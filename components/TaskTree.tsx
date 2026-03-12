@@ -43,7 +43,10 @@ export default function TaskTree({
       const isExpanded = expandedNodes[node._id] !== false; // Default expanded
 
       return (
-        <div key={node._id}>
+        <div
+          key={node._id}
+          className={level === 0 ? "rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden" : ""}
+        >
           <TaskItem
             task={node}
             level={level}
@@ -58,8 +61,16 @@ export default function TaskTree({
             currentUserId={currentUserId}
           />
           {hasChildren && isExpanded && (
-            <div className="task-children">
-              {renderTree(node.children, level + 1)}
+            <div
+              className={
+                level === 0
+                  ? "mx-5 mb-5 rounded-2xl border border-purple-100 bg-gradient-to-br from-purple-50/70 via-white to-white px-3 py-3"
+                  : "ml-5 border-l border-dashed border-purple-200 pl-4 pt-3"
+              }
+            >
+              <div className="space-y-3">
+                {renderTree(node.children, level + 1)}
+              </div>
             </div>
           )}
         </div>
@@ -76,7 +87,7 @@ export default function TaskTree({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="space-y-4">
       {renderTree(tree)}
     </div>
   );
