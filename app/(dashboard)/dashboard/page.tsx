@@ -10,6 +10,9 @@ export default function DashboardPage() {
   const [showModal, setShowModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [creating, setCreating] = useState(false);
+  const [editingProject, setEditingProject] = useState<any>(null);
+  const [updatedName, setUpdatedName] = useState("");
+  const [updating, setUpdating] = useState(false);
 
   const fetchProjects = async () => {
     try {
@@ -52,6 +55,50 @@ export default function DashboardPage() {
     }
   };
 
+  const handleUpdateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!updatedName.trim() || !editingProject) return;
+
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/projects/${editingProject._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: updatedName }),
+      });
+      if (res.ok) {
+        setEditingProject(null);
+        setUpdatedName("");
+        fetchProjects();
+      } else {
+        const data = await res.json();
+        alert(data.message);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleDeleteProject = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this project? This will remove all tasks and member associations.")) return;
+
+    try {
+      const res = await fetch(`/api/projects/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        fetchProjects();
+      } else {
+        const data = await res.json();
+        alert(data.message);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
@@ -79,8 +126,13 @@ export default function DashboardPage() {
               key={p._id}
               id={p._id}
               name={p.name}
-              memberCount={1} // To be updated via agg or separate api
-              taskCount={0}   // To be updated via agg or separate api
+              memberCount={p.memberCount}
+              taskCount={p.taskCount}
+              onEdit={(id, name) => {
+                setEditingProject(p);
+                setUpdatedName(name);
+              }}
+              onDelete={handleDeleteProject}
             />
           ))}
         </div>
@@ -119,6 +171,46 @@ export default function DashboardPage() {
                   className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-purple-700 transition disabled:opacity-70"
                 >
                   {creating ? "Creating..." : "Create"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Project Modal */}
+      {editingProject && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6">
+            <h3 className="text-xl font-bold mb-4">Edit Project</h3>
+            <form onSubmit={handleUpdateProject}>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Project Name</label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                  value={updatedName}
+                  onChange={(e) => setUpdatedName(e.target.value)}
+                  disabled={updating}
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEditingProject(null)}
+                  className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition"
+                  disabled={updating}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updating}
+                  className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-purple-700 transition disabled:opacity-70"
+                >
+                  {updating ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </form>

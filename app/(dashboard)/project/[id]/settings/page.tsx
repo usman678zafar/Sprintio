@@ -15,13 +15,14 @@ export default function ProjectSettingsPage() {
   const [inviteRole, setInviteRole] = useState("MEMBER");
   const [inviting, setInviting] = useState(false);
   const [message, setMessage] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchProject = async () => {
     try {
       const res = await fetch(`/api/projects/${projectId}`);
       if (res.ok) {
         const data = await res.json();
-        setProject(data.project);
+        setProject(data);
       }
     } catch (e) {
       console.error(e);
@@ -31,6 +32,8 @@ export default function ProjectSettingsPage() {
   useEffect(() => {
     fetchProject();
   }, [projectId]);
+
+  const canManageMembers = project?.membership?.role === "MASTER";
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,8 +53,7 @@ export default function ProjectSettingsPage() {
       if (res.ok) {
         setMessage("User invited successfully!");
         setInviteEmail("");
-        // Reload page to refresh member list component
-        window.location.reload(); 
+        setRefreshKey((prev) => prev + 1);
       } else {
         setMessage(`Error: ${data.message}`);
       }
@@ -67,7 +69,7 @@ export default function ProjectSettingsPage() {
       <div className="mb-6">
         <Link href={`/project/${projectId}`} className="inline-flex items-center gap-2 text-primary hover:underline font-medium mb-4">
           <ArrowLeft size={18} />
-          Back to {project ? project.name : "Project"}
+          Back to {project?.project ? project.project.name : "Project"}
         </Link>
         <h2 className="text-2xl font-semibold text-gray-800">Project Settings</h2>
       </div>
@@ -84,41 +86,47 @@ export default function ProjectSettingsPage() {
           </div>
         )}
 
-        <form onSubmit={handleInvite} className="flex items-end gap-4 max-w-2xl">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-            <input
-              type="email"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
+        {canManageMembers ? (
+          <form onSubmit={handleInvite} className="flex items-end gap-4 max-w-2xl">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <input
+                type="email"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                disabled={inviting}
+              />
+            </div>
+            <div className="w-40">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <select
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-white"
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value)}
+                disabled={inviting}
+              >
+                <option value="MEMBER">MEMBER</option>
+                <option value="MASTER">MASTER</option>
+              </select>
+            </div>
+            <button
+              type="submit"
               disabled={inviting}
-            />
-          </div>
-          <div className="w-40">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-white"
-              value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value)}
-              disabled={inviting}
+              className="px-6 py-2 bg-primary text-white font-medium rounded hover:bg-purple-700 transition disabled:opacity-70 h-[42px]"
             >
-              <option value="MEMBER">MEMBER</option>
-              <option value="MASTER">MASTER</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            disabled={inviting}
-            className="px-6 py-2 bg-primary text-white font-medium rounded hover:bg-purple-700 transition disabled:opacity-70 h-[42px]"
-          >
-            {inviting ? "Inviting..." : "Invite"}
-          </button>
-        </form>
+              {inviting ? "Inviting..." : "Invite"}
+            </button>
+          </form>
+        ) : (
+          <p className="text-sm text-gray-500">
+            You can view project members here, but only a MASTER can invite people or change roles.
+          </p>
+        )}
       </div>
 
-      <MemberList projectId={projectId} />
+      <MemberList projectId={projectId} canManageMembers={canManageMembers} refreshKey={refreshKey} />
     </div>
   );
 }

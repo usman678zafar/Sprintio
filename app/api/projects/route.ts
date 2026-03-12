@@ -5,6 +5,8 @@ import connectDB from "@/lib/mongodb";
 import Project from "@/models/Project";
 import ProjectMember from "@/models/ProjectMember";
 
+import Task from "@/models/Task";
+
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,7 +16,25 @@ export async function GET(req: Request) {
     const userId = (session.user as any).id;
 
     const memberships = await ProjectMember.find({ userId }).populate("projectId");
-    const projects = memberships.map((m) => m.projectId).filter(Boolean);
+    
+    // Enrich projects with counts
+    const enrichedProjects = await Promise.all(memberships.map(async (m) => {
+      const project = m.projectId;
+      if (!project) return null;
+
+      const [taskCount, memberCount] = await Promise.all([
+        Task.countDocuments({ projectId: project._id }),
+        ProjectMember.countDocuments({ projectId: project._id })
+      ]);
+
+      return {
+        ...project.toObject(),
+        taskCount,
+        memberCount
+      };
+    }));
+
+    const projects = enrichedProjects.filter(Boolean);
 
     return NextResponse.json({ projects }, { status: 200 });
   } catch (error: any) {

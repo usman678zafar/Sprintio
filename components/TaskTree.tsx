@@ -9,10 +9,19 @@ interface TaskTreeProps {
   onDelete: (taskId: string) => void;
   onAddSubtask: (parentId: string) => void;
   onEdit: (task: any) => void;
-  canEdit: boolean;
+  canManageTasks: boolean;
+  currentUserId?: string;
 }
 
-export default function TaskTree({ tasks, onStatusChange, onDelete, onAddSubtask, onEdit, canEdit }: TaskTreeProps) {
+export default function TaskTree({
+  tasks,
+  onStatusChange,
+  onDelete,
+  onAddSubtask,
+  onEdit,
+  canManageTasks,
+  currentUserId,
+}: TaskTreeProps) {
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
 
   const toggleExpand = (taskId: string) => {
@@ -45,7 +54,8 @@ export default function TaskTree({ tasks, onStatusChange, onDelete, onAddSubtask
             onDelete={onDelete}
             onAddSubtask={onAddSubtask}
             onEdit={onEdit}
-            canEdit={canEdit}
+            canManageTasks={canManageTasks}
+            currentUserId={currentUserId}
           />
           {hasChildren && isExpanded && (
             <div className="task-children">

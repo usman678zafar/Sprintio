@@ -5,9 +5,11 @@ import { UserMinus } from "lucide-react";
 
 interface MemberListProps {
   projectId: string;
+  canManageMembers: boolean;
+  refreshKey?: number;
 }
 
-export default function MemberList({ projectId }: MemberListProps) {
+export default function MemberList({ projectId, canManageMembers, refreshKey = 0 }: MemberListProps) {
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +29,7 @@ export default function MemberList({ projectId }: MemberListProps) {
 
   useEffect(() => {
     fetchMembers();
-  }, [projectId]);
+  }, [projectId, refreshKey]);
 
   const handleRoleChange = async (memberId: string, newRole: string) => {
     try {
@@ -85,20 +87,28 @@ export default function MemberList({ projectId }: MemberListProps) {
             </div>
 
             <div className="flex items-center gap-4">
-              <select
-                value={m.role}
-                onChange={(e) => handleRoleChange(m._id, e.target.value)}
-                className="bg-transparent border border-gray-200 text-sm rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:border-primary"
-              >
-                <option value="MASTER">MASTER</option>
-                <option value="MEMBER">MEMBER</option>
-              </select>
-              <button
-                onClick={() => handleRemoveMember(m._id)}
-                className="p-1.5 text-gray-400 hover:text-red-500 rounded-md hover:bg-red-50 transition"
-              >
-                <UserMinus size={18} />
-              </button>
+              {canManageMembers ? (
+                <>
+                  <select
+                    value={m.role}
+                    onChange={(e) => handleRoleChange(m._id, e.target.value)}
+                    className="bg-transparent border border-gray-200 text-sm rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:border-primary"
+                  >
+                    <option value="MASTER">MASTER</option>
+                    <option value="MEMBER">MEMBER</option>
+                  </select>
+                  <button
+                    onClick={() => handleRemoveMember(m._id)}
+                    className="p-1.5 text-gray-400 hover:text-red-500 rounded-md hover:bg-red-50 transition"
+                  >
+                    <UserMinus size={18} />
+                  </button>
+                </>
+              ) : (
+                <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
+                  {m.role}
+                </span>
+              )}
             </div>
           </div>
         ))}

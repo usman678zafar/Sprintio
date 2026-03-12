@@ -5,6 +5,8 @@ import connectDB from "@/lib/mongodb";
 import Task from "@/models/Task";
 import ProjectMember from "@/models/ProjectMember";
 
+const VALID_STATUSES = ["Pending", "In Progress", "Done"];
+
 // GET all tasks for a project
 export async function GET(req: Request) {
   try {
@@ -37,7 +39,7 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const { projectId, title, description, assignedTo, deadline, parentTaskId } = await req.json();
+    const { projectId, title, description, assignedTo, deadline, parentTaskId, status } = await req.json();
     if (!projectId || !title) return NextResponse.json({ message: "projectId and title are required" }, { status: 400 });
 
     await connectDB();
@@ -51,14 +53,30 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Only MASTER can add tasks" }, { status: 403 });
     }
 
+    if (assignedTo) {
+      const assigneeMembership = await ProjectMember.findOne({ projectId, userId: assignedTo });
+      if (!assigneeMembership) {
+        return NextResponse.json({ message: "Assigned user must belong to the project" }, { status: 400 });
+      }
+    }
+
+    if (parentTaskId) {
+      const parentTask = await Task.findOne({ _id: parentTaskId, projectId });
+      if (!parentTask) {
+        return NextResponse.json({ message: "Parent task not found in this project" }, { status: 400 });
+      }
+    }
+
+    const nextStatus = VALID_STATUSES.includes(status) ? status : "Pending";
+
     const newTask = await Task.create({
       projectId,
       title,
       description,
       assignedTo: assignedTo || null,
-      deadline,
+      deadline: deadline || null,
       parentTaskId: parentTaskId || null,
-      status: "Pending"
+      status: nextStatus,
     });
 
     return NextResponse.json({ task: newTask }, { status: 201 });

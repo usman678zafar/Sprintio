@@ -5,6 +5,8 @@ import connectDB from "@/lib/mongodb";
 import Task from "@/models/Task";
 import ProjectMember from "@/models/ProjectMember";
 
+const VALID_STATUSES = ["Pending", "In Progress", "Done"];
+
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
@@ -26,10 +28,37 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       if (task.assignedTo?.toString() !== userId.toString()) {
         return NextResponse.json({ message: "Forbidden to edit this task" }, { status: 403 });
       }
+
+      if (!VALID_STATUSES.includes(updates.status)) {
+        return NextResponse.json({ message: "Invalid status" }, { status: 400 });
+      }
+
       // ONLY allow status update
       const allowedUpdates = { status: updates.status };
       Object.assign(task, allowedUpdates);
     } else {
+      if (updates.status && !VALID_STATUSES.includes(updates.status)) {
+        return NextResponse.json({ message: "Invalid status" }, { status: 400 });
+      }
+
+      if (updates.assignedTo) {
+        const assigneeMembership = await ProjectMember.findOne({ projectId: task.projectId, userId: updates.assignedTo });
+        if (!assigneeMembership) {
+          return NextResponse.json({ message: "Assigned user must belong to the project" }, { status: 400 });
+        }
+      }
+
+      if (updates.parentTaskId) {
+        if (updates.parentTaskId === params.id) {
+          return NextResponse.json({ message: "A task cannot be its own parent" }, { status: 400 });
+        }
+
+        const parentTask = await Task.findOne({ _id: updates.parentTaskId, projectId: task.projectId });
+        if (!parentTask) {
+          return NextResponse.json({ message: "Parent task not found in this project" }, { status: 400 });
+        }
+      }
+
       // MASTER can edit anything
       Object.assign(task, updates);
     }
@@ -58,9 +87,20 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       return NextResponse.json({ message: "Only MASTER can delete tasks" }, { status: 403 });
     }
 
-    // Optionally handle cascading deletion of subtasks
-    await Task.deleteMany({ parentTaskId: task._id });
-    await Task.findByIdAndDelete(params.id);
+    const idsToDelete = [task._id];
+    const queue = [task._id];
+
+    while (queue.length > 0) {
+      const currentParentId = queue.shift();
+      const children = await Task.find({ parentTaskId: currentParentId }).select("_id");
+
+      for (const child of children) {
+        idsToDelete.push(child._id);
+        queue.push(child._id);
+      }
+    }
+
+    await Task.deleteMany({ _id: { $in: idsToDelete } });
 
     return NextResponse.json({ message: "Task deleted" }, { status: 200 });
 
