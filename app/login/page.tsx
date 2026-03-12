@@ -4,6 +4,8 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+import Logo from "@/components/Logo";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,9 +35,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Sprintio</h1>
-          <p className="text-gray-500">Log in to manage your projects.</p>
+        <div className="flex flex-col items-center mb-8 text-center">
+          <Logo className="mb-4" iconSize={28} />
+          <p className="text-gray-500 font-medium">Log in to manage your projects.</p>
         </div>
 
         {error && (

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
+import Logo from "./Logo";
+
 export default function Sidebar() {
   const pathname = usePathname();
 
@@ -15,7 +17,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
       <div className="p-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-primary">Sprintio</h1>
+        <Logo />
       </div>
       <div className="p-4 flex-1">
         <nav className="space-y-1">

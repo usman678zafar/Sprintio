@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Logo from "@/components/Logo";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -39,9 +40,9 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Sprintio</h1>
-          <p className="text-gray-500">Create an account to get started.</p>
+        <div className="flex flex-col items-center mb-8 text-center">
+          <Logo className="mb-4" iconSize={28} />
+          <p className="text-gray-500 font-medium">Create an account to get started.</p>
         </div>
 
         {error && (
