@@ -1,0 +1,27 @@
+import mongoose, { Schema, Document } from "mongoose";
+
+export type TaskStatus = "Pending" | "In Progress" | "Done";
+
+export interface ITask extends Document {
+  projectId: mongoose.Types.ObjectId;
+  title: string;
+  description?: string;
+  assignedTo?: mongoose.Types.ObjectId;
+  deadline?: Date;
+  status: TaskStatus;
+  parentTaskId?: mongoose.Types.ObjectId;
+  createdAt: Date;
+}
+
+const TaskSchema = new Schema<ITask>({
+  projectId: { type: Schema.Types.ObjectId, ref: "Project", required: true },
+  title: { type: String, required: true },
+  description: { type: String },
+  assignedTo: { type: Schema.Types.ObjectId, ref: "User" },
+  deadline: { type: Date },
+  status: { type: String, enum: ["Pending", "In Progress", "Done"], default: "Pending" },
+  parentTaskId: { type: Schema.Types.ObjectId, ref: "Task" },
+  createdAt: { type: Date, default: Date.now },
+});
+
+export default mongoose.models.Task || mongoose.model<ITask>("Task", TaskSchema);
