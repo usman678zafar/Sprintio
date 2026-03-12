@@ -11,6 +11,9 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Sprintio",
   description: "Minimal project and task management tool.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 import Providers from "@/components/Providers";
