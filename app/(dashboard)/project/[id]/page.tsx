@@ -10,12 +10,25 @@ export default function ProjectPage() {
   const params = useParams();
   const projectId = params.id as string;
   
+  const [project, setProject] = useState<any>(null);
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskParent, setNewTaskParent] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const fetchProject = async () => {
+    try {
+      const res = await fetch(`/api/projects/${projectId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setProject(data.project);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const fetchTasks = async () => {
     try {
@@ -32,6 +45,7 @@ export default function ProjectPage() {
   };
 
   useEffect(() => {
+    fetchProject();
     fetchTasks();
   }, [projectId]);
 
@@ -98,7 +112,12 @@ export default function ProjectPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-semibold text-gray-800">Project Tasks</h2>
+        <div>
+          <h2 className="text-2xl font-semibold text-gray-800">
+            {project ? project.name : "Project Tasks"}
+          </h2>
+          {project && <p className="text-gray-500 text-sm">Manage tasks for this project</p>}
+        </div>
         <div className="flex gap-3">
           <Link href={`/project/${projectId}/settings`} className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm">
             <Settings size={18} />

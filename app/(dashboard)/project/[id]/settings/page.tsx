@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import MemberList from "@/components/MemberList";
 import Link from "next/link";
@@ -10,10 +10,27 @@ export default function ProjectSettingsPage() {
   const params = useParams();
   const projectId = params.id as string;
 
+  const [project, setProject] = useState<any>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("MEMBER");
   const [inviting, setInviting] = useState(false);
   const [message, setMessage] = useState("");
+
+  const fetchProject = async () => {
+    try {
+      const res = await fetch(`/api/projects/${projectId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setProject(data.project);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchProject();
+  }, [projectId]);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +67,7 @@ export default function ProjectSettingsPage() {
       <div className="mb-6">
         <Link href={`/project/${projectId}`} className="inline-flex items-center gap-2 text-primary hover:underline font-medium mb-4">
           <ArrowLeft size={18} />
-          Back to Project Tasks
+          Back to {project ? project.name : "Project"}
         </Link>
         <h2 className="text-2xl font-semibold text-gray-800">Project Settings</h2>
       </div>
