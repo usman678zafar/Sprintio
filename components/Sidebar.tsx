@@ -17,7 +17,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
       <div className="p-6 border-b border-gray-200">
-        <Logo />
+        <Logo href="/dashboard" />
       </div>
       <div className="p-4 flex-1">
         <nav className="space-y-1">

@@ -5,11 +5,12 @@ interface LogoProps {
   className?: string;
   iconSize?: number;
   showText?: boolean;
+  href?: string;
 }
 
-export default function Logo({ className = "", iconSize = 24, showText = true }: LogoProps) {
+export default function Logo({ className = "", iconSize = 24, showText = true, href = "/" }: LogoProps) {
   return (
-    <Link href="/" className={`flex items-center gap-2 ${className}`}>
+    <Link href={href} className={`flex items-center gap-2 ${className}`}>
       <div className="bg-primary p-1.5 rounded-lg text-white">
         <LayoutList size={iconSize} />
       </div>
