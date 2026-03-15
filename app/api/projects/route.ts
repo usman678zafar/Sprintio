@@ -6,6 +6,7 @@ import Project from "@/models/Project";
 import ProjectMember from "@/models/ProjectMember";
 
 import Task from "@/models/Task";
+import mongoose from "mongoose";
 
 export async function GET(req: Request) {
   try {
@@ -14,29 +15,49 @@ export async function GET(req: Request) {
 
     await connectDB();
     const userId = (session.user as any).id;
+    // We need to convert string userId to ObjectId if necessary, depending on how mongoose validates aggregate matches. 
+    // Assuming userId is a string but stored as string or ObjectId in Mongo. Let's use mongoose.Types.ObjectId if it's stored as ObjectId in ProjectMember
+    const objectIdUser = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : userId;
 
-    const memberships = await ProjectMember.find({ userId }).populate("projectId");
-    
-    // Enrich projects with counts
-    const enrichedProjects = await Promise.all(memberships.map(async (m) => {
-      const project = m.projectId;
-      if (!project) return null;
+    const enrichedProjects = await ProjectMember.aggregate([
+      { $match: { userId: objectIdUser } },
+      {
+        $lookup: {
+          from: "projects",
+          localField: "projectId",
+          foreignField: "_id",
+          as: "project"
+        }
+      },
+      { $unwind: "$project" },
+      {
+        $lookup: {
+          from: "tasks",
+          localField: "projectId",
+          foreignField: "projectId",
+          as: "tasks"
+        }
+      },
+      {
+        $lookup: {
+          from: "projectmembers",
+          localField: "projectId",
+          foreignField: "projectId",
+          as: "members"
+        }
+      },
+      {
+        $addFields: {
+          "project.taskCount": { $size: "$tasks" },
+          "project.memberCount": { $size: "$members" }
+        }
+      },
+      {
+        $replaceRoot: { newRoot: "$project" }
+      }
+    ]);
 
-      const [taskCount, memberCount] = await Promise.all([
-        Task.countDocuments({ projectId: project._id }),
-        ProjectMember.countDocuments({ projectId: project._id })
-      ]);
-
-      return {
-        ...project.toObject(),
-        taskCount,
-        memberCount
-      };
-    }));
-
-    const projects = enrichedProjects.filter(Boolean);
-
-    return NextResponse.json({ projects }, { status: 200 });
+    return NextResponse.json({ projects: enrichedProjects }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: "Internal server error", error: error.message }, { status: 500 });
   }

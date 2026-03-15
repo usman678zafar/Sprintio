@@ -15,7 +15,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
+    <aside className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col h-full">
       <div className="p-6 border-b border-gray-200">
         <Logo href="/dashboard" />
       </div>
