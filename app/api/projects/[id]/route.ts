@@ -71,7 +71,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const { name } = await req.json();
+    const body = await req.json();
+    const { name, description, documentUrl, documentName } = body;
+
     if (!name) return NextResponse.json({ message: "Project name is required" }, { status: 400 });
 
     const projectId = params.id;
@@ -85,10 +87,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ message: "Only MASTER can edit project details" }, { status: 403 });
     }
 
+    const updateData: any = { name };
+    if (description !== undefined) updateData.description = description;
+    if (documentUrl !== undefined) updateData.documentUrl = documentUrl;
+    if (documentName !== undefined) updateData.documentName = documentName;
+
     const project = await Project.findByIdAndUpdate(
       projectId,
-      { name },
-      { new: true }
+      updateData,
+      { new: true, strict: false }
     );
 
     if (!project) {
