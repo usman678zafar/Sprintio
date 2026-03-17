@@ -75,24 +75,24 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
       </div>
       <div className="divide-y divide-gray-100 dark:divide-slate-800">
         {members.map((m) => (
-          <div key={m._id} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-800/50 transition">
+          <div key={m._id} className="flex flex-col gap-4 p-4 transition hover:bg-gray-50 dark:hover:bg-slate-800/50 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
                 {m.userId.name ? m.userId.name[0].toUpperCase() : "U"}
               </div>
-              <div>
+              <div className="min-w-0">
                 <div className="font-medium text-gray-800 dark:text-slate-100">{m.userId.name}</div>
-                <div className="text-sm text-gray-500 dark:text-slate-400">{m.userId.email}</div>
+                <div className="truncate text-sm text-gray-500 dark:text-slate-400">{m.userId.email}</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3 sm:justify-end">
               {canManageMembers ? (
                 <>
                   <select
                     value={m.role}
                     onChange={(e) => handleRoleChange(m._id, e.target.value)}
-                    className="bg-transparent border border-gray-200 dark:border-slate-700 text-sm rounded-md px-2 py-1 text-gray-700 dark:text-slate-300 focus:outline-none focus:border-primary transition-colors"
+                    className="min-w-[130px] bg-transparent border border-gray-200 dark:border-slate-700 text-sm rounded-md px-2 py-1 text-gray-700 dark:text-slate-300 focus:outline-none focus:border-primary transition-colors"
                   >
                     <option value="MASTER" className="dark:bg-slate-900">MASTER</option>
                     <option value="MEMBER" className="dark:bg-slate-900">MEMBER</option>

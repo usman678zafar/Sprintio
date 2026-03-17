@@ -83,7 +83,7 @@ export default function MobileSidebar({ user }: { user: any }) {
       )}
 
       <div
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 transform flex-col bg-white shadow-xl transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] bg-white shadow-xl transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

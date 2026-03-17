@@ -280,13 +280,6 @@ export default function TeamPage() {
       </section>
 
       <section className="mt-10 overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-        <div className="grid min-w-[980px] grid-cols-[minmax(0,1.8fr)_220px_minmax(0,2fr)_120px] bg-slate-50 px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
-          <div>Name</div>
-          <div>Role</div>
-          <div>Project Assignments</div>
-          <div />
-        </div>
-
         {loading ? (
           <div className="px-6 py-10 text-sm text-slate-500">Loading team members...</div>
         ) : filteredMembers.length === 0 ? (
@@ -295,7 +288,7 @@ export default function TeamPage() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="divide-y divide-slate-200 lg:hidden">
               {pagedMembers.map((member) => {
                 const canEdit = member.assignments.some((assignment) => assignment.canManage);
                 const canRemove = member.assignments.some(
@@ -303,11 +296,8 @@ export default function TeamPage() {
                 );
 
                 return (
-                  <div
-                    key={member.userId}
-                    className="grid min-w-[980px] grid-cols-[minmax(0,1.8fr)_220px_minmax(0,2fr)_120px] items-center border-t border-slate-200 px-6 py-4"
-                  >
-                    <div className="flex items-center gap-4">
+                  <article key={member.userId} className="space-y-4 px-5 py-4">
+                    <div className="flex items-start gap-4">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
                         {member.name
                           .split(" ")
@@ -324,21 +314,29 @@ export default function TeamPage() {
                       </div>
                     </div>
 
-                    <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        Role
+                      </span>
                       <span className={`rounded-full px-3 py-1 text-sm font-medium ${roleBadge(member.roleSummary)}`}>
                         {member.roleSummary}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap gap-3">
-                      {member.assignments.map((assignment) => (
-                        <span
-                          key={assignment.membershipId}
-                          className="rounded-xl bg-slate-100 px-3 py-1.5 text-sm text-slate-700"
-                        >
-                          {assignment.projectName}
-                        </span>
-                      ))}
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        Project Assignments
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {member.assignments.map((assignment) => (
+                          <span
+                            key={assignment.membershipId}
+                            className="rounded-xl bg-slate-100 px-3 py-1.5 text-sm text-slate-700"
+                          >
+                            {assignment.projectName}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-end gap-3">
@@ -359,9 +357,89 @@ export default function TeamPage() {
                         <Trash2 size={20} />
                       </button>
                     </div>
-                  </div>
+                  </article>
                 );
               })}
+            </div>
+
+            <div className="hidden lg:block">
+              <div className="overflow-x-auto">
+                <div className="min-w-[980px]">
+                  <div className="grid grid-cols-[minmax(0,1.8fr)_220px_minmax(0,2fr)_120px] bg-slate-50 px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+                    <div>Name</div>
+                    <div>Role</div>
+                    <div>Project Assignments</div>
+                    <div />
+                  </div>
+
+                  {pagedMembers.map((member) => {
+                    const canEdit = member.assignments.some((assignment) => assignment.canManage);
+                    const canRemove = member.assignments.some(
+                      (assignment) => assignment.canManage && !assignment.isSelf
+                    );
+
+                    return (
+                      <div
+                        key={member.userId}
+                        className="grid grid-cols-[minmax(0,1.8fr)_220px_minmax(0,2fr)_120px] items-center border-t border-slate-200 px-6 py-4"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
+                            {member.name
+                              .split(" ")
+                              .map((part) => part[0])
+                              .join("")
+                              .slice(0, 2)
+                              .toUpperCase()}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-lg font-medium tracking-tight text-slate-950">
+                              {member.name}
+                            </p>
+                            <p className="truncate text-sm text-slate-500">{member.email}</p>
+                          </div>
+                        </div>
+
+                        <div>
+                          <span className={`rounded-full px-3 py-1 text-sm font-medium ${roleBadge(member.roleSummary)}`}>
+                            {member.roleSummary}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap gap-3">
+                          {member.assignments.map((assignment) => (
+                            <span
+                              key={assignment.membershipId}
+                              className="rounded-xl bg-slate-100 px-3 py-1.5 text-sm text-slate-700"
+                            >
+                              {assignment.projectName}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-end gap-3">
+                          <button
+                            type="button"
+                            onClick={() => openEditModal(member)}
+                            disabled={!canEdit}
+                            className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            <Pencil size={20} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openRemoveModal(member)}
+                            disabled={!canRemove}
+                            className="rounded-xl p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col gap-5 border-t border-slate-200 px-6 py-4 text-slate-500 sm:flex-row sm:items-center sm:justify-between">
@@ -370,7 +448,7 @@ export default function TeamPage() {
                 {Math.min(currentPage * PAGE_SIZE, filteredMembers.length)} of {filteredMembers.length} members
               </p>
 
-              <div className="flex items-center overflow-hidden rounded-2xl border border-slate-200">
+              <div className="flex flex-wrap items-center overflow-hidden rounded-2xl border border-slate-200">
                 <button
                   type="button"
                   onClick={() => setPage((value) => Math.max(1, value - 1))}

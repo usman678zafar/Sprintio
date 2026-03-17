@@ -65,17 +65,18 @@ export default function ProjectSettingsPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="min-h-full bg-[#f6f8fc] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <div className="mx-auto w-full max-w-4xl">
       <div className="mb-6">
-        <Link href={`/project/${projectId}`} className="inline-flex items-center gap-2 text-primary hover:underline font-medium mb-4">
+        <Link href={`/project/${projectId}`} className="mb-4 inline-flex items-center gap-2 font-medium text-primary hover:underline">
           <ArrowLeft size={18} />
           Back to {project?.project ? project.project.name : "Project"}
         </Link>
-        <h2 className="text-2xl font-semibold text-gray-800">Project Settings</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 sm:text-3xl">Project Settings</h2>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+      <div className="rounded-[24px] border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+        <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
           <UserPlus size={20} className="text-primary" />
           Invite Team Member
         </h3>
@@ -87,8 +88,8 @@ export default function ProjectSettingsPage() {
         )}
 
         {canManageMembers ? (
-          <form onSubmit={handleInvite} className="flex items-end gap-4 max-w-2xl">
-            <div className="flex-1">
+          <form onSubmit={handleInvite} className="grid max-w-2xl gap-4 lg:grid-cols-[minmax(0,1fr)_160px_auto] lg:items-end">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input
                 type="email"
@@ -99,7 +100,7 @@ export default function ProjectSettingsPage() {
                 disabled={inviting}
               />
             </div>
-            <div className="w-40">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
               <select
                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-white"
@@ -114,7 +115,7 @@ export default function ProjectSettingsPage() {
             <button
               type="submit"
               disabled={inviting}
-              className="px-6 py-2 bg-primary text-white font-medium rounded hover:bg-purple-700 transition disabled:opacity-70 h-[42px]"
+              className="h-[42px] rounded bg-primary px-6 py-2 font-medium text-white transition hover:bg-purple-700 disabled:opacity-70"
             >
               {inviting ? "Inviting..." : "Invite"}
             </button>
@@ -127,6 +128,7 @@ export default function ProjectSettingsPage() {
       </div>
 
       <MemberList projectId={projectId} canManageMembers={canManageMembers} refreshKey={refreshKey} />
+      </div>
     </div>
   );
 }
