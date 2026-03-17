@@ -28,14 +28,14 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
   return (
     <div className="relative group">
       <Link href={`/project/${id}`} className="block">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-primary/30 transition cursor-pointer h-full">
+        <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition cursor-pointer h-full">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-xl font-semibold text-gray-800 transition group-hover:text-primary pr-8 truncate">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-slate-100 transition group-hover:text-primary dark:group-hover:text-primary pr-8 truncate">
               {name}
             </h3>
           </div>
           
-          <div className="flex items-center gap-6 text-sm text-gray-500">
+          <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-slate-400">
             <div className="flex items-center gap-2">
               <CheckSquare size={16} />
               <span>{taskCount} Tasks</span>
@@ -55,13 +55,13 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
             e.stopPropagation();
             setShowMenu(!showMenu);
           }}
-          className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition opacity-0 group-hover:opacity-100"
+          className="p-1.5 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition opacity-0 group-hover:opacity-100"
         >
           <MoreVertical size={20} />
         </button>
 
         {showMenu && (
-          <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10">
+          <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-[#1E293B] rounded-lg shadow-lg border border-gray-100 dark:border-slate-800 py-1 z-10">
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -69,7 +69,7 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
                 setShowMenu(false);
                 onEdit(id, name);
               }}
-              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 flex items-center gap-2"
             >
               <Edit2 size={14} />
               Edit Name
@@ -81,7 +81,7 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
                 setShowMenu(false);
                 onDelete(id);
               }}
-              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
             >
               <Trash2 size={14} />
               Delete Project

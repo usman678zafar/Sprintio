@@ -1,10 +1,24 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { Plus, Settings, FileText, Upload, Eye, Download, X, Pencil } from "lucide-react";
 import Link from "next/link";
-import TaskTree from "@/components/TaskTree";
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronRight,
+  Flag,
+  Download,
+  FileText,
+  ListChecks,
+  Pencil,
+  Plus,
+  Send,
+  Settings,
+  Share2,
+  UserCircle2,
+  X,
+} from "lucide-react";
 
 type TaskStatus = "Pending" | "In Progress" | "Done";
 
@@ -48,6 +62,10 @@ interface Task {
   parentTaskId?: string | null;
 }
 
+interface TaskNode extends Task {
+  children: TaskNode[];
+}
+
 const DEFAULT_TASK_FORM = {
   title: "",
   description: "",
@@ -56,31 +74,84 @@ const DEFAULT_TASK_FORM = {
   status: "Pending" as TaskStatus,
 };
 
+function buildTaskTree(tasks: Task[], parentId: string | null = null): TaskNode[] {
+  return tasks
+    .filter((task) => (parentId === null ? !task.parentTaskId : task.parentTaskId === parentId))
+    .map((task) => ({
+      ...task,
+      children: buildTaskTree(tasks, task._id),
+    }));
+}
+
+function formatDate(date?: string | null) {
+  if (!date) return "No date";
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+}
+
+function getStatusPill(status: TaskStatus) {
+  if (status === "Done") {
+    return "bg-emerald-100 text-emerald-700";
+  }
+  if (status === "In Progress") {
+    return "bg-blue-100 text-primary";
+  }
+  return "bg-amber-100 text-amber-700";
+}
+
+function findTaskNode(nodes: TaskNode[], taskId: string | null): TaskNode | null {
+  if (!taskId) return null;
+
+  for (const node of nodes) {
+    if (node._id === taskId) return node;
+    const nested = findTaskNode(node.children, taskId);
+    if (nested) return nested;
+  }
+
+  return null;
+}
+
+function getPriority(task: TaskNode | null) {
+  if (!task) return { label: "Medium", className: "text-amber-600" };
+  if (task.status === "Done") return { label: "Low", className: "text-emerald-600" };
+  if (!task.deadline) return { label: "Medium", className: "text-amber-600" };
+
+  const due = new Date(task.deadline).getTime();
+  const days = Math.ceil((due - Date.now()) / (1000 * 60 * 60 * 24));
+  if (days <= 7) return { label: "High", className: "text-red-500" };
+  return { label: "Medium", className: "text-amber-600" };
+}
+
 export default function ProjectPage() {
   const params = useParams();
   const projectId = params.id as string;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [project, setProject] = useState<ProjectDetails["project"] | null>(null);
   const [membership, setMembership] = useState<ProjectDetails["membership"] | null>(null);
   const [members, setMembers] = useState<ProjectMember[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [taskComments, setTaskComments] = useState<Record<string, string[]>>({});
+  const [commentDraft, setCommentDraft] = useState("");
+
+  const [showTaskModal, setShowTaskModal] = useState(false);
   const [newTaskParent, setNewTaskParent] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [taskForm, setTaskForm] = useState(DEFAULT_TASK_FORM);
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
+  const [taskMessage, setTaskMessage] = useState("");
 
-  // Overview state
   const [showOverviewModal, setShowOverviewModal] = useState(false);
   const [overviewForm, setOverviewForm] = useState({ description: "" });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [overviewSubmitting, setOverviewSubmitting] = useState(false);
   const [overviewMessage, setOverviewMessage] = useState("");
-  const [showPdfPreview, setShowPdfPreview] = useState(false);
-  const [showOverviewDrawer, setShowOverviewDrawer] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const canManageTasks = membership?.role === "MASTER";
 
@@ -94,8 +165,8 @@ export default function ProjectPage() {
         setMembers(data.members);
         setOverviewForm({ description: data.project.description || "" });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -106,8 +177,8 @@ export default function ProjectPage() {
         const data = await res.json();
         setTasks(data.tasks);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -118,8 +189,23 @@ export default function ProjectPage() {
     fetchTasks();
   }, [projectId]);
 
+  const rootTasks = useMemo(() => buildTaskTree(tasks), [tasks]);
+  const selectedTask = useMemo(
+    () => findTaskNode(rootTasks, selectedTaskId),
+    [rootTasks, selectedTaskId]
+  );
+  const selectedPriority = useMemo(() => getPriority(selectedTask), [selectedTask]);
+
+  const toggleExpand = (taskId: string) => {
+    setExpanded((prev) => ({ ...prev, [taskId]: prev[taskId] === false ? true : !prev[taskId] }));
+  };
+
   const handleStatusChange = async (taskId: string, newStatus: string) => {
-    setTasks((prev) => prev.map((task) => (task._id === taskId ? { ...task, status: newStatus as TaskStatus } : task)));
+    setTasks((prev) =>
+      prev.map((task) =>
+        task._id === taskId ? { ...task, status: newStatus as TaskStatus } : task
+      )
+    );
 
     try {
       const res = await fetch(`/api/tasks/${taskId}`, {
@@ -131,7 +217,7 @@ export default function ProjectPage() {
       if (!res.ok) {
         fetchTasks();
       }
-    } catch (e) {
+    } catch {
       fetchTasks();
     }
   };
@@ -144,25 +230,35 @@ export default function ProjectPage() {
       if (res.ok) {
         fetchTasks();
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
+  const submitComment = () => {
+    if (!selectedTaskId || !commentDraft.trim()) return;
+
+    setTaskComments((prev) => ({
+      ...prev,
+      [selectedTaskId]: [...(prev[selectedTaskId] || []), commentDraft.trim()],
+    }));
+    setCommentDraft("");
+  };
+
+  const closeTaskModal = () => {
+    setShowTaskModal(false);
     setNewTaskParent(null);
     setEditingTask(null);
     setTaskForm(DEFAULT_TASK_FORM);
-    setMessage("");
+    setTaskMessage("");
   };
 
   const openAddModal = (parentId: string | null = null) => {
     setEditingTask(null);
     setNewTaskParent(parentId);
     setTaskForm(DEFAULT_TASK_FORM);
-    setMessage("");
-    setShowModal(true);
+    setTaskMessage("");
+    setShowTaskModal(true);
   };
 
   const openEditModal = (task: Task) => {
@@ -175,8 +271,8 @@ export default function ProjectPage() {
       deadline: task.deadline ? new Date(task.deadline).toISOString().slice(0, 10) : "",
       status: task.status,
     });
-    setMessage("");
-    setShowModal(true);
+    setTaskMessage("");
+    setShowTaskModal(true);
   };
 
   const submitTask = async (e: React.FormEvent) => {
@@ -184,9 +280,8 @@ export default function ProjectPage() {
     if (!taskForm.title.trim()) return;
 
     setSubmitting(true);
-    setMessage("");
+    setTaskMessage("");
 
-    const isEditing = Boolean(editingTask);
     const payload = {
       projectId,
       title: taskForm.title,
@@ -194,27 +289,26 @@ export default function ProjectPage() {
       assignedTo: taskForm.assignedTo || null,
       deadline: taskForm.deadline || null,
       status: taskForm.status,
-      parentTaskId: isEditing ? editingTask?.parentTaskId || null : newTaskParent,
+      parentTaskId: editingTask ? editingTask.parentTaskId || null : newTaskParent,
     };
 
     try {
-      const res = await fetch(isEditing ? `/api/tasks/${editingTask?._id}` : "/api/tasks", {
-        method: isEditing ? "PUT" : "POST",
+      const res = await fetch(editingTask ? `/api/tasks/${editingTask._id}` : "/api/tasks", {
+        method: editingTask ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
-
       if (res.ok) {
-        closeModal();
+        closeTaskModal();
         fetchTasks();
       } else {
-        setMessage(data.message || "Failed to save task");
+        setTaskMessage(data.message || "Failed to save task");
       }
-    } catch (e) {
-      console.error(e);
-      setMessage("Failed to save task");
+    } catch (error) {
+      console.error(error);
+      setTaskMessage("Failed to save task");
     } finally {
       setSubmitting(false);
     }
@@ -233,11 +327,6 @@ export default function ProjectPage() {
     setOverviewMessage("");
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setSelectedFile(file);
-  };
-
   const submitOverview = async (e: React.FormEvent) => {
     e.preventDefault();
     setOverviewSubmitting(true);
@@ -247,7 +336,6 @@ export default function ProjectPage() {
       let documentUrl = project?.documentUrl || "";
       let documentName = project?.documentName || "";
 
-      // Upload file if selected
       if (selectedFile) {
         const formData = new FormData();
         formData.append("file", selectedFile);
@@ -268,7 +356,6 @@ export default function ProjectPage() {
         documentName = uploadData.documentName;
       }
 
-      // Update project overview description
       const res = await fetch(`/api/projects/${projectId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -287,163 +374,377 @@ export default function ProjectPage() {
         const data = await res.json();
         setOverviewMessage(data.message || "Failed to save overview");
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
       setOverviewMessage("Something went wrong");
     } finally {
       setOverviewSubmitting(false);
     }
   };
 
-  const isPdf = project?.documentName?.toLowerCase().endsWith(".pdf");
+  const stats = useMemo(() => {
+    const completed = tasks.filter((task) => task.status === "Done").length;
+    const upcoming = tasks
+      .map((task) => task.deadline)
+      .filter(Boolean)
+      .map((deadline) => new Date(deadline as string))
+      .filter((date) => !Number.isNaN(date.getTime()))
+      .sort((a, b) => a.getTime() - b.getTime())[0];
+
+    if (!upcoming) {
+      return { total: tasks.length, completed, deadlineLabel: "No deadline", deadlineTone: "text-slate-500" };
+    }
+
+    const diff = Math.ceil((upcoming.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    return {
+      total: tasks.length,
+      completed,
+      deadlineLabel: diff <= 0 ? "Due now" : `${diff} Day${diff === 1 ? "" : "s"} Left`,
+      deadlineTone: diff <= 7 ? "text-red-500" : "text-amber-500",
+    };
+  }, [tasks]);
+
+  const renderRows = (nodes: TaskNode[], level = 0): React.ReactNode[] =>
+    nodes.flatMap((task) => {
+      const isExpanded = expanded[task._id] !== false;
+      const hasChildren = task.children.length > 0;
+      const avatar = task.assignedTo?.name
+        ?.split(" ")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+
+      const row = (
+        <div
+          key={task._id}
+          role="button"
+          tabIndex={0}
+          onClick={() => setSelectedTaskId(task._id)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              setSelectedTaskId(task._id);
+            }
+          }}
+          className={`grid min-w-[980px] grid-cols-[minmax(0,1.9fr)_220px_220px_180px] items-center border-t border-slate-200 bg-white px-6 py-5 ${
+            level > 0 ? "text-base" : "text-[17px]"
+          } cursor-pointer transition hover:bg-slate-50/80 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-100`}
+        >
+          <div className="flex items-center gap-4">
+            <div style={{ width: level * 28 }} className="shrink-0" />
+            {level === 0 ? (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (hasChildren) toggleExpand(task._id);
+                }}
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
+              >
+                {hasChildren ? (
+                  isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />
+                ) : (
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+                )}
+              </button>
+            ) : (
+              <span className="ml-1 h-2 w-2 rounded-full bg-slate-200" />
+            )}
+
+            <div className="min-w-0">
+              <div className="flex items-center gap-3">
+                <span className={`truncate ${level === 0 ? "font-medium text-slate-950" : "text-slate-700"}`}>
+                  {task.title}
+                </span>
+                {canManageTasks && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openEditModal(task);
+                      }}
+                      className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openAddModal(task._id);
+                      }}
+                      className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
+                    >
+                      <Plus size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleDelete(task._id);
+                      }}
+                      className="rounded-lg p-1.5 text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
+              {task.description && level === 0 && (
+                <p className="mt-2 truncate text-sm text-slate-500">{task.description}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 text-slate-600">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-700">
+              {avatar || "NA"}
+            </div>
+            <span>{task.assignedTo?.name || "Unassigned"}</span>
+          </div>
+
+          <div className="text-slate-600">{formatDate(task.deadline)}</div>
+
+          <div className="flex items-center gap-3">
+            <span className={`rounded-full px-4 py-1.5 text-sm font-medium ${getStatusPill(task.status)}`}>
+              {task.status === "Pending" ? "To Do" : task.status}
+            </span>
+            <select
+              value={task.status}
+              onClick={(event) => event.stopPropagation()}
+              onChange={(event) => handleStatusChange(task._id, event.target.value)}
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500"
+            >
+              <option value="Pending">To Do</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Done">Done</option>
+            </select>
+          </div>
+        </div>
+      );
+
+      return hasChildren && isExpanded ? [row, ...renderRows(task.children, level + 1)] : [row];
+    });
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-800">
-            {project ? project.name : "Project Tasks"}
-          </h2>
-          {project && <p className="text-gray-500 text-sm">Manage tasks for this project</p>}
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowOverviewDrawer(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium text-sm shadow-sm"
-          >
-            <FileText size={18} className="text-primary" />
-            Overview
-          </button>
-          <Link href={`/project/${projectId}/settings`} className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm">
-            <Settings size={18} />
-            Settings
-          </Link>
+    <div className="min-h-full bg-[#f6f8fc]">
+      <section className="border-b border-slate-200 bg-white px-4 py-7 sm:px-6 lg:px-8">
+        <div className="mx-auto flex w-full max-w-[1040px] flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <div className="flex items-center gap-3 text-sm text-slate-400">
+              <Link href="/projects" className="hover:text-primary">
+                Projects
+              </Link>
+              <span>/</span>
+              <span className="text-slate-600">{project?.name || "Project Workspace"}</span>
+            </div>
+
+            <h1 className="mt-2.5 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
+              {project?.name || "Project Workspace"}
+            </h1>
+            <p className="mt-2.5 max-w-4xl text-sm leading-6 text-slate-500">
+              {project?.description || "Design and implementation work is organized here with tasks, owners, and due dates."}
+            </p>
+
+            <div className="mt-5 flex flex-wrap items-center gap-4 text-sm">
+              <Link href={`/project/${projectId}/settings`} className="inline-flex items-center gap-2 text-slate-500 transition hover:text-primary">
+                <Settings size={16} />
+                Project settings
+              </Link>
+              {project?.documentUrl && (
+                <a
+                  href={project.documentUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 text-slate-500 transition hover:text-primary"
+                >
+                  <FileText size={16} />
+                  {project.documentName || "View document"}
+                </a>
+              )}
+              {canManageTasks && (
+                <button
+                  type="button"
+                  onClick={openOverviewModal}
+                  className="inline-flex items-center gap-2 text-slate-500 transition hover:text-primary"
+                >
+                  <Pencil size={16} />
+                  Edit overview
+                </button>
+              )}
+            </div>
+          </div>
+
           {canManageTasks && (
             <button
+              type="button"
               onClick={() => openAddModal(null)}
-              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition"
+              className="inline-flex items-center gap-2.5 rounded-2xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-[0_16px_32px_rgba(37,99,235,0.24)] transition hover:bg-blue-700"
             >
-              <Plus size={18} />
+              <Plus size={20} />
               Add Task
             </button>
           )}
         </div>
-      </div>
+      </section>
 
-      {membership && (
-        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-600">
-          Your role in this project: <span className="font-semibold text-gray-800">{membership.role}</span>
-          {canManageTasks
-            ? " . You can create, edit, assign, and remove tasks."
-            : " . You can only update the status of tasks assigned to you."}
+      <section className="px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-[1040px]">
+        <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+          <div className="min-w-[980px] grid grid-cols-[minmax(0,1.9fr)_220px_220px_180px] bg-slate-50 px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+            <div>Task Name</div>
+            <div>Assignee</div>
+            <div>Due Date</div>
+            <div>Status</div>
+          </div>
+
+          {loading ? (
+            <div className="px-6 py-10 text-sm text-slate-500">Loading tasks...</div>
+          ) : tasks.length === 0 ? (
+            <button
+              type="button"
+              onClick={() => openAddModal(null)}
+              className="flex w-full items-center gap-3 border-t border-slate-200 px-6 py-5 text-left text-base text-slate-400 transition hover:bg-slate-50 hover:text-primary"
+            >
+              <Plus size={18} />
+              Add a new task...
+            </button>
+          ) : (
+            <>
+              <div className="overflow-x-auto">{renderRows(rootTasks)}</div>
+              <button
+                type="button"
+                onClick={() => openAddModal(null)}
+                className="flex w-full items-center gap-3 border-t border-slate-200 px-6 py-5 text-left text-base text-slate-400 transition hover:bg-slate-50 hover:text-primary"
+              >
+                <Plus size={18} />
+                Add a new task...
+              </button>
+            </>
+          )}
         </div>
-      )}
 
-      {/* Project Overview Drawer moved to bottom */}
+        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+          <div className="rounded-[22px] border border-slate-200 bg-white px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-500">Total Tasks</p>
+            <p className="mt-2.5 text-2xl font-semibold tracking-tight text-slate-950">{stats.total}</p>
+          </div>
+          <div className="rounded-[22px] border border-slate-200 bg-white px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-500">Completed</p>
+            <p className="mt-2.5 text-2xl font-semibold tracking-tight text-emerald-600">{stats.completed}</p>
+          </div>
+          <div className="rounded-[22px] border border-slate-200 bg-white px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-500">Deadline</p>
+            <p className={`mt-2.5 text-2xl font-semibold tracking-tight ${stats.deadlineTone}`}>{stats.deadlineLabel}</p>
+          </div>
+        </div>
 
-      {loading ? (
-        <div className="text-gray-500">Loading tasks...</div>
-      ) : (
-        <TaskTree
-          tasks={tasks}
-          onStatusChange={handleStatusChange}
-          onDelete={handleDelete}
-          onAddSubtask={openAddModal}
-          onEdit={openEditModal}
-          canManageTasks={canManageTasks}
-          currentUserId={membership?.userId}
-        />
-      )}
+        <p className="mt-16 text-center text-sm text-slate-400">
+          Copyright 2026 Sprintio Project Management. All rights reserved.
+        </p>
+        </div>
+      </section>
 
-      {/* Task Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6">
-            <h3 className="text-xl font-bold mb-4">
-              {editingTask ? "Edit Task" : newTaskParent ? "Create Subtask" : "Create New Task"}
-            </h3>
-            <form onSubmit={submitTask}>
-              {message && (
-                <div className="mb-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-                  {message}
+      {showTaskModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-xl rounded-3xl border border-slate-200 bg-white p-7 shadow-2xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-semibold text-slate-950">
+                  {editingTask ? "Edit Task" : newTaskParent ? "Create Subtask" : "Create New Task"}
+                </h3>
+                <p className="mt-1 text-sm text-slate-500">
+                  Fill in the details to {editingTask ? "update" : "add"} the task.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeTaskModal}
+                className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={submitTask} className="mt-6">
+              {taskMessage && (
+                <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                  {taskMessage}
                 </div>
               )}
 
-              <div className="space-y-4 mb-6">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Task Title</label>
+                  <label className="mb-2 block text-sm font-medium text-slate-600">Task Title</label>
                   <input
                     type="text"
                     required
                     autoFocus
-                    placeholder="What needs to be done?"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition"
                     value={taskForm.title}
-                    onChange={(e) => setTaskForm((prev) => ({ ...prev, title: e.target.value }))}
-                    disabled={submitting}
+                    onChange={(event) => setTaskForm((prev) => ({ ...prev, title: event.target.value }))}
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="mb-2 block text-sm font-medium text-slate-600">Description</label>
                   <textarea
-                    rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition resize-none"
+                    rows={4}
                     value={taskForm.description}
-                    onChange={(e) => setTaskForm((prev) => ({ ...prev, description: e.target.value }))}
-                    disabled={submitting}
+                    onChange={(event) => setTaskForm((prev) => ({ ...prev, description: event.target.value }))}
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-5 sm:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Assignee</label>
+                    <label className="mb-2 block text-sm font-medium text-slate-600">Assignee</label>
                     <select
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition bg-white"
                       value={taskForm.assignedTo}
-                      onChange={(e) => setTaskForm((prev) => ({ ...prev, assignedTo: e.target.value }))}
-                      disabled={submitting}
+                      onChange={(event) => setTaskForm((prev) => ({ ...prev, assignedTo: event.target.value }))}
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
                     >
                       <option value="">Unassigned</option>
                       {members.map((member) => (
                         <option key={member._id} value={member.user._id}>
-                          {member.user.name} ({member.role})
+                          {member.user.name}
                         </option>
                       ))}
                     </select>
                   </div>
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
+                    <label className="mb-2 block text-sm font-medium text-slate-600">Deadline</label>
                     <input
                       type="date"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition"
                       value={taskForm.deadline}
-                      onChange={(e) => setTaskForm((prev) => ({ ...prev, deadline: e.target.value }))}
-                      disabled={submitting}
+                      onChange={(event) => setTaskForm((prev) => ({ ...prev, deadline: event.target.value }))}
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <label className="mb-2 block text-sm font-medium text-slate-600">Status</label>
                   <select
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition bg-white"
                     value={taskForm.status}
-                    onChange={(e) => setTaskForm((prev) => ({ ...prev, status: e.target.value as TaskStatus }))}
-                    disabled={submitting}
+                    onChange={(event) => setTaskForm((prev) => ({ ...prev, status: event.target.value as TaskStatus }))}
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
                   >
-                    <option value="Pending">Pending</option>
+                    <option value="Pending">To Do</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Done">Done</option>
                   </select>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3">
+              <div className="mt-7 flex justify-end gap-3">
                 <button
                   type="button"
-                  onClick={closeModal}
-                  className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition"
+                  onClick={closeTaskModal}
+                  className="rounded-2xl px-4 py-3 font-medium text-slate-500 transition hover:bg-slate-50"
                   disabled={submitting}
                 >
                   Cancel
@@ -451,9 +752,9 @@ export default function ProjectPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-purple-700 transition disabled:opacity-70"
+                  className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-70"
                 >
-                  {submitting ? "Saving..." : editingTask ? "Save Changes" : "Create"}
+                  {submitting ? "Saving..." : editingTask ? "Save Changes" : "Create Task"}
                 </button>
               </div>
             </form>
@@ -461,90 +762,96 @@ export default function ProjectPage() {
         </div>
       )}
 
-      {/* Edit Overview Modal */}
       {showOverviewModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-xl font-bold text-gray-800">Edit Project Overview</h3>
-              <button onClick={closeOverviewModal} className="text-gray-400 hover:text-gray-600 transition">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-7 shadow-2xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-semibold text-slate-950">Edit Project Overview</h3>
+                <p className="mt-1 text-sm text-slate-500">Update the project description and documentation.</p>
+              </div>
+              <button
+                type="button"
+                onClick={closeOverviewModal}
+                className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
+              >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={submitOverview}>
+            <form onSubmit={submitOverview} className="mt-6">
               {overviewMessage && (
-                <div className="mb-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
                   {overviewMessage}
                 </div>
               )}
 
-              <div className="space-y-5 mb-6">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Project Description</label>
+                  <label className="mb-2 block text-sm font-medium text-slate-600">Project Description</label>
                   <textarea
-                    rows={5}
-                    placeholder="Describe the project goals, scope, and any important details..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition resize-none text-sm"
+                    rows={6}
                     value={overviewForm.description}
-                    onChange={(e) => setOverviewForm({ description: e.target.value })}
-                    disabled={overviewSubmitting}
+                    onChange={(event) => setOverviewForm({ description: event.target.value })}
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Project Document</label>
+                  <label className="mb-2 block text-sm font-medium text-slate-600">Project Document</label>
+                  <div className="rounded-3xl border-2 border-dashed border-slate-200 p-6">
+                    {(selectedFile || project?.documentName) && (
+                      <div className="mb-4 flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="rounded-xl bg-white p-2 text-primary shadow-sm">
+                            <FileText size={18} />
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-900">
+                              {selectedFile?.name || project?.documentName}
+                            </p>
+                            <p className="text-xs text-slate-400">
+                              {selectedFile ? "Ready to upload" : "Current file"}
+                            </p>
+                          </div>
+                        </div>
+                        {project?.documentUrl && !selectedFile && (
+                          <a
+                            href={project.documentUrl}
+                            download={project.documentName}
+                            className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-primary"
+                          >
+                            <Download size={16} />
+                            Download
+                          </a>
+                        )}
+                      </div>
+                    )}
 
-                  {/* Current document display */}
-                  {project?.documentName && !selectedFile && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 border border-gray-200 mb-3">
-                      <FileText size={16} className="text-primary flex-shrink-0" />
-                      <span className="text-sm text-gray-700 truncate flex-1">{project.documentName}</span>
-                      <span className="text-xs text-gray-400 flex-shrink-0">Current file</span>
-                    </div>
-                  )}
-
-                  {/* Selected new file display */}
-                  {selectedFile && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-50 border border-primary/30 mb-3">
-                      <FileText size={16} className="text-primary flex-shrink-0" />
-                      <span className="text-sm text-gray-700 truncate flex-1">{selectedFile.name}</span>
-                      <button
-                        type="button"
-                        onClick={() => { setSelectedFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
-                        className="text-gray-400 hover:text-red-500 transition flex-shrink-0"
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={overviewSubmitting}
-                    className="flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-primary hover:text-primary transition w-full justify-center"
-                  >
-                    <Upload size={16} />
-                    {project?.documentName ? "Replace Document" : "Upload Document"} (PDF or Word)
-                  </button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    disabled={overviewSubmitting}
-                  />
-                  <p className="text-xs text-gray-400 mt-1.5">Supported formats: PDF, DOC, DOCX · Max size: 10 MB</p>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-50 px-4 py-4 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+                    >
+                      <FileText size={18} />
+                      {project?.documentName ? "Replace document" : "Upload document"}
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      className="hidden"
+                      onChange={(event) => setSelectedFile(event.target.files?.[0] || null)}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3">
+              <div className="mt-7 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={closeOverviewModal}
-                  className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition"
+                  className="rounded-2xl px-4 py-3 font-medium text-slate-500 transition hover:bg-slate-50"
                   disabled={overviewSubmitting}
                 >
                   Cancel
@@ -552,153 +859,258 @@ export default function ProjectPage() {
                 <button
                   type="submit"
                   disabled={overviewSubmitting}
-                  className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-purple-700 transition disabled:opacity-70"
+                  className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-70"
                 >
-                  {overviewSubmitting ? "Saving..." : "Save Overview"}
+                  {overviewSubmitting ? "Saving..." : "Update Overview"}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-      {/* PDF Preview Modal */}
-      {showPdfPreview && project?.documentUrl && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[60] p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 flex-shrink-0">
-              <div className="flex items-center gap-2">
-                <FileText size={18} className="text-primary" />
-                <span className="font-semibold text-gray-800 text-sm truncate max-w-xs">{project.documentName}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <a
-                  href={project.documentUrl}
-                  download={project.documentName}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-                >
-                  <Download size={14} />
-                  Download
-                </a>
-                <button
-                  onClick={() => setShowPdfPreview(false)}
-                  className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:bg-gray-100 transition"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <iframe
-                src={`${project.documentUrl}#toolbar=1`}
-                className="w-full h-full border-0"
-                title="PDF Preview"
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Project Overview Drawer */}
-      {showOverviewDrawer && (
+      {selectedTask && (
         <>
           <div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity animate-in fade-in duration-300"
-            onClick={() => setShowOverviewDrawer(false)}
+            className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-[2px]"
+            onClick={() => setSelectedTaskId(null)}
           />
-          <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out animate-in slide-in-from-right">
-            <div className="flex flex-col h-full">
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <FileText size={22} className="text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">Project Overview</h3>
-                    <p className="text-xs text-gray-500">Details and documentation</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowOverviewDrawer(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition text-gray-400 hover:text-gray-600"
-                >
-                  <X size={20} />
-                </button>
+          <aside className="fixed inset-y-2 right-2 z-50 flex w-[calc(100vw-16px)] flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl sm:w-[560px]">
+            <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+              <div className="flex items-center gap-2.5 text-xs text-slate-500">
+                <span className="rounded-xl bg-blue-50 px-3 py-1 text-sm font-medium text-primary">
+                  TSK-{selectedTask._id.slice(-4).toUpperCase()}
+                </span>
+                <span>{project?.name || "Project"}</span>
+                <span className="text-slate-300">/</span>
+                <span>Task Details</span>
               </div>
 
-              {/* Drawer Content */}
-              <div className="flex-1 overflow-y-auto p-6">
-                {canManageTasks && (
-                  <button
-                    onClick={() => {
-                      setShowOverviewDrawer(false);
-                      openOverviewModal();
-                    }}
-                    className="flex items-center gap-2 w-full justify-center px-4 py-2.5 mb-6 text-sm font-semibold text-primary bg-primary/5 border border-primary/20 rounded-xl hover:bg-primary/10 transition group"
-                  >
-                    <Pencil size={16} className="group-hover:scale-110 transition-transform" />
-                    Edit Project Overview
-                  </button>
-                )}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      navigator.clipboard?.writeText(window.location.href);
+                    }
+                  }}
+                  className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
+                >
+                  <Share2 size={18} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedTaskId(null)}
+                  className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
+                >
+                  <X size={22} />
+                </button>
+              </div>
+            </div>
 
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Description</h4>
-                    {project?.description ? (
-                      <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{project.description}</p>
-                    ) : (
-                      <p className="text-gray-400 text-sm italic">No description provided yet.</p>
-                    )}
+            <div className="flex-1 overflow-y-auto px-5 py-5">
+              <h2 className="max-w-3xl text-2xl font-semibold tracking-tight text-slate-950 sm:text-[32px]">
+                {selectedTask.title}
+              </h2>
+
+              <div className="mt-6 grid gap-6 sm:grid-cols-2">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Assignee</p>
+                  <div className="mt-2.5 flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                      <UserCircle2 size={20} />
+                    </div>
+                    <span className="text-base text-slate-900">
+                      {selectedTask.assignedTo?.name || "Unassigned"}
+                    </span>
                   </div>
+                </div>
 
-                  {project?.documentUrl && project?.documentName && (
-                    <div>
-                      <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Attachment</h4>
-                      <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center border border-gray-100">
-                            <FileText size={20} className="text-primary" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-900 truncate">{project.documentName}</p>
-                            <p className="text-xs text-gray-500">{isPdf ? "PDF Document" : "Word Document"}</p>
-                          </div>
-                        </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Status</p>
+                  <div className="mt-2.5">
+                    <span className={`rounded-2xl border px-3.5 py-1.5 text-base font-medium ${getStatusPill(selectedTask.status)} border-current/20`}>
+                      {selectedTask.status === "Pending" ? "To Do" : selectedTask.status}
+                    </span>
+                  </div>
+                </div>
 
-                        <div className="flex gap-2">
-                          {isPdf && (
-                            <button
-                              onClick={() => setShowPdfPreview(true)}
-                              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-purple-700 transition"
-                            >
-                              <Eye size={16} />
-                              Preview
-                            </button>
-                          )}
-                          <a
-                            href={project.documentUrl}
-                            download={project.documentName}
-                            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium ${isPdf ? "text-gray-700 bg-white border border-gray-200 hover:bg-gray-50" : "text-white bg-primary hover:bg-purple-700"} rounded-lg transition`}
-                          >
-                            <Download size={16} />
-                            Download
-                          </a>
-                        </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Priority</p>
+                  <div className={`mt-2.5 inline-flex items-center gap-2 text-base font-medium ${selectedPriority.className}`}>
+                    <Flag size={18} />
+                    {selectedPriority.label}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Due Date</p>
+                  <div className="mt-2.5 text-base text-slate-900">
+                    {formatDate(selectedTask.deadline)}
+                  </div>
+                </div>
+              </div>
+
+              <section className="mt-8">
+                <div className="flex items-center gap-3">
+                  <FileText size={18} className="text-slate-500" />
+                  <h3 className="text-lg font-semibold tracking-tight text-slate-950">Description</h3>
+                </div>
+                <div className="mt-3.5 space-y-3 text-sm leading-6 text-slate-600">
+                  <p>
+                    {selectedTask.description ||
+                      "No detailed description has been added to this task yet."}
+                  </p>
+                </div>
+              </section>
+
+              <section className="mt-8">
+                <div className="mb-3 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <ListChecks size={18} className="text-primary" />
+                    <h3 className="text-lg font-semibold tracking-tight text-slate-950">Checklist</h3>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    {selectedTask.children.length > 0
+                      ? `${selectedTask.children.filter((child) => child.status === "Done").length} of ${selectedTask.children.length} complete`
+                      : `${selectedTask.status === "Done" ? 1 : 0} of 1 complete`}
+                  </p>
+                </div>
+                <div className="h-2 rounded-full bg-slate-100">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{
+                      width: `${
+                        selectedTask.children.length > 0
+                          ? (selectedTask.children.filter((child) => child.status === "Done").length / selectedTask.children.length) * 100
+                          : selectedTask.status === "Done"
+                            ? 100
+                            : 0
+                      }%`,
+                    }}
+                  />
+                </div>
+                <div className="mt-4 space-y-3">
+                  {(selectedTask.children.length > 0
+                    ? selectedTask.children
+                    : [
+                        {
+                          _id: `${selectedTask._id}-fallback`,
+                          title: "Complete this task",
+                          status: selectedTask.status,
+                        },
+                      ]
+                  ).map((item) => {
+                    const done = item.status === "Done";
+                    return (
+                      <div key={item._id} className="flex items-center gap-3 text-sm">
+                        <span
+                          className={`grid h-5 w-5 place-items-center rounded-full border ${
+                            done
+                              ? "border-primary bg-primary text-white"
+                              : "border-slate-300 bg-white"
+                          }`}
+                        >
+                          {done && <span className="h-2 w-2 rounded-full bg-white" />}
+                        </span>
+                        <span className={done ? "text-slate-400 line-through" : "text-slate-800"}>
+                          {item.title}
+                        </span>
                       </div>
+                    );
+                  })}
+                  {canManageTasks && (
+                    <button
+                      type="button"
+                      onClick={() => openAddModal(selectedTask._id)}
+                      className="pt-1 text-sm font-medium text-primary"
+                    >
+                      + Add an item
+                    </button>
+                  )}
+                </div>
+              </section>
+
+              <section className="mt-8">
+                <div className="flex items-center gap-3">
+                  <Download size={18} className="text-slate-500" />
+                  <h3 className="text-lg font-semibold tracking-tight text-slate-950">Attachments</h3>
+                </div>
+                <div className="mt-4 grid gap-3">
+                  {project?.documentUrl && project?.documentName ? (
+                    <a
+                      href={project.documentUrl}
+                      download={project.documentName}
+                      className="flex items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:border-slate-300 hover:bg-slate-50"
+                    >
+                      <div className="rounded-xl bg-red-50 p-2.5 text-red-500">
+                        <FileText size={20} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-slate-900">
+                          {project.documentName}
+                        </p>
+                        <p className="text-xs text-slate-500">Project attachment</p>
+                      </div>
+                    </a>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-slate-300 p-4 text-xs text-slate-400">
+                      No attachments are available for this task yet.
                     </div>
                   )}
                 </div>
-              </div>
+              </section>
 
-              {/* Drawer Footer */}
-              <div className="p-6 border-t border-gray-50 bg-gray-50/50">
-                <p className="text-[11px] text-center text-gray-400 uppercase tracking-widest font-medium">Sprintio Project Dashboard</p>
+              <section className="mt-8">
+                <div className="flex items-center gap-3">
+                  <Pencil size={18} className="text-slate-500" />
+                  <h3 className="text-lg font-semibold tracking-tight text-slate-950">Quick Notes</h3>
+                </div>
+                <div className="mt-4 space-y-3">
+                  {(taskComments[selectedTask._id] || []).length === 0 ? (
+                    <p className="text-xs text-slate-400">No notes yet for this task.</p>
+                  ) : (
+                    (taskComments[selectedTask._id] || []).map((comment, index) => (
+                      <div
+                        key={`${selectedTask._id}-comment-${index}`}
+                        className="rounded-2xl border border-slate-200 px-3.5 py-2.5 text-xs text-slate-600"
+                      >
+                        {comment}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
+            </div>
+
+            <div className="border-t border-slate-200 px-5 py-3.5">
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={commentDraft}
+                  onChange={(event) => setCommentDraft(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      submitComment();
+                    }
+                  }}
+                  placeholder="Write a comment..."
+                  className="flex-1 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
+                />
+                <button
+                  type="button"
+                  onClick={submitComment}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+                >
+                  <Send size={18} />
+                  Send
+                </button>
               </div>
             </div>
-          </div>
+          </aside>
         </>
       )}
     </div>
   );
 }
-

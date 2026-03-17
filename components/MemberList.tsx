@@ -66,23 +66,23 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
     }
   };
 
-  if (loading) return <div className="text-gray-500">Loading members...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-slate-400">Loading members...</div>;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-6">
-      <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
-        <h3 className="font-semibold text-gray-800">Project Members</h3>
+    <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden mt-6 transition-all duration-300">
+      <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/50">
+        <h3 className="font-semibold text-gray-800 dark:text-slate-100">Project Members</h3>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-gray-100 dark:divide-slate-800">
         {members.map((m) => (
-          <div key={m._id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition">
+          <div key={m._id} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-800/50 transition">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
                 {m.userId.name ? m.userId.name[0].toUpperCase() : "U"}
               </div>
               <div>
-                <div className="font-medium text-gray-800">{m.userId.name}</div>
-                <div className="text-sm text-gray-500">{m.userId.email}</div>
+                <div className="font-medium text-gray-800 dark:text-slate-100">{m.userId.name}</div>
+                <div className="text-sm text-gray-500 dark:text-slate-400">{m.userId.email}</div>
               </div>
             </div>
 
@@ -92,20 +92,20 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
                   <select
                     value={m.role}
                     onChange={(e) => handleRoleChange(m._id, e.target.value)}
-                    className="bg-transparent border border-gray-200 text-sm rounded-md px-2 py-1 text-gray-700 focus:outline-none focus:border-primary"
+                    className="bg-transparent border border-gray-200 dark:border-slate-700 text-sm rounded-md px-2 py-1 text-gray-700 dark:text-slate-300 focus:outline-none focus:border-primary transition-colors"
                   >
-                    <option value="MASTER">MASTER</option>
-                    <option value="MEMBER">MEMBER</option>
+                    <option value="MASTER" className="dark:bg-slate-900">MASTER</option>
+                    <option value="MEMBER" className="dark:bg-slate-900">MEMBER</option>
                   </select>
                   <button
                     onClick={() => handleRemoveMember(m._id)}
-                    className="p-1.5 text-gray-400 hover:text-red-500 rounded-md hover:bg-red-50 transition"
+                    className="p-1.5 text-gray-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
                   >
                     <UserMinus size={18} />
                   </button>
                 </>
               ) : (
-                <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
+                <span className="rounded-full bg-gray-100 dark:bg-slate-800 px-2 py-1 text-xs font-medium text-gray-600 dark:text-slate-400 border border-transparent dark:border-slate-700">
                   {m.role}
                 </span>
               )}

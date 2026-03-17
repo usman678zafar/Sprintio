@@ -45,7 +45,7 @@ export default function TaskTree({
       return (
         <div
           key={node._id}
-          className={level === 0 ? "rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden" : ""}
+          className={level === 0 ? "rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-[#1E293B] shadow-sm overflow-hidden" : ""}
         >
           <TaskItem
             task={node}
@@ -64,8 +64,8 @@ export default function TaskTree({
             <div
               className={
                 level === 0
-                  ? "mx-5 mb-5 rounded-2xl border border-purple-100 bg-gradient-to-br from-purple-50/70 via-white to-white px-3 py-3"
-                  : "ml-5 border-l border-dashed border-purple-200 pl-4 pt-3"
+                  ? "mx-5 mb-5 rounded-2xl border border-purple-100 dark:border-purple-900/30 bg-gradient-to-br from-purple-50/70 via-white to-white dark:from-purple-900/10 dark:via-slate-900/50 dark:to-slate-900/50 px-3 py-3"
+                  : "ml-5 border-l border-dashed border-purple-200 dark:border-purple-800/50 pl-4 pt-3"
               }
             >
               <div className="space-y-3">
@@ -80,14 +80,14 @@ export default function TaskTree({
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500 border border-dashed border-gray-200 rounded-lg">
+      <div className="text-center py-12 text-gray-500 dark:text-slate-500 border border-dashed border-gray-200 dark:border-slate-800 rounded-lg">
         No tasks found. Click "Add Task" to create one.
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       {renderTree(tree)}
     </div>
   );
