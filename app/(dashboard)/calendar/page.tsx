@@ -14,6 +14,9 @@ import {
   Tag,
   UserRound,
   X,
+  LayoutGrid,
+  List as ListIcon,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 
 type ViewMode = "month" | "week" | "day";
@@ -199,7 +202,7 @@ function getPriority(task: CalendarTask) {
 
   const diff = Math.ceil(
     (startOfDay(new Date(task.deadline)).getTime() - startOfDay(new Date()).getTime()) /
-      (1000 * 60 * 60 * 24)
+    (1000 * 60 * 60 * 24)
   );
 
   if (diff <= 3) return { label: "High", tone: "text-red-500" };
@@ -231,6 +234,7 @@ export default function CalendarPage() {
   const [taskForm, setTaskForm] = useState(DEFAULT_TASK_FORM);
   const [taskMessage, setTaskMessage] = useState("");
   const [creatingTask, setCreatingTask] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const fetchCalendar = async () => {
     try {
@@ -356,7 +360,7 @@ export default function CalendarPage() {
   const openCreateTaskModal = (initialDate?: string) => {
     const defaultProjectId =
       selectedProjectId !== "all" &&
-      manageableProjects.some((project) => project._id === selectedProjectId)
+        manageableProjects.some((project) => project._id === selectedProjectId)
         ? selectedProjectId
         : manageableProjects[0]?._id || "";
 
@@ -446,766 +450,399 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="min-h-full bg-[#f6f8fc] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <div className="mx-auto grid w-full max-w-[1320px] gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-6">
-          <section className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-xl">
-              <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
-                {selectedProjectId === "all"
-                  ? "All Projects Calendar"
-                  : projects.find((project) => project._id === selectedProjectId)?.name || "Project Calendar"}
-              </h1>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Track milestones, due dates, and sprint commitments across your active work.
-              </p>
+    <div className="min-h-full bg-[#f8fafc] px-4 py-8 sm:px-6 lg:px-10">
+      <div className="mx-auto w-full max-w-[1240px]">
+        {/* Header Section */}
+        <section className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-primary">
+              <CalendarDays size={20} className="md:h-6 md:w-6" />
+              <span className="text-sm font-black uppercase tracking-widest text-primary/70">Planner</span>
             </div>
+            <h1 className="text-3xl font-black tracking-tight text-slate-900 md:text-4xl">
+              {selectedProjectId === "all"
+                ? "Organization View"
+                : projects.find((project) => project._id === selectedProjectId)?.name || "Project View"}
+            </h1>
+            <p className="mt-2 text-base font-medium text-slate-500">
+              Manage sprints, deadlines, and multi-team scheduling.
+            </p>
+          </div>
 
-            <div className="flex w-full items-center gap-3 self-start rounded-[22px] border border-slate-200 bg-white px-4 py-3 shadow-sm sm:max-w-xs">
-              <Filter size={18} className="text-slate-400" />
-              <select
-                value={selectedProjectId}
-                onChange={(event) => setSelectedProjectId(event.target.value)}
-                className="w-full bg-transparent text-sm font-medium text-slate-700"
-              >
-                <option value="all">Select Projects</option>
-                {projects.map((project) => (
-                  <option key={project._id} value={project._id}>
-                    {project.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </section>
-
-          <section className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <span className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-400">
-                  Filter By:
-                </span>
-
-                <label className="inline-flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600 sm:w-auto">
-                  <UserRound size={16} className="text-slate-400" />
-                  <select
-                    value={selectedMemberId}
-                    onChange={(event) => setSelectedMemberId(event.target.value)}
-                    className="w-full bg-transparent"
-                  >
-                    <option value="all">Team Member</option>
-                    {members.map((member) => (
-                      <option key={member._id} value={member._id}>
-                        {member.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="inline-flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600 sm:w-auto">
-                  <Tag size={16} className="text-slate-400" />
-                  <select
-                    value={selectedTag}
-                    onChange={(event) => setSelectedTag(event.target.value)}
-                    className="w-full bg-transparent"
-                  >
-                    <option value="all">Project Tag</option>
-                    {visibleTags.map((tag) => (
-                      <option key={tag} value={tag}>
-                        {tag}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <label className="flex w-full items-center justify-between gap-3 text-sm text-slate-600 sm:w-auto sm:justify-start">
-                <span>Show only my tasks</span>
-                <button
-                  type="button"
-                  onClick={() => setOnlyMine((value) => !value)}
-                  className={`relative h-7 w-12 rounded-full transition ${
-                    onlyMine ? "bg-primary" : "bg-slate-200"
-                  }`}
-                >
-                  <span
-                    className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${
-                      onlyMine ? "left-6" : "left-1"
-                    }`}
-                  />
-                </button>
-              </label>
-            </div>
-          </section>
-
-          <section className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="inline-flex w-full flex-wrap items-center rounded-[20px] border border-slate-200 bg-white p-1 shadow-sm sm:w-fit">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm">
               {(["month", "week", "day"] as ViewMode[]).map((mode) => (
                 <button
                   key={mode}
-                  type="button"
                   onClick={() => setViewMode(mode)}
-                  className={`flex-1 rounded-2xl px-4 py-2.5 text-sm font-medium capitalize transition sm:flex-none sm:px-5 ${
-                    viewMode === mode
-                      ? "bg-primary text-white shadow-[0_10px_20px_rgba(37,99,235,0.22)]"
-                      : "text-slate-600 hover:bg-slate-50"
-                  }`}
+                  className={`rounded-xl px-4 py-2 text-sm font-bold capitalize transition-all ${viewMode === mode
+                      ? "bg-slate-900 text-white shadow-xl"
+                      : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                    }`}
                 >
                   {mode}
                 </button>
               ))}
             </div>
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition lg:hidden"
+            >
+              <ListFilter size={20} />
+            </button>
+          </div>
+        </section>
 
-            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-2">
+        {/* View Grid */}
+        <div className="grid gap-8 xl:grid-cols-[1fr_360px]">
+          <div className="space-y-6">
+            {/* Navigation Strip */}
+            <div className="flex items-center justify-between rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-center gap-4">
                 <button
-                  type="button"
                   onClick={() => handleNavigate("prev")}
-                  className="rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-500 transition hover:bg-slate-50"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 transition"
                 >
-                  <ChevronLeft size={18} />
+                  <ChevronLeft size={20} />
                 </button>
-                <h2 className="min-w-0 flex-1 text-center text-base font-semibold tracking-tight text-slate-950 sm:min-w-[190px] sm:text-xl">
+                <h2 className="text-lg font-black text-slate-900 md:text-xl">
                   {headerLabel}
                 </h2>
                 <button
-                  type="button"
                   onClick={() => handleNavigate("next")}
-                  className="rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-500 transition hover:bg-slate-50"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 transition"
                 >
-                  <ChevronRight size={18} />
+                  <ChevronRight size={20} />
                 </button>
               </div>
-
               <button
-                type="button"
                 onClick={handleToday}
-                className="self-end text-sm font-semibold text-primary transition hover:text-blue-700 sm:self-auto"
+                className="rounded-xl px-4 py-2 text-sm font-black uppercase tracking-widest text-primary hover:bg-blue-50 transition"
               >
                 Today
               </button>
             </div>
-          </section>
 
-          <section className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-            {loading ? (
-              <div className="px-6 py-16 text-center text-sm text-slate-500">
-                Loading calendar...
-              </div>
-            ) : viewMode === "month" ? (
-              <div className="overflow-x-auto">
-                <div className="min-w-[720px]">
-                  <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
-                    {DAY_LABELS.map((label) => (
-                      <div
-                        key={label}
-                        className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-slate-400"
-                      >
-                        {label}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="grid grid-cols-7">
-                    {monthDays.map((day) => {
-                      const key = toDateKey(day);
-                      const dayTasks = tasksByDate.get(key) || [];
-                      const inMonth = day.getMonth() === currentDate.getMonth();
-                      const isToday = isSameDay(day, today);
-                      const isSelected = key === selectedDayKey;
-
-                      return (
-                        <div
-                          key={key}
-                          onClick={() => handleSelectDay(day)}
-                          className={`min-h-[140px] cursor-pointer border-b border-r border-slate-100 p-3 transition last:border-r-0 sm:min-h-[152px] ${
-                            inMonth ? "bg-white" : "bg-slate-50/80"
-                          } ${isSelected ? "bg-blue-50/40" : ""}`}
-                        >
-                          <div className="mb-3 flex items-center justify-between">
-                            <span
-                              className={`grid h-8 w-8 place-items-center rounded-full text-sm font-semibold ${
-                                isToday
-                                  ? "bg-primary text-white"
-                                  : inMonth
-                                    ? "text-slate-800"
-                                    : "text-slate-300"
-                              }`}
-                            >
-                              {day.getDate()}
-                            </span>
-                            {dayTasks.length > 0 && (
-                              <span className="text-[11px] font-semibold text-slate-400">
-                                {dayTasks.length} task{dayTasks.length === 1 ? "" : "s"}
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="space-y-2">
-                            {dayTasks.slice(0, 3).map((task) => {
-                              const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
-                              return (
-                                <button
-                                  key={task._id}
-                                  type="button"
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    setSelectedTask(task);
-                                  }}
-                                  className={`w-full rounded-2xl border px-2.5 py-2 text-left ${color.surface}`}
-                                >
-                                  <div className="flex items-center gap-1.5">
-                                    <span className={`h-2 w-2 rounded-full ${color.dot}`} />
-                                    <span className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
-                                      {task.projectTag}
-                                    </span>
-                                  </div>
-                                  <p className={`mt-1 truncate text-sm font-semibold ${color.text}`}>
-                                    {task.title}
-                                  </p>
-                                </button>
-                              );
-                            })}
-                            {dayTasks.length > 3 && (
-                              <button
-                                type="button"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleSelectDay(day);
-                                  setViewMode("day");
-                                }}
-                                className="text-xs font-semibold text-primary"
-                              >
-                                +{dayTasks.length - 3} more
-                              </button>
-                            )}
-                          </div>
+            {/* Calendar Main Core */}
+            <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-100 border-t-primary" />
+                  <p className="mt-4 font-bold">Synchronizing...</p>
+                </div>
+              ) : viewMode === "month" ? (
+                <div className="overflow-x-auto">
+                  <div className="min-w-[800px]">
+                    <div className="grid grid-cols-7 border-b border-slate-100 bg-slate-50/50">
+                      {DAY_LABELS.map(label => (
+                        <div key={label} className="py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                          {label}
                         </div>
-                      );
-                    })}
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-7">
+                      {monthDays.map((day) => {
+                        const key = toDateKey(day);
+                        const dayTasks = tasksByDate.get(key) || [];
+                        const inMonth = day.getMonth() === currentDate.getMonth();
+                        const isToday = isSameDay(day, today);
+                        const isSelected = key === selectedDayKey;
+
+                        return (
+                          <div
+                            key={key}
+                            onClick={() => handleSelectDay(day)}
+                            className={`min-h-[140px] border-b border-r border-slate-100 p-3 transition-all hover:bg-slate-50/50 cursor-pointer ${inMonth ? "bg-white" : "bg-slate-50/30"} ${isSelected ? "bg-blue-50/30" : ""}`}
+                          >
+                            <div className="mb-3 flex items-center justify-between">
+                              <span className={`flex h-8 w-8 items-center justify-center rounded-xl text-sm font-black transition-all ${isToday ? "bg-primary text-white shadow-lg shadow-primary/20" : inMonth ? "text-slate-900" : "text-slate-300"}`}>
+                                {day.getDate()}
+                              </span>
+                              {dayTasks.length > 0 && (
+                                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                              )}
+                            </div>
+                            <div className="space-y-1.5">
+                              {dayTasks.slice(0, 2).map((task) => {
+                                const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
+                                return (
+                                  <div
+                                    key={task._id}
+                                    className={`truncate rounded-lg border px-2 py-1 text-[10px] font-bold ${color.surface} ${color.text} border-transparent`}
+                                  >
+                                    {task.title}
+                                  </div>
+                                );
+                              })}
+                              {dayTasks.length > 2 && (
+                                <div className="px-1 text-[9px] font-black uppercase text-slate-400">
+                                  +{dayTasks.length - 2} more
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : viewMode === "week" ? (
-              <div className="grid gap-px bg-slate-100 md:grid-cols-2 xl:grid-cols-7">
-                {weekDays.map((day) => {
-                  const key = toDateKey(day);
-                  const dayTasks = tasksByDate.get(key) || [];
-
-                  return (
-                    <div key={key} className="min-h-[420px] bg-white p-4">
-                      <button
-                        type="button"
-                        onClick={() => handleSelectDay(day)}
-                        className={`flex w-full items-center justify-between rounded-2xl px-3 py-2 text-left transition ${
-                          key === selectedDayKey ? "bg-blue-50 text-primary" : "hover:bg-slate-50"
-                        }`}
-                      >
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                            {DAY_LABELS[day.getDay()]}
-                          </p>
-                          <p className="mt-1 text-lg font-semibold text-slate-900">
-                            {day.getDate()}
-                          </p>
+              ) : viewMode === "week" ? (
+                <div className="grid divide-x divide-slate-100 md:grid-cols-7">
+                  {weekDays.map(day => {
+                    const key = toDateKey(day);
+                    const dayTasks = tasksByDate.get(key) || [];
+                    const isToday = isSameDay(day, today);
+                    return (
+                      <div key={key} className="min-h-[500px] p-4 bg-white hover:bg-slate-50/30 transition">
+                        <div className={`mb-6 rounded-2xl p-3 text-center ${isToday ? "bg-primary text-white shadow-xl shadow-primary/10" : "bg-slate-50"}`}>
+                          <p className={`text-[10px] font-black uppercase tracking-widest ${isToday ? "text-white/70" : "text-slate-400"}`}>{DAY_LABELS[day.getDay()]}</p>
+                          <p className="mt-1 text-xl font-black">{day.getDate()}</p>
                         </div>
-                        {isSameDay(day, today) && (
-                          <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-primary">
-                            Today
-                          </span>
-                        )}
-                      </button>
-
-                      <div className="mt-4 space-y-3">
-                        {dayTasks.length === 0 ? (
-                          <div className="rounded-2xl border border-dashed border-slate-200 px-3 py-4 text-sm text-slate-400">
-                            No scheduled tasks
-                          </div>
-                        ) : (
-                          dayTasks.map((task) => {
+                        <div className="space-y-3">
+                          {dayTasks.map(task => {
                             const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
                             return (
-                              <button
+                              <div
                                 key={task._id}
-                                type="button"
                                 onClick={() => setSelectedTask(task)}
-                                className={`block w-full rounded-2xl border px-3 py-3 text-left ${color.surface}`}
+                                className={`cursor-pointer rounded-2xl border border-slate-100 p-3 transition shadow-sm hover:shadow-md ${color.surface}`}
                               >
-                                <div className="flex items-center gap-2">
-                                  <span className={`h-2 w-2 rounded-full ${color.dot}`} />
-                                  <span className="truncate text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                                    {task.projectTag}
-                                  </span>
-                                </div>
-                                <p className={`mt-1 text-sm font-semibold ${color.text}`}>
-                                  {task.title}
-                                </p>
-                                <p className="mt-1 text-xs text-slate-500">
-                                  {task.assignedTo?.name || "Unassigned"}
-                                </p>
-                              </button>
+                                <p className="text-[10px] font-black uppercase tracking-tighter text-slate-400 mb-1">{task.projectTag}</p>
+                                <p className={`text-xs font-bold leading-tight ${color.text}`}>{task.title}</p>
+                              </div>
                             );
-                          })
-                        )}
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="p-5">
-                <div className="mb-5 flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                      Selected Day
-                    </p>
-                    <h3 className="mt-1 text-xl font-semibold tracking-tight text-slate-950">
-                      {formatDayLabel(selectedDate)}
-                    </h3>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => openCreateTaskModal(selectedDayKey)}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
-                  >
-                    <Plus size={16} />
-                    Add Task
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {selectedDayTasks.length === 0 ? (
-                    <div className="rounded-[22px] border border-dashed border-slate-200 px-5 py-10 text-center text-sm text-slate-400">
-                      No tasks scheduled for this day.
-                    </div>
-                  ) : (
-                    selectedDayTasks.map((task) => {
-                      const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
-                      return (
-                        <button
-                          key={task._id}
-                          type="button"
-                          onClick={() => setSelectedTask(task)}
-                          className="flex w-full flex-col gap-4 rounded-[22px] border border-slate-200 bg-white px-5 py-4 text-left transition hover:border-slate-300 hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between"
-                        >
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] ${color.badge}`}>
-                                {task.projectTag}
-                              </span>
-                              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusTone(task.status)}`}>
-                                {task.status === "Pending" ? "To Do" : task.status}
-                              </span>
-                            </div>
-                            <p className="mt-3 text-base font-semibold text-slate-900">
-                              {task.title}
-                            </p>
-                            <p className="mt-1 text-sm text-slate-500">
-                              {task.projectName} · {task.assignedTo?.name || "Unassigned"}
-                            </p>
-                          </div>
-                          <div className="text-left sm:text-right">
-                            <p className="text-sm font-semibold text-slate-900">
-                              {formatDeadline(task.deadline)}
-                            </p>
-                            <p className="mt-1 text-xs text-slate-400">Deadline</p>
-                          </div>
-                        </button>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-            )}
-          </section>
-        </div>
-
-        <aside className="space-y-5">
-          <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-blue-50 p-3 text-primary">
-                <ListFilter size={18} />
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  Calendar Scope
-                </p>
-                <p className="mt-1 text-sm text-slate-600">
-                  {filteredTasks.length} scheduled task{filteredTasks.length === 1 ? "" : "s"} in view
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                {selectedProjectId === "all"
-                  ? "All Projects"
-                  : projects.find((project) => project._id === selectedProjectId)?.name || "Project"}
-              </span>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                {selectedMemberId === "all"
-                  ? "Any Member"
-                  : members.find((member) => member._id === selectedMemberId)?.name || "Member"}
-              </span>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                {selectedTag === "all" ? "Any Tag" : selectedTag}
-              </span>
-            </div>
-          </div>
-
-          <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-xl font-semibold tracking-tight text-slate-950">
-                Upcoming Deadlines
-              </h3>
-              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                {upcomingDeadlines.length} items
-              </span>
-            </div>
-
-            <div className="mt-5 space-y-4">
-              {upcomingDeadlines.length === 0 ? (
-                <div className="rounded-[22px] border border-dashed border-slate-200 px-4 py-8 text-center text-sm text-slate-400">
-                  No upcoming deadlines match the current filters.
+                    );
+                  })}
                 </div>
               ) : (
-                upcomingDeadlines.map((task) => {
-                  const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
-                  return (
+                <div className="p-6">
+                  <div className="mb-8 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Detailed Report</p>
+                      <h3 className="mt-1 text-2xl font-black text-slate-900">{formatDayLabel(selectedDate)}</h3>
+                    </div>
                     <button
-                      key={task._id}
-                      type="button"
-                      onClick={() => setSelectedTask(task)}
-                      className="block w-full rounded-[22px] border border-slate-200 bg-white px-4 py-4 text-left transition hover:border-slate-300 hover:bg-slate-50"
+                      onClick={() => openCreateTaskModal(selectedDayKey)}
+                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white shadow-xl shadow-primary/20 transition-all hover:scale-110 active:scale-95"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] ${color.badge}`}>
-                          {getPriority(task).label} Priority
-                        </span>
-                        <span className="text-sm text-slate-400">
-                          {formatDeadline(task.deadline)}
-                        </span>
-                      </div>
-                      <h4 className="mt-4 text-lg font-semibold tracking-tight text-slate-950">
-                        {task.title}
-                      </h4>
-                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">
-                        {task.description || `Milestone scheduled in ${task.projectName}.`}
-                      </p>
-
-                      <div className="mt-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className={`grid h-9 w-9 place-items-center rounded-full text-xs font-semibold ${color.badge}`}>
-                            {task.assignedTo?.name
-                              ?.split(" ")
-                              .map((part) => part[0])
-                              .join("")
-                              .slice(0, 2)
-                              .toUpperCase() || "NA"}
-                          </span>
-                          <div>
-                            <p className="text-sm font-medium text-slate-900">
-                              {task.assignedTo?.name || "Unassigned"}
-                            </p>
-                            <p className="text-xs text-slate-400">{task.projectTag}</p>
-                          </div>
-                        </div>
-                        <ArrowRight size={18} className="text-slate-300" />
-                      </div>
+                      <Plus size={24} />
                     </button>
-                  );
-                })
+                  </div>
+
+                  {selectedDayTasks.length === 0 ? (
+                    <div className="py-20 text-center">
+                      <CalendarIcon size={48} className="mx-auto text-slate-100 mb-4" />
+                      <p className="text-lg font-bold text-slate-400">Zero missions found.</p>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {selectedDayTasks.map(task => {
+                        const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
+                        return (
+                          <div
+                            key={task._id}
+                            onClick={() => setSelectedTask(task)}
+                            className="group cursor-pointer rounded-[28px] border border-slate-200 bg-white p-6 transition-all hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5"
+                          >
+                            <div className="flex items-center justify-between mb-4">
+                              <span className={`rounded-xl px-3 py-1.5 text-[10px] font-black uppercase tracking-widest ${color.badge}`}>
+                                {task.projectTag}
+                              </span>
+                              <div className={`h-2.5 w-2.5 rounded-full ${color.dot} shadow-lg shadow-${color.dot.split('-')[1]}-200`} />
+                            </div>
+                            <h4 className="text-lg font-black text-slate-900 leading-snug group-hover:text-primary transition-colors">{task.title}</h4>
+                            <p className="mt-2 line-clamp-2 text-sm font-medium text-slate-500">{task.description || "In-depth review and execution."}</p>
+                            <div className="mt-6 flex items-center justify-between border-t border-slate-50 pt-5">
+                              <div className="flex items-center gap-2">
+                                <div className="h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold">
+                                  {task.assignedTo?.name.charAt(0) || "U"}
+                                </div>
+                                <span className="text-xs font-bold text-slate-600">{task.assignedTo?.name || "Unassigned"}</span>
+                              </div>
+                              <span className={`text-[10px] font-black uppercase tracking-widest ${getStatusTone(task.status)} px-3 py-1 rounded-full`}>
+                                {task.status}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => openCreateTaskModal(selectedDayKey)}
-            className="flex min-h-[150px] w-full flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-slate-300 bg-white px-4 py-6 text-center transition hover:border-primary hover:bg-blue-50/30"
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-primary">
-              <Plus size={24} />
+          {/* Sidebar - Collapsible on Mobile */}
+          <aside className="hidden space-y-8 lg:block">
+            {/* Project Filter */}
+            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="mb-6 text-lg font-black text-slate-900">Project Engine</h3>
+              <div className="space-y-2">
+                <button
+                  onClick={() => setSelectedProjectId("all")}
+                  className={`w-full rounded-2xl px-4 py-3 text-left text-sm font-bold transition-all ${selectedProjectId === "all" ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-50"}`}
+                >
+                  All Active
+                </button>
+                {projects.map(p => (
+                  <button
+                    key={p._id}
+                    onClick={() => setSelectedProjectId(p._id)}
+                    className={`w-full rounded-2xl px-4 py-3 text-left text-sm font-bold transition-all ${selectedProjectId === p._id ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-500 hover:bg-slate-50"}`}
+                  >
+                    {p.name}
+                  </button>
+                ))}
+              </div>
             </div>
-            <p className="mt-4 text-lg font-semibold text-slate-950">Schedule a Task</p>
-            <p className="mt-1 text-sm text-slate-500">
-              Create a new deadline and place it on the calendar.
-            </p>
-          </button>
-        </aside>
+
+            {/* Upcoming Deadlines */}
+            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 className="mb-6 text-lg font-black text-slate-900">Priority Stream</h3>
+              <div className="space-y-6">
+                {upcomingDeadlines.length === 0 ? (
+                  <p className="text-sm font-bold text-slate-400">Clear horizon ahead.</p>
+                ) : (
+                  upcomingDeadlines.map(task => {
+                    const priority = getPriority(task);
+                    return (
+                      <div key={task._id} className="flex gap-4">
+                        <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-red-500 shadow-lg shadow-red-200" />
+                        <div>
+                          <p className="text-sm font-bold text-slate-700 leading-tight">{task.title}</p>
+                          <div className="mt-1 flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase text-slate-400">{formatDeadline(task.deadline)}</span>
+                            <span className={`text-[10px] font-black uppercase ${priority.tone}`}>{priority.label}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
 
+      {/* Task Creation Modal */}
       {showTaskModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-xl rounded-[28px] border border-slate-200 bg-white p-6 shadow-2xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-xl font-semibold tracking-tight text-slate-950">
-                  New Task
-                </h3>
-                <p className="mt-1 text-sm text-slate-500">
-                  Add a scheduled task to one of your managed projects.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={closeCreateTaskModal}
-                className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
-              >
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/40 p-0 backdrop-blur-sm sm:items-center sm:p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-lg rounded-t-[40px] border border-slate-200 bg-white p-8 shadow-2xl sm:rounded-[40px] animate-in slide-in-from-bottom-full sm:zoom-in-95">
+            <div className="mb-8 flex items-center justify-between">
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Plan Mission</h3>
+              <button onClick={closeCreateTaskModal} className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
                 <X size={20} />
               </button>
             </div>
-
-            {manageableProjects.length === 0 ? (
-              <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                You need MASTER access on at least one project to schedule tasks from the calendar.
-              </div>
-            ) : (
-              <form onSubmit={handleCreateTask} className="mt-6">
-                {taskMessage && (
-                  <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
-                    {taskMessage}
-                  </div>
-                )}
-
-                <div className="space-y-4">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-600">
-                        Project
-                      </label>
-                      <select
-                        value={taskForm.projectId}
-                        onChange={(event) =>
-                          setTaskForm((prev) => ({
-                            ...prev,
-                            projectId: event.target.value,
-                            assignedTo: "",
-                          }))
-                        }
-                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
-                      >
-                        <option value="">Select a project</option>
-                        {manageableProjects.map((project) => (
-                          <option key={project._id} value={project._id}>
-                            {project.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-600">
-                        Deadline
-                      </label>
-                      <input
-                        type="date"
-                        value={taskForm.deadline}
-                        onChange={(event) =>
-                          setTaskForm((prev) => ({ ...prev, deadline: event.target.value }))
-                        }
-                        className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-600">
-                      Task Title
-                    </label>
-                    <input
-                      type="text"
-                      value={taskForm.title}
-                      onChange={(event) =>
-                        setTaskForm((prev) => ({ ...prev, title: event.target.value }))
-                      }
-                      className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
-                      placeholder="Prepare milestone deliverable..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-600">
-                      Description
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={taskForm.description}
-                      onChange={(event) =>
-                        setTaskForm((prev) => ({ ...prev, description: event.target.value }))
-                      }
-                      className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
-                      placeholder="Add context, handoff details, or acceptance notes..."
-                    />
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-600">
-                        Assignee
-                      </label>
-                      <select
-                        value={taskForm.assignedTo}
-                        onChange={(event) =>
-                          setTaskForm((prev) => ({ ...prev, assignedTo: event.target.value }))
-                        }
-                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
-                      >
-                        <option value="">Unassigned</option>
-                        {assignableMembers.map((member) => (
-                          <option key={member._id} value={member._id}>
-                            {member.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-600">
-                        Status
-                      </label>
-                      <select
-                        value={taskForm.status}
-                        onChange={(event) =>
-                          setTaskForm((prev) => ({
-                            ...prev,
-                            status: event.target.value as TaskStatus,
-                          }))
-                        }
-                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
-                      >
-                        <option value="Pending">To Do</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Done">Done</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={closeCreateTaskModal}
-                    className="rounded-2xl px-4 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
+            <form onSubmit={handleCreateTask} className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-400">Objective Title</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all"
+                    placeholder="Core task identifier..."
+                    value={taskForm.title}
+                    onChange={e => setTaskForm({ ...taskForm, title: e.target.value })}
                     disabled={creatingTask}
-                    className="rounded-2xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70"
-                  >
-                    {creatingTask ? "Creating..." : "Create Task"}
-                  </button>
+                  />
                 </div>
-              </form>
-            )}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-400">Deadline</label>
+                    <input
+                      type="date"
+                      required
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold outline-none focus:border-primary focus:bg-white transition-all"
+                      value={taskForm.deadline}
+                      onChange={e => setTaskForm({ ...taskForm, deadline: e.target.value })}
+                      disabled={creatingTask}
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-400">Assigned To</label>
+                    <select
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold outline-none focus:border-primary focus:bg-white transition-all"
+                      value={taskForm.assignedTo}
+                      onChange={e => setTaskForm({ ...taskForm, assignedTo: e.target.value })}
+                      disabled={creatingTask || !taskForm.projectId}
+                    >
+                      <option value="">Collaborator (Optional)</option>
+                      {assignableMembers.map(m => (
+                        <option key={m._id} value={m._id}>{m.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              {taskMessage && <p className="text-xs font-bold text-red-500 bg-red-50 p-3 rounded-xl">{taskMessage}</p>}
+              <div className="flex gap-3 pt-4">
+                <button type="button" onClick={closeCreateTaskModal} className="flex-1 rounded-[22px] py-4 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition">Discard</button>
+                <button type="submit" disabled={creatingTask} className="flex-1 rounded-[22px] bg-primary py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-primary/20 hover:bg-blue-700 transition disabled:opacity-50">
+                  {creatingTask ? "Syncing..." : "Launch Task"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
 
-      {selectedTask && (
-        <>
-          <div
-            className="fixed inset-0 z-40 bg-slate-950/30 backdrop-blur-[2px]"
-            onClick={() => setSelectedTask(null)}
-          />
-          <aside className="fixed inset-y-2 right-2 z-50 flex w-[calc(100vw-16px)] flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl sm:w-[460px]">
-            <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-              <div className="flex items-center gap-2.5 text-xs text-slate-500">
-                <span className="rounded-xl bg-blue-50 px-3 py-1 text-sm font-medium text-primary">
-                  {selectedTask.projectTag}
-                </span>
-                <span>{selectedTask.projectName}</span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTask(null)}
-                className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
-              >
+      {/* Mobile Filters Drawer */}
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/40 p-0 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="w-full rounded-t-[40px] bg-white p-8 shadow-2xl animate-in slide-in-from-bottom-full">
+            <div className="mb-8 flex items-center justify-between">
+              <h3 className="text-xl font-black text-slate-900">Control Panel</h3>
+              <button onClick={() => setShowMobileFilters(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400">
                 <X size={20} />
               </button>
             </div>
-
-            <div className="flex-1 overflow-y-auto px-5 py-5">
-              <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
-                {selectedTask.title}
-              </h2>
-
-              <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                    Status
-                  </p>
-                  <span className={`mt-2 inline-flex rounded-full px-3 py-1.5 text-sm font-semibold ${getStatusTone(selectedTask.status)}`}>
-                    {selectedTask.status === "Pending" ? "To Do" : selectedTask.status}
-                  </span>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                    Due Date
-                  </p>
-                  <p className="mt-2 text-base font-medium text-slate-900">
-                    {new Date(selectedTask.deadline).toLocaleDateString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                    Assignee
-                  </p>
-                  <p className="mt-2 text-base font-medium text-slate-900">
-                    {selectedTask.assignedTo?.name || "Unassigned"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                    Priority
-                  </p>
-                  <div className={`mt-2 inline-flex items-center gap-2 text-base font-medium ${getPriority(selectedTask).tone}`}>
-                    <Flag size={16} />
-                    {getPriority(selectedTask).label}
-                  </div>
+            <div className="space-y-6">
+              <div>
+                <label className="mb-3 block text-xs font-black uppercase tracking-widest text-slate-400">Quick Filters</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => { setOnlyMine(!onlyMine); setShowMobileFilters(false); }}
+                    className={`rounded-2xl px-4 py-3 text-sm font-bold border transition ${onlyMine ? "bg-primary text-white border-primary" : "bg-white text-slate-600 border-slate-100"}`}
+                  >
+                    {onlyMine ? "My Work Only" : "Team & Me"}
+                  </button>
+                  <select
+                    value={selectedMemberId}
+                    onChange={e => { setSelectedMemberId(e.target.value); setShowMobileFilters(false); }}
+                    className="rounded-2xl border border-slate-100 bg-white px-4 py-3 text-sm font-bold text-slate-600"
+                  >
+                    <option value="all">Any Member</option>
+                    {members.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
+                  </select>
                 </div>
               </div>
-
-              <section className="mt-8">
-                <div className="flex items-center gap-2 text-slate-500">
-                  <CalendarDays size={18} />
-                  <h3 className="text-lg font-semibold tracking-tight text-slate-950">
-                    Description
-                  </h3>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-slate-600">
-                  {selectedTask.description || "No description has been added to this task yet."}
-                </p>
-              </section>
-
-              <section className="mt-8 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  Project Link
-                </p>
-                <p className="mt-2 text-base font-semibold text-slate-900">
-                  {selectedTask.projectName}
-                </p>
-                <Link
-                  href={`/project/${selectedTask.projectId}`}
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary"
+              <div>
+                <label className="mb-3 block text-xs font-black uppercase tracking-widest text-slate-400">Project Workspace</label>
+                <select
+                  value={selectedProjectId}
+                  onChange={e => { setSelectedProjectId(e.target.value); setShowMobileFilters(false); }}
+                  className="w-full rounded-2xl border border-slate-100 bg-white px-4 py-3 text-sm font-bold text-slate-600"
                 >
-                  Open Project
-                  <ArrowRight size={16} />
-                </Link>
-              </section>
+                  <option value="all">All Projects</option>
+                  {projects.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
+                </select>
+              </div>
             </div>
-          </aside>
-        </>
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              className="mt-10 w-full rounded-[22px] bg-slate-950 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl"
+            >
+              Apply Settings
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
