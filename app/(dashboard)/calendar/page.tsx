@@ -16,6 +16,8 @@ import {
   Calendar as CalendarIcon,
   ChevronDown,
   LayoutGrid,
+  MoreVertical,
+  ArrowRight,
 } from "lucide-react";
 
 type ViewMode = "month" | "week" | "day";
@@ -114,6 +116,21 @@ function formatMonthYear(value: Date) {
   return value.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }
 
+function getPriority(task: CalendarTask) {
+  if (task.status === "Done") {
+    return { label: "Low", tone: "text-emerald-600" };
+  }
+
+  const diff = Math.ceil(
+    (startOfDay(new Date(task.deadline)).getTime() - startOfDay(new Date()).getTime()) /
+    (1000 * 60 * 60 * 24)
+  );
+
+  if (diff <= 3) return { label: "High Priority", tone: "text-red-500" };
+  if (diff <= 7) return { label: "Medium", tone: "text-amber-600" };
+  return { label: "Planned", tone: "text-blue-600" };
+}
+
 export default function CalendarPage() {
   const today = useMemo(() => startOfDay(new Date()), []);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -180,6 +197,14 @@ export default function CalendarPage() {
   const monthDays = useMemo(() => getMonthGrid(currentDate), [currentDate]);
   const currentWeekDays = useMemo(() => getWeekStrip(currentDate), [currentDate]);
   const selectedDayTasks = useMemo(() => tasksByDate.get(selectedDayKey) || [], [selectedDayKey, tasksByDate]);
+
+  const upcomingDeadlines = useMemo(() => {
+    const start = startOfDay(new Date()).getTime();
+    return filteredTasks
+      .filter((task) => new Date(task.deadline).getTime() >= start && task.status !== "Done")
+      .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())
+      .slice(0, 3);
+  }, [filteredTasks]);
 
   const handleSelectDay = (day: Date) => {
     setCurrentDate(day);
@@ -353,24 +378,55 @@ export default function CalendarPage() {
             </div>
           </div>
 
-          <aside className="space-y-8">
-            <div className="rounded-[40px] border border-slate-100 bg-white p-8 shadow-sm">
-              <h3 className="text-xl font-black text-slate-900 mb-6 tracking-tight">Focus Zone</h3>
-              <div className="space-y-6">
-                {selectedDayTasks.length === 0 ? (
-                  <p className="text-sm font-bold text-slate-400">No events scheduled for the selected focus day.</p>
-                ) : (
-                  selectedDayTasks.map(t => (
-                    <div key={t._id} className="group relative flex gap-4">
-                      <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                      <div>
-                        <p className="text-sm font-black text-slate-800 transition group-hover:text-primary">{t.title}</p>
-                        <p className="mt-1 text-xs font-bold text-slate-400">{t.projectTag} • Due Today</p>
+          <aside className="space-y-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Upcoming Deadlines</h3>
+              <button className="text-slate-300 hover:text-slate-600 transition"><MoreVertical size={20} /></button>
+            </div>
+
+            <div className="space-y-4">
+              {upcomingDeadlines.length === 0 ? (
+                <p className="text-sm font-bold text-slate-400">All clear for now.</p>
+              ) : (
+                upcomingDeadlines.map(task => {
+                  const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
+                  const priority = getPriority(task);
+                  return (
+                    <div key={task._id} className="group relative rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm transition hover:shadow-xl hover:shadow-slate-200/50">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className={`rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest ${color.badge}`}>
+                          {priority.label}
+                        </span>
+                        <span className="text-xs font-bold text-slate-400">
+                          {new Date(task.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-black text-slate-900 group-hover:text-primary transition-colors leading-tight">{task.title}</h4>
+                      <p className="mt-2 text-sm font-medium text-slate-400 line-clamp-2">
+                        {task.description || "Review alignment and confirm deliverables before the final demo."}
+                      </p>
+                      <div className="mt-6 flex items-center justify-between">
+                        <div className="flex -space-x-1.5">
+                          <div className="h-8 w-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold">
+                            {task.assignedTo?.name.charAt(0) || "U"}
+                          </div>
+                          <div className="h-8 w-8 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center" />
+                        </div>
+                        <ArrowRight size={18} className="text-slate-100 transition-colors group-hover:text-primary" />
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
+                  );
+                })
+              )}
+
+              {/* Schedule a Meeting Placeholder */}
+              <button className="w-full flex flex-col items-center justify-center rounded-[32px] border-2 border-dashed border-slate-100 bg-slate-50/30 py-8 transition hover:bg-white hover:border-primary group">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-blue-100/50 text-blue-600 transition group-hover:bg-primary group-hover:text-white">
+                  <Plus size={20} />
+                </div>
+                <h5 className="text-sm font-black text-slate-900">Schedule a Meeting</h5>
+                <p className="mt-1 text-xs font-bold text-slate-400">Find time for the whole team.</p>
+              </button>
             </div>
           </aside>
         </div>
