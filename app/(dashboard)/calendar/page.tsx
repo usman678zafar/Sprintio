@@ -277,6 +277,49 @@ export default function CalendarPage() {
         </div>
       </header>
 
+      {/* Desktop Filter Bar - Sticky */}
+      <div className="sticky top-0 z-30 hidden border-b border-slate-100 bg-white/80 py-3 backdrop-blur-xl md:block">
+        <div className="mx-auto flex max-w-[1240px] items-center justify-between px-8">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Stream:</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSelectedProjectId("all")}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${selectedProjectId === "all" ? "bg-slate-900 text-white shadow-lg shadow-slate-200" : "text-slate-500 hover:bg-slate-100"
+                    }`}
+                >
+                  All Active
+                </button>
+                {projects.slice(0, 4).map((project) => (
+                  <button
+                    key={project._id}
+                    onClick={() => setSelectedProjectId(project._id)}
+                    className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${selectedProjectId === project._id
+                        ? "bg-primary text-white shadow-lg shadow-primary/20"
+                        : "border border-slate-100 text-slate-500 hover:bg-slate-50"
+                      }`}
+                  >
+                    {project.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setOnlyMine(!onlyMine)}
+              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold transition-all ${onlyMine ? "bg-primary text-white shadow-lg shadow-primary/20" : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+                }`}
+            >
+              <UserRound size={14} className={onlyMine ? "text-white" : "text-slate-400"} />
+              My Targets Only
+            </button>
+          </div>
+        </div>
+      </div>
+
       <main className="mx-auto max-w-[1240px] px-4 pt-6 md:px-8">
         {/* Mobile View: Tasks for selected day */}
         <div className="md:hidden">
