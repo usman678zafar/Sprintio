@@ -24,4 +24,8 @@ const TaskSchema = new Schema<ITask>({
   createdAt: { type: Date, default: Date.now },
 });
 
+// Indices for faster project-based and user-assigned task lookups
+TaskSchema.index({ projectId: 1 });
+TaskSchema.index({ assignedTo: 1 });
+
 export default mongoose.models.Task || mongoose.model<ITask>("Task", TaskSchema);

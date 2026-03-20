@@ -14,5 +14,6 @@ const ProjectMemberSchema = new Schema<IProjectMember>({
 
 // Ensure a user cannot be added twice to the same project
 ProjectMemberSchema.index({ projectId: 1, userId: 1 }, { unique: true });
+ProjectMemberSchema.index({ userId: 1 });
 
 export default mongoose.models.ProjectMember || mongoose.model<IProjectMember>("ProjectMember", ProjectMemberSchema);
