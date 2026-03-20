@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import BottomNav from "@/components/BottomNav";
 import { authOptions } from "@/lib/auth";
 
 export default async function DashboardLayout({
@@ -19,9 +20,10 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-svh bg-[#f6f8fc] text-slate-900 md:h-svh">
       <Sidebar user={session.user} />
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden pb-16 md:pb-0">
         <Navbar user={session.user} />
         <main className="flex-1 overflow-y-auto">{children}</main>
+        <BottomNav />
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Bell, Plus, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-import MobileSidebar from "./MobileSidebar";
+import Logo from "./Logo";
 
 export default function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
@@ -24,11 +24,11 @@ export default function Navbar({ user }: { user: any }) {
           ? "projects-search"
           : pathname === "/calendar"
             ? "calendar-search"
-          : pathname === "/settings"
-            ? "settings-search"
-          : pathname === "/team"
-            ? "team-search"
-          : null;
+            : pathname === "/settings"
+              ? "settings-search"
+              : pathname === "/team"
+                ? "team-search"
+                : null;
 
     if (!searchEventName) {
       setSearchQuery("");
@@ -48,7 +48,7 @@ export default function Navbar({ user }: { user: any }) {
           ? "projects-add-project"
           : pathname === "/calendar"
             ? "calendar-add-task"
-          : null;
+            : null;
 
     if (addEventName) {
       window.dispatchEvent(new Event(addEventName));
@@ -59,7 +59,7 @@ export default function Navbar({ user }: { user: any }) {
     <header className="border-b border-slate-200 bg-white">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-5">
         <div className="shrink-0 md:hidden">
-          <MobileSidebar user={user} />
+          <Logo href="/dashboard" />
         </div>
 
         <div className="relative hidden max-w-2xl flex-1 sm:block">
