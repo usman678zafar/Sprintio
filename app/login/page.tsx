@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -23,6 +24,7 @@ export default function LoginPage() {
     const res = await signIn("credentials", {
       email,
       password,
+      rememberMe,
       redirect: false,
     });
 
@@ -80,6 +82,19 @@ export default function LoginPage() {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <span className="text-sm text-gray-500 group-hover:text-gray-700 transition">Remember me for 30 days</span>
+            </label>
+            <a href="#" className="text-sm text-primary hover:underline font-medium">Forgot?</a>
           </div>
           <button
             type="submit"

@@ -148,13 +148,13 @@ function ProjectCard({
                 </h3>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                <div className="flex items-center gap-1.5">
-                    <CheckCircle2 size={14} className="text-slate-300" />
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg border border-slate-100 bg-slate-50/50">
+                    <CheckCircle2 size={12} className="text-slate-300" />
                     <span>{project.taskCount} Tasks</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                    <Users size={14} className="text-slate-300" />
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg border border-slate-100 bg-slate-50/50">
+                    <Users size={12} className="text-slate-300" />
                     <span>{project.memberCount} Members</span>
                 </div>
             </div>
@@ -338,9 +338,9 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                                 <button
                                     key={f.key}
                                     onClick={() => setFilter(f.key)}
-                                    className={`rounded-full px-5 py-2.5 text-sm font-bold transition-all ${filter === f.key
-                                        ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                        : "bg-white text-slate-500 border border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                                    className={`rounded-full px-5 py-2.5 text-sm font-bold transition-all shadow-sm ${filter === f.key
+                                        ? "bg-primary text-white shadow-primary/20"
+                                        : "bg-white/60 text-slate-500 border border-slate-200/50 hover:border-slate-300 hover:bg-white backdrop-blur-sm"
                                         }`}
                                 >
                                     {f.label}

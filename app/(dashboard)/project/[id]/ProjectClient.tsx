@@ -94,13 +94,14 @@ function formatDate(date?: string | null) {
 }
 
 function getStatusPill(status: TaskStatus) {
+    const common = "px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm";
     if (status === "Done") {
-        return "bg-emerald-100 text-emerald-700";
+        return `bg-emerald-50/60 text-emerald-700 border border-emerald-200/50 ${common}`;
     }
     if (status === "In Progress") {
-        return "bg-blue-100 text-primary";
+        return `bg-blue-50/60 text-primary border border-blue-200/50 ${common}`;
     }
-    return "bg-amber-100 text-amber-700";
+    return `bg-amber-50/60 text-amber-700 border border-amber-200/50 ${common}`;
 }
 
 function findTaskNode(nodes: TaskNode[], taskId: string | null): TaskNode | null {
@@ -503,7 +504,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                     <div className="text-slate-600">{formatDate(task.deadline)}</div>
 
                     <div className="flex items-center gap-3">
-                        <span className={`rounded-full px-4 py-1.5 text-sm font-medium ${getStatusPill(task.status)}`}>
+                        <span className={`rounded-full ${getStatusPill(task.status)}`}>
                             {task.status === "Pending" ? "To Do" : task.status}
                         </span>
                         <select
@@ -553,11 +554,11 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                         <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
                                 {level > 0 ? (
-                                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+                                    <span className="rounded-full bg-slate-100/60 border border-slate-200/50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 backdrop-blur-sm">
                                         Subtask
                                     </span>
                                 ) : null}
-                                <span className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusPill(task.status)}`}>
+                                <span className={`rounded-full ${getStatusPill(task.status)}`}>
                                     {task.status === "Pending" ? "To Do" : task.status}
                                 </span>
                             </div>
@@ -873,8 +874,8 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                                 type="button"
                                                 onClick={() => setTaskForm({ ...taskForm, status: s as TaskStatus })}
                                                 className={`rounded-xl border py-3 text-sm font-semibold transition ${taskForm.status === s
-                                                        ? "border-primary bg-primary text-white shadow-[0_12px_24px_rgba(37,99,235,0.2)]"
-                                                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                                                    ? "border-primary bg-primary text-white shadow-[0_12px_24px_rgba(37,99,235,0.2)]"
+                                                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                                                     }`}
                                             >
                                                 {s === "Pending" ? "To Do" : s}

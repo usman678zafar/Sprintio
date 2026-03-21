@@ -11,6 +11,9 @@ import {
     Trash2,
     TrendingUp,
     Users,
+    Clock,
+    AlertCircle,
+    Layout,
 } from "lucide-react";
 
 type Project = {
@@ -76,24 +79,30 @@ function getProjectTone(project: Project): {
 function getToneClasses(tone: StatusTone) {
     if (tone === "risk") {
         return {
-            badge: "bg-amber-50 text-amber-700",
-            bar: "bg-amber-500",
-            accent: "text-amber-600",
+            badge: "bg-white/60 backdrop-blur-md border border-rose-100 shadow-[0_2px_10px_rgba(225,29,72,0.04)]",
+            text: "bg-gradient-to-r from-rose-600 to-red-500 bg-clip-text text-transparent",
+            icon: "text-rose-500",
+            bar: "bg-gradient-to-r from-rose-500 to-red-500 shadow-[0_4px_12px_rgba(225,29,72,0.2)]",
+            accent: "text-rose-600 font-semibold",
         };
     }
 
     if (tone === "planning") {
         return {
-            badge: "bg-emerald-50 text-emerald-700",
-            bar: "bg-emerald-500",
-            accent: "text-slate-400",
+            badge: "bg-white/60 backdrop-blur-md border border-indigo-100 shadow-[0_2px_10px_rgba(79,70,229,0.04)]",
+            text: "bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent",
+            icon: "text-indigo-500",
+            bar: "bg-gradient-to-r from-indigo-500 to-blue-500 shadow-[0_4px_12px_rgba(79,70,229,0.2)]",
+            accent: "text-indigo-600",
         };
     }
 
     return {
-        badge: "bg-blue-50 text-primary",
-        bar: "bg-primary",
-        accent: "text-slate-500",
+        badge: "bg-white/60 backdrop-blur-md border border-primary/20 shadow-[0_2px_10px_rgba(37,99,235,0.04)]",
+        text: "bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent",
+        icon: "text-primary",
+        bar: "bg-gradient-to-r from-primary to-purple-600 shadow-[0_4px_12px_rgba(37,99,235,0.2)]",
+        accent: "text-primary font-semibold",
     };
 }
 
@@ -327,25 +336,25 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                             label: "Total Tasks",
                             value: metrics.totalTasks,
                             chip: "+12%",
-                            chipClass: "bg-emerald-50 text-emerald-600",
+                            chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 shadow-[0_1px_4px_rgba(16,185,129,0.05)]",
                         },
                         {
                             label: "Active Projects",
                             value: metrics.activeProjects,
                             chip: "Steady",
-                            chipClass: "bg-blue-50 text-primary",
+                            chipClass: "bg-blue-500/10 text-primary border-blue-500/20 shadow-[0_1px_4px_rgba(37,99,235,0.05)]",
                         },
                         {
                             label: "Upcoming Deadlines",
                             value: metrics.upcomingDeadlines,
                             chip: "Attention",
-                            chipClass: "bg-amber-50 text-amber-600",
+                            chipClass: "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_1px_4px_rgba(245,158,11,0.05)]",
                         },
                         {
                             label: "Team Efficiency",
                             value: `${metrics.efficiency}%`,
                             chip: "+4%",
-                            chipClass: "bg-emerald-50 text-emerald-600",
+                            chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 shadow-[0_1px_4px_rgba(16,185,129,0.05)]",
                         },
                     ].map((card) => (
                         <div
@@ -358,7 +367,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                     {card.value}
                                 </span>
                                 <span
-                                    className={`rounded-full px-3 py-1 text-sm font-semibold ${card.chipClass}`}
+                                    className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${card.chipClass}`}
                                 >
                                     {card.chip}
                                 </span>
@@ -435,11 +444,17 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                         className="cursor-pointer rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)] focus:outline-none focus:ring-4 focus:ring-blue-100"
                                     >
                                         <div className="flex items-start justify-between gap-4">
-                                            <span
-                                                className={`rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-[0.12em] ${toneClasses.badge}`}
-                                            >
-                                                {tone.label}
-                                            </span>
+                                            {(() => {
+                                                const Icon = tone.tone === 'risk' ? AlertCircle : tone.tone === 'planning' ? Layout : Clock;
+                                                return (
+                                                    <span
+                                                        className={`flex items-center gap-2 rounded-xl px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest ${toneClasses.badge}`}
+                                                    >
+                                                        <Icon size={13} className={toneClasses.icon} />
+                                                        <span className={toneClasses.text}>{tone.label}</span>
+                                                    </span>
+                                                );
+                                            })()}
 
                                             <div className="relative">
                                                 <button
