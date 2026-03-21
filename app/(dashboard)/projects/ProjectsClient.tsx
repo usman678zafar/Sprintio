@@ -188,6 +188,82 @@ function ProjectCard({
     );
 }
 
+function ProjectListItem({
+    project,
+    index,
+    onEdit,
+    onDelete
+}: {
+    project: Project;
+    index: number;
+    onEdit: (p: Project) => void;
+    onDelete: (id: string) => void;
+}) {
+    const router = useRouter();
+    const [showMenu, setShowMenu] = useState(false);
+    const theme = themePalette[index % themePalette.length];
+
+    return (
+        <div
+            onClick={() => router.push(`/project/${project._id}`)}
+            className="group flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:border-primary/30 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+        >
+            <div className="flex items-center gap-4 min-w-0">
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${theme.bg} ${theme.text}`}>
+                    <FolderDot size={20} />
+                </div>
+                <div className="min-w-0">
+                    <h3 className="truncate font-bold text-slate-900 group-hover:text-primary transition-colors">
+                        {project.name}
+                    </h3>
+                    <p className="text-xs text-slate-500">{formatDate(project.createdAt)}</p>
+                </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-6 sm:justify-end">
+                <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
+                    <CheckCircle2 size={16} className="text-slate-300" />
+                    <span>{project.taskCount} Tasks</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
+                    <Users size={16} className="text-slate-300" />
+                    <span>{project.memberCount} Members</span>
+                </div>
+
+                <div className="relative">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setShowMenu(!showMenu);
+                        }}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50"
+                    >
+                        <MoreVertical size={18} />
+                    </button>
+                    {showMenu && (
+                        <div className="absolute right-0 top-11 z-20 w-48 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                            <button
+                                onClick={() => { onEdit(project); setShowMenu(false); }}
+                                className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                            >
+                                <Pencil size={16} />
+                                Rename
+                            </button>
+                            <button
+                                onClick={() => { onDelete(project._id); setShowMenu(false); }}
+                                className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                            >
+                                <Trash2 size={16} />
+                                Delete
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function ProjectsClient({ initialProjects }: { initialProjects: Project[] }) {
     const [projects, setProjects] = useState<Project[]>(initialProjects);
     const [loading, setLoading] = useState(false);
@@ -382,7 +458,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                             Create First Project
                         </button>
                     </div>
-                ) : (
+                ) : viewMode === "grid" ? (
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                         {visibleProjects.map((project, index) => (
                             <ProjectCard
@@ -406,6 +482,29 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                             </div>
                             <h3 className="text-xl font-bold text-slate-900">New Project</h3>
                             <p className="mt-2 text-sm text-slate-500 max-w-[180px]">Establish a new workspace and invite collaborators.</p>
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-4">
+                        {visibleProjects.map((project, index) => (
+                            <ProjectListItem
+                                key={project._id}
+                                project={project}
+                                index={index}
+                                onEdit={(p) => {
+                                    setEditingProject(p);
+                                    setUpdatedName(p.name);
+                                }}
+                                onDelete={handleDeleteProject}
+                            />
+                        ))}
+
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="flex items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-white p-6 transition-all hover:border-primary hover:bg-blue-50/20"
+                        >
+                            <Plus size={20} className="text-slate-400" />
+                            <span className="font-bold text-slate-900">Add New Project</span>
                         </button>
                     </div>
                 )}
