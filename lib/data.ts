@@ -29,23 +29,29 @@ export async function getDashboardData() {
         {
             $lookup: {
                 from: "tasks",
-                localField: "projectId",
-                foreignField: "projectId",
-                as: "tasks"
+                let: { pid: "$projectId" },
+                pipeline: [
+                    { $match: { $expr: { $eq: ["$projectId", "$$pid"] } } },
+                    { $count: "count" }
+                ],
+                as: "taskCountInfo"
             }
         },
         {
             $lookup: {
                 from: "projectmembers",
-                localField: "projectId",
-                foreignField: "projectId",
-                as: "members"
+                let: { pid: "$projectId" },
+                pipeline: [
+                    { $match: { $expr: { $eq: ["$projectId", "$$pid"] } } },
+                    { $count: "count" }
+                ],
+                as: "memberCountInfo"
             }
         },
         {
             $addFields: {
-                "project.taskCount": { $size: "$tasks" },
-                "project.memberCount": { $size: "$members" }
+                "project.taskCount": { $ifNull: [{ $arrayElemAt: ["$taskCountInfo.count", 0] }, 0] },
+                "project.memberCount": { $ifNull: [{ $arrayElemAt: ["$memberCountInfo.count", 0] }, 0] }
             }
         },
         {

@@ -12,6 +12,8 @@ import {
   Sparkles,
   SunMedium,
   UserRound,
+  Camera,
+  Loader2,
 } from "lucide-react";
 
 type ThemeMode = "system" | "light";
@@ -19,6 +21,7 @@ type Density = "comfortable" | "compact";
 
 type SettingsState = {
   fullName: string;
+  image?: string | null;
   title: string;
   email: string;
   timezone: string;
@@ -121,6 +124,7 @@ export default function SettingsPage() {
   const initialState = useMemo<SettingsState>(
     () => ({
       fullName: session?.user?.name || "Sprinto User",
+      image: (session?.user as any)?.image || null,
       title: "Workspace Owner",
       email: session?.user?.email || "",
       timezone: "Asia/Karachi",
@@ -142,6 +146,41 @@ export default function SettingsPage() {
   );
 
   const [form, setForm] = useState<SettingsState>(initialState);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, contentType: file.type }),
+      });
+
+      if (!res.ok) throw new Error("Failed to get presigned URL");
+
+      const { presignedUrl, publicUrl } = await res.json();
+
+      await fetch(presignedUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
+
+      setForm((prev) => ({ ...prev, image: publicUrl }));
+      setSavedMessage("Photo uploaded. Click Save to apply.");
+    } catch (error) {
+      console.error("Upload failed", error);
+      alert("Failed to upload image. Check server credentials.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   useEffect(() => {
     const stored =
@@ -206,11 +245,27 @@ export default function SettingsPage() {
     );
   }, [searchQuery, sections]);
 
-  const persistSettings = () => {
+  const persistSettings = async () => {
     if (typeof window === "undefined") return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-    setSavedMessage("Settings saved locally.");
-    window.setTimeout(() => setSavedMessage(""), 2400);
+    setIsSaving(true);
+    try {
+      await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: form.fullName,
+          image: form.image,
+        }),
+      });
+
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+      setSavedMessage("Settings saved successfully.");
+      window.setTimeout(() => setSavedMessage(""), 2400);
+    } catch (error) {
+      console.error("Failed to save settings to DB", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const initials = form.workspaceName
@@ -245,10 +300,11 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={persistSettings}
-              className="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(37,99,235,0.22)] transition hover:bg-blue-700"
+              disabled={isSaving || isUploading}
+              className="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(37,99,235,0.22)] transition hover:bg-blue-700 disabled:opacity-50"
             >
-              <Save size={16} />
-              Save Changes
+              {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+              {isSaving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </section>
@@ -269,13 +325,29 @@ export default function SettingsPage() {
                   >
                     <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
                       <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-xl font-semibold text-primary">
-                          {form.fullName
-                            .split(" ")
-                            .map((part) => part[0])
-                            .join("")
-                            .slice(0, 2)
-                            .toUpperCase()}
+                        <div className="relative group mb-4 inline-block">
+                          {form.image ? (
+                            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full overflow-hidden border border-slate-200 bg-white relative">
+                              <img src={form.image} alt="Profile Avatar" className="h-full w-full object-cover" />
+                              <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                {isUploading ? <Loader2 className="animate-spin text-white" size={24} /> : <Camera className="text-white" size={24} />}
+                                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={isUploading || isSaving} />
+                              </label>
+                            </div>
+                          ) : (
+                            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full overflow-hidden bg-blue-100 text-2xl font-semibold text-primary relative">
+                              {form.fullName
+                                .split(" ")
+                                .map((part) => part[0])
+                                .join("")
+                                .slice(0, 2)
+                                .toUpperCase()}
+                              <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                {isUploading ? <Loader2 className="animate-spin text-white" size={24} /> : <Camera className="text-white" size={24} />}
+                                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={isUploading || isSaving} />
+                              </label>
+                            </div>
+                          )}
                         </div>
                         <h3 className="mt-4 text-lg font-semibold text-slate-950">
                           {form.fullName}

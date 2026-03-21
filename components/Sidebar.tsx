@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 import Logo from "./Logo";
+import { useState } from "react";
 
 const navItems = [
   {
@@ -45,8 +46,11 @@ const navItems = [
 export default function Sidebar({ user }: { user: any }) {
   const pathname = usePathname();
 
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/login" });
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await signOut({ callbackUrl: "/login", redirect: true });
   };
 
   return (
@@ -81,8 +85,8 @@ export default function Sidebar({ user }: { user: any }) {
                 key={label}
                 href={href}
                 className={`relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive
-                    ? "bg-blue-50 text-primary"
-                    : "text-slate-600 hover:bg-slate-50"
+                  ? "bg-blue-50 text-primary"
+                  : "text-slate-600 hover:bg-slate-50"
                   }`}
               >
                 <Icon
@@ -101,9 +105,15 @@ export default function Sidebar({ user }: { user: any }) {
 
       <div className="border-t border-slate-200 px-5 py-5">
         <div className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-800">
-            {user?.name?.[0]?.toUpperCase() || "U"}
-          </div>
+          {user?.image ? (
+            <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-white">
+              <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
+            </div>
+          ) : (
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-800">
+              {user?.name?.[0]?.toUpperCase() || "U"}
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-slate-900">
               {user?.name || "Sprinto User"}
@@ -116,10 +126,11 @@ export default function Sidebar({ user }: { user: any }) {
 
         <button
           onClick={handleLogout}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+          disabled={isLoggingOut}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
         >
           <LogOut size={18} />
-          Logout
+          {isLoggingOut ? "Leaving..." : "Logout"}
         </button>
       </div>
     </aside>

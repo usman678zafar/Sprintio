@@ -37,7 +37,12 @@ export default function LoginPage() {
       setLoading(false);
     } else {
       // Use the callbackUrl if available, otherwise default to dashboard
-      router.push(callbackUrl);
+      // If it's an absolute URL for the same host, Next.js push might be slow, so we can use window.location
+      if (callbackUrl.startsWith("http")) {
+        window.location.href = callbackUrl;
+      } else {
+        router.push(callbackUrl);
+      }
     }
   };
 
