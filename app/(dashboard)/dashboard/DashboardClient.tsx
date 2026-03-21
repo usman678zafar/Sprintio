@@ -330,7 +330,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
     return (
         <div className="min-h-full bg-[#f6f8fc] px-4 py-5 sm:px-5 lg:px-6 lg:py-6">
             <div className="mx-auto w-full max-w-[1040px]">
-                <section className="grid gap-4 lg:grid-cols-4">
+                <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                     {[
                         {
                             label: "Total Tasks",
@@ -351,7 +351,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                             chipClass: "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_1px_4px_rgba(245,158,11,0.05)]",
                         },
                         {
-                            label: "Team Efficiency",
+                            label: "Efficiency",
                             value: `${metrics.efficiency}%`,
                             chip: "+4%",
                             chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 shadow-[0_1px_4px_rgba(16,185,129,0.05)]",
@@ -359,15 +359,17 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                     ].map((card) => (
                         <div
                             key={card.label}
-                            className="rounded-[24px] border border-slate-200 bg-white px-5 py-6 shadow-[0_12px_40px_rgba(15,23,42,0.04)]"
+                            className="flex flex-col justify-between rounded-[20px] border border-slate-200 bg-white p-4 sm:rounded-[24px] sm:px-5 sm:py-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-transform hover:scale-[1.02]"
                         >
-                            <p className="text-sm font-medium text-slate-500">{card.label}</p>
-                            <div className="mt-3 flex items-center gap-3">
-                                <span className="text-3xl font-semibold tracking-tight text-slate-950">
+                            <p className="text-[13px] font-medium leading-tight text-slate-500 sm:text-sm">
+                                {card.label}
+                            </p>
+                            <div className="mt-2.5 flex flex-wrap items-baseline gap-2 sm:mt-3 sm:items-center sm:gap-3">
+                                <span className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
                                     {card.value}
                                 </span>
                                 <span
-                                    className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${card.chipClass}`}
+                                    className={`shrink-0 rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider shadow-sm sm:px-2.5 sm:text-[10px] ${card.chipClass}`}
                                 >
                                     {card.chip}
                                 </span>
@@ -379,7 +381,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                 <section className="mt-8">
                     <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h1 className="text-2xl font-semibold tracking-tight text-slate-950">
+                            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-950">
                                 Active Projects
                             </h1>
                             <p className="mt-1 text-sm text-slate-500">
@@ -422,7 +424,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                             </p>
                         </div>
                     ) : (
-                        <div id="active-projects" className="grid gap-5 xl:grid-cols-3">
+                        <div id="active-projects" className="grid gap-4 sm:gap-5 xl:grid-cols-3">
                             {featuredProjects.map((project, index) => {
                                 const tone = getProjectTone(project);
                                 const toneClasses = getToneClasses(tone.tone);
@@ -441,7 +443,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                 router.push(`/project/${project._id}`);
                                             }
                                         }}
-                                        className="cursor-pointer rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)] focus:outline-none focus:ring-4 focus:ring-blue-100"
+                                        className="cursor-pointer rounded-[20px] sm:rounded-[24px] border border-slate-200 bg-white p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] focus:outline-none focus:ring-4 focus:ring-blue-100 transition-transform hover:-translate-y-1"
                                     >
                                         <div className="flex items-start justify-between gap-4">
                                             {(() => {
@@ -504,15 +506,15 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                             </div>
                                         </div>
 
-                                        <Link href={`/project/${project._id}`} className="mt-5 block">
-                                            <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
+                                        <Link href={`/project/${project._id}`} className="mt-4 sm:mt-5 block">
+                                            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-950">
                                                 {project.name}
                                             </h2>
-                                            <p className="mt-3 min-h-12 text-base leading-7 text-slate-500">
+                                            <p className="mt-2 sm:mt-3 min-h-12 text-sm sm:text-base leading-relaxed text-slate-500">
                                                 {getProjectSummary(project)}
                                             </p>
 
-                                            <div className="mt-6">
+                                            <div className="mt-5 sm:mt-6">
                                                 <div className="mb-3 flex items-center justify-between text-sm font-medium text-slate-600">
                                                     <span>Progress</span>
                                                     <span>{tone.progress}%</span>
@@ -555,31 +557,31 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                     )}
                 </section>
 
-                <section className="mt-8 grid gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
-                    <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                        <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
+                <section className="mt-6 sm:mt-8 grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
+                    <div className="rounded-[20px] sm:rounded-[24px] border border-slate-200 bg-white p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-950">
                             Recent Activity
                         </h2>
-                        <div className="mt-6 space-y-6">
+                        <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
                             {recentActivity.map((item) => (
                                 <div key={`${item.text}-${item.meta}`} className="flex gap-4">
                                     <span
-                                        className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${item.color}`}
+                                        className={`mt-1.5 sm:mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${item.color}`}
                                     />
                                     <div>
-                                        <p className="text-base leading-7 text-slate-900">{item.text}</p>
-                                        <p className="mt-1 text-sm text-slate-500">{item.meta}</p>
+                                        <p className="text-sm sm:text-base leading-relaxed text-slate-900">{item.text}</p>
+                                        <p className="mt-1 text-xs sm:text-sm text-slate-500">{item.meta}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                        <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
+                    <div className="rounded-[20px] sm:rounded-[24px] border border-slate-200 bg-white p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-950">
                             Team Status
                         </h2>
-                        <div className="mt-6 space-y-5">
+                        <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-5">
                             {teamMembers.map((member, index) => (
                                 <div key={`${member.name}-${index}`} className="flex items-center gap-4">
                                     <div className="relative">
