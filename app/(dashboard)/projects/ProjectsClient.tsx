@@ -388,19 +388,19 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
-                        <div className="flex rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-11 items-center rounded-full border border-slate-200 bg-white p-1 shadow-sm">
                             <button
                                 onClick={() => setViewMode("grid")}
-                                className={`rounded-xl px-4 py-2.5 transition-all ${viewMode === "grid" ? "bg-slate-900 text-white shadow-lg" : "text-slate-400 hover:text-slate-600"}`}
+                                className={`flex h-9 w-12 items-center justify-center rounded-full transition-all duration-300 ${viewMode === "grid" ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" : "text-slate-400 hover:text-slate-600"}`}
                             >
-                                <LayoutGrid size={20} />
+                                <LayoutGrid size={18} />
                             </button>
                             <button
                                 onClick={() => setViewMode("list")}
-                                className={`rounded-xl px-4 py-2.5 transition-all ${viewMode === "list" ? "bg-slate-900 text-white shadow-lg" : "text-slate-400 hover:text-slate-600"}`}
+                                className={`flex h-9 w-12 items-center justify-center rounded-full transition-all duration-300 ${viewMode === "list" ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" : "text-slate-400 hover:text-slate-600"}`}
                             >
-                                <List size={20} />
+                                <List size={18} />
                             </button>
                         </div>
                     </div>
@@ -465,7 +465,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                                 key={project._id}
                                 project={project}
                                 index={index}
-                                onEdit={(p) => {
+                                onEdit={(p: Project) => {
                                     setEditingProject(p);
                                     setUpdatedName(p.name);
                                 }}
@@ -491,7 +491,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                                 key={project._id}
                                 project={project}
                                 index={index}
-                                onEdit={(p) => {
+                                onEdit={(p: Project) => {
                                     setEditingProject(p);
                                     setUpdatedName(p.name);
                                 }}
