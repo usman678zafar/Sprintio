@@ -62,28 +62,24 @@ export default function Navbar({ user }: { user: any }) {
           <Logo href="/dashboard" />
         </div>
 
-        <div className="relative hidden max-w-2xl flex-1 sm:block">
-          <Search
-            size={20}
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-          />
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder={searchPlaceholder}
-            className="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-700 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100"
-          />
-        </div>
+        {pathname !== "/dashboard" && (
+          <div className="relative hidden max-w-2xl flex-1 sm:block">
+            <Search
+              size={20}
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder={searchPlaceholder}
+              className="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-700 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100"
+            />
+          </div>
+        )}
 
         <div className="ml-auto flex items-center gap-3 sm:gap-4">
-          <button
-            type="button"
-            className="rounded-2xl border border-transparent p-2.5 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
-            aria-label="Notifications"
-          >
-            <Bell size={18} />
-          </button>
+
 
           {(pathname === "/dashboard" || pathname === "/projects" || pathname === "/calendar") && (
             <button
@@ -100,21 +96,23 @@ export default function Navbar({ user }: { user: any }) {
         </div>
       </div>
 
-      <div className="border-t border-slate-100 px-4 pb-4 sm:hidden">
-        <div className="relative">
-          <Search
-            size={18}
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-          />
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder={searchPlaceholder}
-            className="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-700 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100"
-          />
+      {pathname !== "/dashboard" && (
+        <div className="border-t border-slate-100 px-4 pb-4 sm:hidden">
+          <div className="relative">
+            <Search
+              size={18}
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder={searchPlaceholder}
+              className="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-700 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100"
+            />
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }

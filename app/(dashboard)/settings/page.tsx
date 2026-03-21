@@ -166,17 +166,21 @@ export default function SettingsPage() {
 
       const { presignedUrl, publicUrl } = await res.json();
 
-      await fetch(presignedUrl, {
+      const uploadRes = await fetch(presignedUrl, {
         method: "PUT",
         body: file,
         headers: { "Content-Type": file.type },
       });
 
+      if (!uploadRes.ok) {
+        throw new Error(`Cloudflare R2 returned ${uploadRes.status}: ${uploadRes.statusText}`);
+      }
+
       setForm((prev) => ({ ...prev, image: publicUrl }));
       setSavedMessage("Photo uploaded. Click Save to apply.");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Upload failed", error);
-      alert("Failed to upload image. Check server credentials.");
+      alert(`Failed to upload image. Error: ${error.message}`);
     } finally {
       setIsUploading(false);
     }
@@ -220,11 +224,6 @@ export default function SettingsPage() {
         id: "branding",
         title: "Workspace Branding",
         keywords: "workspace branding logo slug description identity name",
-      },
-      {
-        id: "appearance",
-        title: "Appearance",
-        keywords: "appearance theme density motion calendar sidebar layout",
       },
     ],
     []
@@ -446,27 +445,7 @@ export default function SettingsPage() {
                     description="Shape the identity your team sees across calendars, dashboards, and project spaces."
                     icon={<Building2 size={18} />}
                   >
-                    <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)]">
-                      <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                          Live Preview
-                        </p>
-                        <div className="mt-4 rounded-[24px] border border-slate-200 bg-white p-5">
-                          <div
-                            className={`flex h-16 w-16 items-center justify-center bg-primary text-lg font-semibold text-white ${form.logoStyle === "circle" ? "rounded-full" : "rounded-2xl"
-                              }`}
-                          >
-                            {initials || "SW"}
-                          </div>
-                          <p className="mt-4 text-lg font-semibold text-slate-950">
-                            {form.workspaceName}
-                          </p>
-                          <p className="mt-1 text-sm text-slate-500">
-                            sprinto.app/{form.workspaceSlug || "workspace"}
-                          </p>
-                        </div>
-                      </div>
-
+                    <div>
                       <div className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                           <Input
@@ -534,181 +513,7 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              {filteredSections.has("appearance") && (
-                <div id="appearance">
-                  <SectionCard
-                    title="Appearance"
-                    description="Tune the visual density and interaction feel while keeping the product color system consistent."
-                    icon={<Paintbrush size={18} />}
-                  >
-                    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-                      <div className="space-y-4">
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="rounded-[24px] border border-slate-200 p-4">
-                            <p className="text-sm font-medium text-slate-900">Theme Preference</p>
-                            <div className="mt-3 flex gap-3">
-                              {[
-                                { key: "system" as ThemeMode, label: "System", icon: <MonitorCog size={16} /> },
-                                { key: "light" as ThemeMode, label: "Light", icon: <SunMedium size={16} /> },
-                              ].map((option) => (
-                                <button
-                                  key={option.key}
-                                  type="button"
-                                  onClick={() =>
-                                    setForm((prev) => ({ ...prev, themeMode: option.key }))
-                                  }
-                                  className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-medium transition ${form.themeMode === option.key
-                                    ? "border-primary bg-blue-50 text-primary"
-                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                                    }`}
-                                >
-                                  {option.icon}
-                                  {option.label}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
 
-                          <div className="rounded-[24px] border border-slate-200 p-4">
-                            <p className="text-sm font-medium text-slate-900">Density</p>
-                            <div className="mt-3 flex gap-3">
-                              {(["comfortable", "compact"] as Density[]).map((density) => (
-                                <button
-                                  key={density}
-                                  type="button"
-                                  onClick={() =>
-                                    setForm((prev) => ({ ...prev, density }))
-                                  }
-                                  className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${form.density === density
-                                    ? "border-primary bg-blue-50 text-primary"
-                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                                    }`}
-                                >
-                                  {density}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="rounded-2xl border border-slate-200 px-4 py-3">
-                            <div className="flex items-center justify-between gap-3">
-                              <div>
-                                <p className="text-sm font-medium text-slate-900">Reduced Motion</p>
-                                <p className="mt-1 text-xs text-slate-500">
-                                  Minimize animated transitions across the UI.
-                                </p>
-                              </div>
-                              <Toggle
-                                checked={form.reducedMotion}
-                                onChange={(value) =>
-                                  setForm((prev) => ({ ...prev, reducedMotion: value }))
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          <div className="rounded-2xl border border-slate-200 px-4 py-3">
-                            <div className="flex items-center justify-between gap-3">
-                              <div>
-                                <p className="text-sm font-medium text-slate-900">Show Weekends</p>
-                                <p className="mt-1 text-xs text-slate-500">
-                                  Display weekends by default in the calendar workspace.
-                                </p>
-                              </div>
-                              <Toggle
-                                checked={form.calendarWeekends}
-                                onChange={(value) =>
-                                  setForm((prev) => ({ ...prev, calendarWeekends: value }))
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          <div className="rounded-2xl border border-slate-200 px-4 py-3">
-                            <div className="flex items-center justify-between gap-3">
-                              <div>
-                                <p className="text-sm font-medium text-slate-900">Compact Sidebar</p>
-                                <p className="mt-1 text-xs text-slate-500">
-                                  Prefer denser navigation spacing for more room.
-                                </p>
-                              </div>
-                              <Toggle
-                                checked={form.compactSidebar}
-                                onChange={(value) =>
-                                  setForm((prev) => ({ ...prev, compactSidebar: value }))
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          <div className="rounded-[24px] border border-slate-200 p-4">
-                            <p className="text-sm font-medium text-slate-900">Calendar Start Day</p>
-                            <div className="mt-3 flex gap-3">
-                              {(["sunday", "monday"] as const).map((day) => (
-                                <button
-                                  key={day}
-                                  type="button"
-                                  onClick={() =>
-                                    setForm((prev) => ({ ...prev, calendarStartDay: day }))
-                                  }
-                                  className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${form.calendarStartDay === day
-                                    ? "border-primary bg-blue-50 text-primary"
-                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                                    }`}
-                                >
-                                  {day}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                        <div className="flex items-center gap-2 text-primary">
-                          <Sparkles size={16} />
-                          <p className="text-sm font-semibold">Preview</p>
-                        </div>
-                        <div className="mt-4 rounded-[22px] border border-slate-200 bg-white p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-slate-900">Interface Mood</p>
-                              <p className="mt-1 text-xs text-slate-500">
-                                {form.density === "compact"
-                                  ? "Denser spacing for more content on screen."
-                                  : "Comfortable spacing for calmer scanning."}
-                              </p>
-                            </div>
-                            <div className="rounded-2xl bg-blue-50 p-3 text-primary">
-                              {form.themeMode === "light" ? <SunMedium size={18} /> : <MoonStar size={18} />}
-                            </div>
-                          </div>
-                          <div className="mt-4 space-y-3">
-                            <div className="rounded-2xl border border-slate-200 px-3 py-3">
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-slate-900">Sidebar spacing</span>
-                                <span className="text-xs text-slate-500">
-                                  {form.compactSidebar ? "Compact" : "Standard"}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="rounded-2xl border border-slate-200 px-3 py-3">
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-slate-900">Calendar weekends</span>
-                                <span className="text-xs text-slate-500">
-                                  {form.calendarWeekends ? "Visible" : "Hidden"}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </SectionCard>
-                </div>
-              )}
             </>
           )
           }
