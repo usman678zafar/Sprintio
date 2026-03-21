@@ -232,25 +232,27 @@ export default function CalendarPage() {
           </button>
         </div>
 
-        {/* Swipeable Date Strip */}
-        <div className="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-none" ref={scrollRef}>
-          {currentWeekDays.map((day) => {
-            const isSelected = toDateKey(day) === selectedDayKey;
-            const isToday = isSameDay(day, today);
-            return (
-              <button
-                key={toDateKey(day)}
-                onClick={() => handleSelectDay(day)}
-                className={`flex min-w-[54px] flex-col items-center gap-1.5 rounded-2xl py-3 transition-all ${isSelected ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-slate-50 text-slate-400 hover:bg-slate-100"
-                  }`}
-              >
-                <span className="text-[10px] font-black uppercase tracking-widest">{DAY_LABELS[day.getDay()]}</span>
-                <span className="text-lg font-black">{day.getDate()}</span>
-                {tasksByDate.has(toDateKey(day)) && !isSelected && <div className="h-1 w-1 rounded-full bg-primary" />}
-              </button>
-            );
-          })}
-        </div>
+        {/* Swipeable Date Strip (Only visible in 'day' view) */}
+        {viewMode !== "month" && (
+          <div className="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-none" ref={scrollRef}>
+            {currentWeekDays.map((day) => {
+              const isSelected = toDateKey(day) === selectedDayKey;
+              const isToday = isSameDay(day, today);
+              return (
+                <button
+                  key={toDateKey(day)}
+                  onClick={() => handleSelectDay(day)}
+                  className={`flex min-w-[54px] flex-col items-center gap-1.5 rounded-2xl py-3 transition-all ${isSelected ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                    }`}
+                >
+                  <span className="text-[10px] font-black uppercase tracking-widest">{DAY_LABELS[day.getDay()]}</span>
+                  <span className="text-lg font-black">{day.getDate()}</span>
+                  {tasksByDate.has(toDateKey(day)) && !isSelected && <div className="h-1 w-1 rounded-full bg-primary" />}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Desktop Header */}
@@ -296,8 +298,8 @@ export default function CalendarPage() {
                     key={project._id}
                     onClick={() => setSelectedProjectId(project._id)}
                     className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${selectedProjectId === project._id
-                        ? "bg-primary text-white shadow-lg shadow-primary/20"
-                        : "border border-slate-100 text-slate-500 hover:bg-slate-50"
+                      ? "bg-primary text-white shadow-lg shadow-primary/20"
+                      : "border border-slate-100 text-slate-500 hover:bg-slate-50"
                       }`}
                   >
                     {project.name}
@@ -324,22 +326,31 @@ export default function CalendarPage() {
         {/* Mobile View: Tasks for selected day */}
         <div className="md:hidden">
           {viewMode === "month" && (
-            <div className="mb-8 grid grid-cols-7 gap-px overflow-hidden rounded-[28px] border border-slate-100 bg-white shadow-sm">
-              {monthDays.map(day => {
-                const key = toDateKey(day);
-                const isSelected = key === selectedDayKey;
-                const inMonth = day.getMonth() === currentDate.getMonth();
-                return (
-                  <button
-                    key={key}
-                    onClick={() => handleSelectDay(day)}
-                    className={`flex h-12 items-center justify-center text-sm font-bold transition-all ${isSelected ? "bg-primary text-white" : inMonth ? "text-slate-900" : "text-slate-200"}`}
-                  >
-                    {day.getDate()}
-                    {tasksByDate.has(key) && !isSelected && <div className="absolute mt-6 h-1 w-1 rounded-full bg-primary" />}
-                  </button>
-                );
-              })}
+            <div className="mb-8 overflow-hidden rounded-[28px] border border-slate-100 bg-white shadow-sm">
+              <div className="grid grid-cols-7 border-b border-slate-50 bg-slate-50/50">
+                {DAY_LABELS.map((dayLabel) => (
+                  <div key={dayLabel} className="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    {dayLabel.substring(0, 3)}
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 gap-px">
+                {monthDays.map(day => {
+                  const key = toDateKey(day);
+                  const isSelected = key === selectedDayKey;
+                  const inMonth = day.getMonth() === currentDate.getMonth();
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => handleSelectDay(day)}
+                      className={`flex h-12 items-center justify-center text-sm font-bold transition-all ${isSelected ? "bg-primary text-white" : inMonth ? "text-slate-900" : "text-slate-200"}`}
+                    >
+                      {day.getDate()}
+                      {tasksByDate.has(key) && !isSelected && <div className="absolute mt-6 h-1 w-1 rounded-full bg-primary" />}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
