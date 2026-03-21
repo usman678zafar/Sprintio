@@ -21,6 +21,10 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
+    // Get the callbackUrl from search parameters if it exists
+    const searchParams = new URLSearchParams(window.location.search);
+    const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
     const res = await signIn("credentials", {
       email,
       password,
@@ -32,7 +36,8 @@ export default function LoginPage() {
       setError(res.error);
       setLoading(false);
     } else {
-      router.push("/dashboard");
+      // Use the callbackUrl if available, otherwise default to dashboard
+      router.push(callbackUrl);
     }
   };
 

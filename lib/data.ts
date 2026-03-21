@@ -14,6 +14,7 @@ export async function getDashboardData() {
     const userId = (session.user as any).id;
     const objectIdUser = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : userId;
 
+    console.time("getDashboardDataAggregation");
     const enrichedProjects = await ProjectMember.aggregate([
         { $match: { userId: objectIdUser } },
         {
@@ -51,6 +52,7 @@ export async function getDashboardData() {
             $replaceRoot: { newRoot: "$project" }
         }
     ]);
+    console.timeEnd("getDashboardDataAggregation");
 
     // Convert ObjectIds to strings for React Serializability
     return {

@@ -37,7 +37,7 @@ type SettingsState = {
   calendarStartDay: "sunday" | "monday";
 };
 
-const STORAGE_KEY = "sprintio-settings";
+const STORAGE_KEY = "sprinto-settings";
 
 function Toggle({
   checked,
@@ -444,8 +444,8 @@ export default function SettingsPage() {
                                   setForm((prev) => ({ ...prev, logoStyle: style }))
                                 }
                                 className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${form.logoStyle === style
-                                    ? "border-primary bg-blue-50 text-primary"
-                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                  ? "border-primary bg-blue-50 text-primary"
+                                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
                                   }`}
                               >
                                 {style}
@@ -486,8 +486,8 @@ export default function SettingsPage() {
                                     setForm((prev) => ({ ...prev, themeMode: option.key }))
                                   }
                                   className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-medium transition ${form.themeMode === option.key
-                                      ? "border-primary bg-blue-50 text-primary"
-                                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                    ? "border-primary bg-blue-50 text-primary"
+                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
                                     }`}
                                 >
                                   {option.icon}
@@ -508,8 +508,8 @@ export default function SettingsPage() {
                                     setForm((prev) => ({ ...prev, density }))
                                   }
                                   className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${form.density === density
-                                      ? "border-primary bg-blue-50 text-primary"
-                                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                    ? "border-primary bg-blue-50 text-primary"
+                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
                                     }`}
                                 >
                                   {density}
@@ -582,8 +582,8 @@ export default function SettingsPage() {
                                     setForm((prev) => ({ ...prev, calendarStartDay: day }))
                                   }
                                   className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${form.calendarStartDay === day
-                                      ? "border-primary bg-blue-50 text-primary"
-                                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                    ? "border-primary bg-blue-50 text-primary"
+                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
                                     }`}
                                 >
                                   {day}
