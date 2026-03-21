@@ -83,9 +83,8 @@ export default function MobileSidebar({ user }: { user: any }) {
       )}
 
       <div
-        className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] bg-white shadow-xl transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] bg-white shadow-xl transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5">
           <Logo href="/dashboard" />
@@ -101,10 +100,10 @@ export default function MobileSidebar({ user }: { user: any }) {
         <div className="flex-1 overflow-y-auto px-5 py-6">
           <nav className="space-y-2">
             {navItems.map(({ label, href, icon: Icon }) => {
-            const isActive = href
+              const isActive = href
                 ? pathname === href ||
-                  (href === "/projects" && pathname.startsWith("/project/")) ||
-                  (href === "/settings" && pathname.startsWith("/settings"))
+                (href === "/projects" && pathname.startsWith("/project/")) ||
+                (href === "/settings" && pathname.startsWith("/settings"))
                 : false;
 
               if (!href) {
@@ -123,11 +122,10 @@ export default function MobileSidebar({ user }: { user: any }) {
                 <Link
                   key={label}
                   href={href}
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
-                    isActive
+                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive
                       ? "bg-blue-50 text-primary"
                       : "text-slate-600 hover:bg-slate-50"
-                  }`}
+                    }`}
                 >
                   <Icon
                     size={20}
@@ -147,7 +145,7 @@ export default function MobileSidebar({ user }: { user: any }) {
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-slate-900">
-                {user?.name || "Sprintio User"}
+                {user?.name || "Sprinto User"}
               </p>
               <p className="truncate text-xs text-slate-500">
                 {user?.email || "Admin Account"}

@@ -2,7 +2,7 @@ import { getDashboardData } from "@/lib/data";
 import DashboardClient from "./DashboardClient";
 
 export const metadata = {
-  title: "Dashboard | Sprintio",
+  title: "Dashboard | Sprinto",
   description: "View your active projects and team progress.",
 };
 

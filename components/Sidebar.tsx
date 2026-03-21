@@ -60,8 +60,8 @@ export default function Sidebar({ user }: { user: any }) {
           {navItems.map(({ label, href, icon: Icon }) => {
             const isActive = href
               ? pathname === href ||
-                (href === "/projects" && pathname.startsWith("/project/")) ||
-                (href === "/settings" && pathname.startsWith("/settings"))
+              (href === "/projects" && pathname.startsWith("/project/")) ||
+              (href === "/settings" && pathname.startsWith("/settings"))
               : false;
 
             if (!href) {
@@ -80,11 +80,10 @@ export default function Sidebar({ user }: { user: any }) {
               <Link
                 key={label}
                 href={href}
-                className={`relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
-                  isActive
+                className={`relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive
                     ? "bg-blue-50 text-primary"
                     : "text-slate-600 hover:bg-slate-50"
-                }`}
+                  }`}
               >
                 <Icon
                   size={20}
@@ -107,7 +106,7 @@ export default function Sidebar({ user }: { user: any }) {
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-slate-900">
-              {user?.name || "Sprintio User"}
+              {user?.name || "Sprinto User"}
             </p>
             <p className="truncate text-sm text-slate-500">
               {user?.email || "Admin Account"}

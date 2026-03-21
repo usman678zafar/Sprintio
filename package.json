@@ -1,7 +1,7 @@
 {
-  "name": "sprintio-app",
+  "name": "sprinto-app",
   "version": "1.0.0",
-  "description": "Minimal modern web application called Sprintio",
+  "description": "Minimal modern web application called Sprinto",
   "private": true,
   "scripts": {
     "dev": "next dev",

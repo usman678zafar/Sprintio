@@ -24,18 +24,18 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI || "mongodb://127.0.0.1:27017/sprintio", opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI || "mongodb://127.0.0.1:27017/sprinto", opts).then((mongoose) => {
       return mongoose;
     });
   }
-  
+
   try {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
     throw e;
   }
-  
+
   return cached.conn;
 }
 

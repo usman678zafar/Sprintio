@@ -59,7 +59,7 @@ export default function Logo({
       </div>
       {showText && (
         <span className="text-xl font-semibold tracking-tight text-slate-900">
-          Sprintio
+          Sprinto
         </span>
       )}
     </Link>

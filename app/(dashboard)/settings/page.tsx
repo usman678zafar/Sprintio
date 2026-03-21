@@ -50,14 +50,12 @@ function Toggle({
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`relative h-7 w-12 rounded-full transition ${
-        checked ? "bg-primary" : "bg-slate-200"
-      }`}
+      className={`relative h-7 w-12 rounded-full transition ${checked ? "bg-primary" : "bg-slate-200"
+        }`}
     >
       <span
-        className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${
-          checked ? "left-6" : "left-1"
-        }`}
+        className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${checked ? "left-6" : "left-1"
+          }`}
       />
     </button>
   );
@@ -122,15 +120,15 @@ export default function SettingsPage() {
 
   const initialState = useMemo<SettingsState>(
     () => ({
-      fullName: session?.user?.name || "Sprintio User",
+      fullName: session?.user?.name || "Sprinto User",
       title: "Workspace Owner",
       email: session?.user?.email || "",
       timezone: "Asia/Karachi",
       bio: "Leading product delivery, planning milestones, and keeping the workspace aligned.",
       emailUpdates: true,
       desktopAlerts: true,
-      workspaceName: "Sprintio Workspace",
-      workspaceSlug: "sprintio-workspace",
+      workspaceName: "Sprinto Workspace",
+      workspaceSlug: "sprinto-workspace",
       workspaceDescription: "Project planning, task execution, and team coordination in one place.",
       logoStyle: "rounded",
       density: "comfortable",
@@ -233,7 +231,7 @@ export default function SettingsPage() {
               Workspace Settings
             </h1>
             <p className="mt-2 text-sm leading-6 text-slate-500">
-              Manage your account details, workspace identity, and the way Sprintio
+              Manage your account details, workspace identity, and the way Sprinto
               feels day to day.
             </p>
           </div>
@@ -256,396 +254,392 @@ export default function SettingsPage() {
         </section>
 
         <div className="mx-auto w-full max-w-[920px] space-y-6">
-            {noMatches ? (
-              <div className="rounded-[26px] border border-dashed border-slate-300 bg-white px-6 py-14 text-center text-sm text-slate-500">
-                No settings sections match "{searchQuery}".
-              </div>
-            ) : (
-              <>
-                {filteredSections.has("profile") && (
-                  <div id="profile">
-                    <SectionCard
-                      title="User Profile"
-                      description="Control how your identity appears across workspaces and how updates reach you."
-                      icon={<UserRound size={18} />}
-                    >
-                      <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
-                        <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-xl font-semibold text-primary">
-                            {form.fullName
-                              .split(" ")
-                              .map((part) => part[0])
-                              .join("")
-                              .slice(0, 2)
-                              .toUpperCase()}
-                          </div>
-                          <h3 className="mt-4 text-lg font-semibold text-slate-950">
-                            {form.fullName}
-                          </h3>
-                          <p className="mt-1 text-sm text-slate-500">{form.title}</p>
-                          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-primary">
-                            <BadgeCheck size={14} />
-                            Active Workspace Admin
-                          </div>
+          {noMatches ? (
+            <div className="rounded-[26px] border border-dashed border-slate-300 bg-white px-6 py-14 text-center text-sm text-slate-500">
+              No settings sections match "{searchQuery}".
+            </div>
+          ) : (
+            <>
+              {filteredSections.has("profile") && (
+                <div id="profile">
+                  <SectionCard
+                    title="User Profile"
+                    description="Control how your identity appears across workspaces and how updates reach you."
+                    icon={<UserRound size={18} />}
+                  >
+                    <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
+                      <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-xl font-semibold text-primary">
+                          {form.fullName
+                            .split(" ")
+                            .map((part) => part[0])
+                            .join("")
+                            .slice(0, 2)
+                            .toUpperCase()}
+                        </div>
+                        <h3 className="mt-4 text-lg font-semibold text-slate-950">
+                          {form.fullName}
+                        </h3>
+                        <p className="mt-1 text-sm text-slate-500">{form.title}</p>
+                        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-primary">
+                          <BadgeCheck size={14} />
+                          Active Workspace Admin
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <Input
+                            label="Full Name"
+                            value={form.fullName}
+                            onChange={(value) => setForm((prev) => ({ ...prev, fullName: value }))}
+                          />
+                          <Input
+                            label="Role Title"
+                            value={form.title}
+                            onChange={(value) => setForm((prev) => ({ ...prev, title: value }))}
+                          />
                         </div>
 
-                        <div className="space-y-4">
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <Input
-                              label="Full Name"
-                              value={form.fullName}
-                              onChange={(value) => setForm((prev) => ({ ...prev, fullName: value }))}
-                            />
-                            <Input
-                              label="Role Title"
-                              value={form.title}
-                              onChange={(value) => setForm((prev) => ({ ...prev, title: value }))}
-                            />
-                          </div>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <Input
+                            label="Email Address"
+                            value={form.email}
+                            onChange={(value) => setForm((prev) => ({ ...prev, email: value }))}
+                            disabled
+                          />
+                          <Input
+                            label="Timezone"
+                            value={form.timezone}
+                            onChange={(value) => setForm((prev) => ({ ...prev, timezone: value }))}
+                          />
+                        </div>
 
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <Input
-                              label="Email Address"
-                              value={form.email}
-                              onChange={(value) => setForm((prev) => ({ ...prev, email: value }))}
-                              disabled
-                            />
-                            <Input
-                              label="Timezone"
-                              value={form.timezone}
-                              onChange={(value) => setForm((prev) => ({ ...prev, timezone: value }))}
-                            />
-                          </div>
+                        <div>
+                          <label className="mb-2 block text-sm font-medium text-slate-600">Bio</label>
+                          <textarea
+                            value={form.bio}
+                            onChange={(event) =>
+                              setForm((prev) => ({ ...prev, bio: event.target.value }))
+                            }
+                            rows={4}
+                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
+                          />
+                        </div>
 
-                          <div>
-                            <label className="mb-2 block text-sm font-medium text-slate-600">Bio</label>
-                            <textarea
-                              value={form.bio}
-                              onChange={(event) =>
-                                setForm((prev) => ({ ...prev, bio: event.target.value }))
-                              }
-                              rows={4}
-                              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
-                            />
-                          </div>
-
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="rounded-2xl border border-slate-200 px-4 py-3">
-                              <div className="flex items-center justify-between gap-3">
-                                <div>
-                                  <p className="text-sm font-medium text-slate-900">Email Updates</p>
-                                  <p className="mt-1 text-xs text-slate-500">
-                                    Receive planning summaries and due date alerts.
-                                  </p>
-                                </div>
-                                <Toggle
-                                  checked={form.emailUpdates}
-                                  onChange={(value) =>
-                                    setForm((prev) => ({ ...prev, emailUpdates: value }))
-                                  }
-                                />
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="rounded-2xl border border-slate-200 px-4 py-3">
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm font-medium text-slate-900">Email Updates</p>
+                                <p className="mt-1 text-xs text-slate-500">
+                                  Receive planning summaries and due date alerts.
+                                </p>
                               </div>
+                              <Toggle
+                                checked={form.emailUpdates}
+                                onChange={(value) =>
+                                  setForm((prev) => ({ ...prev, emailUpdates: value }))
+                                }
+                              />
                             </div>
-                            <div className="rounded-2xl border border-slate-200 px-4 py-3">
-                              <div className="flex items-center justify-between gap-3">
-                                <div>
-                                  <p className="text-sm font-medium text-slate-900">Desktop Alerts</p>
-                                  <p className="mt-1 text-xs text-slate-500">
-                                    Show immediate reminders for urgent work.
-                                  </p>
-                                </div>
-                                <Toggle
-                                  checked={form.desktopAlerts}
-                                  onChange={(value) =>
-                                    setForm((prev) => ({ ...prev, desktopAlerts: value }))
-                                  }
-                                />
+                          </div>
+                          <div className="rounded-2xl border border-slate-200 px-4 py-3">
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm font-medium text-slate-900">Desktop Alerts</p>
+                                <p className="mt-1 text-xs text-slate-500">
+                                  Show immediate reminders for urgent work.
+                                </p>
                               </div>
+                              <Toggle
+                                checked={form.desktopAlerts}
+                                onChange={(value) =>
+                                  setForm((prev) => ({ ...prev, desktopAlerts: value }))
+                                }
+                              />
                             </div>
                           </div>
                         </div>
                       </div>
-                    </SectionCard>
-                  </div>
-                )}
+                    </div>
+                  </SectionCard>
+                </div>
+              )}
 
-                {filteredSections.has("branding") && (
-                  <div id="branding">
-                    <SectionCard
-                      title="Workspace Branding"
-                      description="Shape the identity your team sees across calendars, dashboards, and project spaces."
-                      icon={<Building2 size={18} />}
-                    >
-                      <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)]">
-                        <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                            Live Preview
-                          </p>
-                          <div className="mt-4 rounded-[24px] border border-slate-200 bg-white p-5">
-                            <div
-                              className={`flex h-16 w-16 items-center justify-center bg-primary text-lg font-semibold text-white ${
-                                form.logoStyle === "circle" ? "rounded-full" : "rounded-2xl"
+              {filteredSections.has("branding") && (
+                <div id="branding">
+                  <SectionCard
+                    title="Workspace Branding"
+                    description="Shape the identity your team sees across calendars, dashboards, and project spaces."
+                    icon={<Building2 size={18} />}
+                  >
+                    <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)]">
+                      <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                          Live Preview
+                        </p>
+                        <div className="mt-4 rounded-[24px] border border-slate-200 bg-white p-5">
+                          <div
+                            className={`flex h-16 w-16 items-center justify-center bg-primary text-lg font-semibold text-white ${form.logoStyle === "circle" ? "rounded-full" : "rounded-2xl"
                               }`}
-                            >
-                              {initials || "SW"}
-                            </div>
-                            <p className="mt-4 text-lg font-semibold text-slate-950">
-                              {form.workspaceName}
-                            </p>
-                            <p className="mt-1 text-sm text-slate-500">
-                              sprintio.app/{form.workspaceSlug || "workspace"}
-                            </p>
+                          >
+                            {initials || "SW"}
                           </div>
+                          <p className="mt-4 text-lg font-semibold text-slate-950">
+                            {form.workspaceName}
+                          </p>
+                          <p className="mt-1 text-sm text-slate-500">
+                            sprinto.app/{form.workspaceSlug || "workspace"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <Input
+                            label="Workspace Name"
+                            value={form.workspaceName}
+                            onChange={(value) =>
+                              setForm((prev) => ({ ...prev, workspaceName: value }))
+                            }
+                          />
+                          <Input
+                            label="Workspace Slug"
+                            value={form.workspaceSlug}
+                            onChange={(value) =>
+                              setForm((prev) => ({
+                                ...prev,
+                                workspaceSlug: value.toLowerCase().replace(/\s+/g, "-"),
+                              }))
+                            }
+                          />
                         </div>
 
-                        <div className="space-y-4">
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <Input
-                              label="Workspace Name"
-                              value={form.workspaceName}
-                              onChange={(value) =>
-                                setForm((prev) => ({ ...prev, workspaceName: value }))
-                              }
-                            />
-                            <Input
-                              label="Workspace Slug"
-                              value={form.workspaceSlug}
-                              onChange={(value) =>
-                                setForm((prev) => ({
-                                  ...prev,
-                                  workspaceSlug: value.toLowerCase().replace(/\s+/g, "-"),
-                                }))
-                              }
-                            />
-                          </div>
+                        <div>
+                          <label className="mb-2 block text-sm font-medium text-slate-600">
+                            Workspace Description
+                          </label>
+                          <textarea
+                            value={form.workspaceDescription}
+                            onChange={(event) =>
+                              setForm((prev) => ({
+                                ...prev,
+                                workspaceDescription: event.target.value,
+                              }))
+                            }
+                            rows={4}
+                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
+                          />
+                        </div>
 
-                          <div>
-                            <label className="mb-2 block text-sm font-medium text-slate-600">
-                              Workspace Description
-                            </label>
-                            <textarea
-                              value={form.workspaceDescription}
-                              onChange={(event) =>
-                                setForm((prev) => ({
-                                  ...prev,
-                                  workspaceDescription: event.target.value,
-                                }))
-                              }
-                              rows={4}
-                              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:ring-4 focus:ring-blue-100"
-                            />
+                        <div className="rounded-[24px] border border-slate-200 p-4">
+                          <p className="text-sm font-medium text-slate-900">Logo Style</p>
+                          <div className="mt-3 flex gap-3">
+                            {(["rounded", "circle"] as const).map((style) => (
+                              <button
+                                key={style}
+                                type="button"
+                                onClick={() =>
+                                  setForm((prev) => ({ ...prev, logoStyle: style }))
+                                }
+                                className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${form.logoStyle === style
+                                    ? "border-primary bg-blue-50 text-primary"
+                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                  }`}
+                              >
+                                {style}
+                              </button>
+                            ))}
                           </div>
+                          <p className="mt-3 text-xs text-slate-500">
+                            Accent color stays on the Sprinto blue system already used across the app.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </SectionCard>
+                </div>
+              )}
 
+              {filteredSections.has("appearance") && (
+                <div id="appearance">
+                  <SectionCard
+                    title="Appearance"
+                    description="Tune the visual density and interaction feel while keeping the product color system consistent."
+                    icon={<Paintbrush size={18} />}
+                  >
+                    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+                      <div className="space-y-4">
+                        <div className="grid gap-4 sm:grid-cols-2">
                           <div className="rounded-[24px] border border-slate-200 p-4">
-                            <p className="text-sm font-medium text-slate-900">Logo Style</p>
+                            <p className="text-sm font-medium text-slate-900">Theme Preference</p>
                             <div className="mt-3 flex gap-3">
-                              {(["rounded", "circle"] as const).map((style) => (
+                              {[
+                                { key: "system" as ThemeMode, label: "System", icon: <MonitorCog size={16} /> },
+                                { key: "light" as ThemeMode, label: "Light", icon: <SunMedium size={16} /> },
+                              ].map((option) => (
                                 <button
-                                  key={style}
+                                  key={option.key}
                                   type="button"
                                   onClick={() =>
-                                    setForm((prev) => ({ ...prev, logoStyle: style }))
+                                    setForm((prev) => ({ ...prev, themeMode: option.key }))
                                   }
-                                  className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${
-                                    form.logoStyle === style
+                                  className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-medium transition ${form.themeMode === option.key
                                       ? "border-primary bg-blue-50 text-primary"
                                       : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                                  }`}
+                                    }`}
                                 >
-                                  {style}
+                                  {option.icon}
+                                  {option.label}
                                 </button>
                               ))}
                             </div>
-                            <p className="mt-3 text-xs text-slate-500">
-                              Accent color stays on the Sprintio blue system already used across the app.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </SectionCard>
-                  </div>
-                )}
-
-                {filteredSections.has("appearance") && (
-                  <div id="appearance">
-                    <SectionCard
-                      title="Appearance"
-                      description="Tune the visual density and interaction feel while keeping the product color system consistent."
-                      icon={<Paintbrush size={18} />}
-                    >
-                      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-                        <div className="space-y-4">
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="rounded-[24px] border border-slate-200 p-4">
-                              <p className="text-sm font-medium text-slate-900">Theme Preference</p>
-                              <div className="mt-3 flex gap-3">
-                                {[
-                                  { key: "system" as ThemeMode, label: "System", icon: <MonitorCog size={16} /> },
-                                  { key: "light" as ThemeMode, label: "Light", icon: <SunMedium size={16} /> },
-                                ].map((option) => (
-                                  <button
-                                    key={option.key}
-                                    type="button"
-                                    onClick={() =>
-                                      setForm((prev) => ({ ...prev, themeMode: option.key }))
-                                    }
-                                    className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-medium transition ${
-                                      form.themeMode === option.key
-                                        ? "border-primary bg-blue-50 text-primary"
-                                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                                    }`}
-                                  >
-                                    {option.icon}
-                                    {option.label}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div className="rounded-[24px] border border-slate-200 p-4">
-                              <p className="text-sm font-medium text-slate-900">Density</p>
-                              <div className="mt-3 flex gap-3">
-                                {(["comfortable", "compact"] as Density[]).map((density) => (
-                                  <button
-                                    key={density}
-                                    type="button"
-                                    onClick={() =>
-                                      setForm((prev) => ({ ...prev, density }))
-                                    }
-                                    className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${
-                                      form.density === density
-                                        ? "border-primary bg-blue-50 text-primary"
-                                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                                    }`}
-                                  >
-                                    {density}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
                           </div>
 
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="rounded-2xl border border-slate-200 px-4 py-3">
-                              <div className="flex items-center justify-between gap-3">
-                                <div>
-                                  <p className="text-sm font-medium text-slate-900">Reduced Motion</p>
-                                  <p className="mt-1 text-xs text-slate-500">
-                                    Minimize animated transitions across the UI.
-                                  </p>
-                                </div>
-                                <Toggle
-                                  checked={form.reducedMotion}
-                                  onChange={(value) =>
-                                    setForm((prev) => ({ ...prev, reducedMotion: value }))
+                          <div className="rounded-[24px] border border-slate-200 p-4">
+                            <p className="text-sm font-medium text-slate-900">Density</p>
+                            <div className="mt-3 flex gap-3">
+                              {(["comfortable", "compact"] as Density[]).map((density) => (
+                                <button
+                                  key={density}
+                                  type="button"
+                                  onClick={() =>
+                                    setForm((prev) => ({ ...prev, density }))
                                   }
-                                />
-                              </div>
-                            </div>
-
-                            <div className="rounded-2xl border border-slate-200 px-4 py-3">
-                              <div className="flex items-center justify-between gap-3">
-                                <div>
-                                  <p className="text-sm font-medium text-slate-900">Show Weekends</p>
-                                  <p className="mt-1 text-xs text-slate-500">
-                                    Display weekends by default in the calendar workspace.
-                                  </p>
-                                </div>
-                                <Toggle
-                                  checked={form.calendarWeekends}
-                                  onChange={(value) =>
-                                    setForm((prev) => ({ ...prev, calendarWeekends: value }))
-                                  }
-                                />
-                              </div>
-                            </div>
-
-                            <div className="rounded-2xl border border-slate-200 px-4 py-3">
-                              <div className="flex items-center justify-between gap-3">
-                                <div>
-                                  <p className="text-sm font-medium text-slate-900">Compact Sidebar</p>
-                                  <p className="mt-1 text-xs text-slate-500">
-                                    Prefer denser navigation spacing for more room.
-                                  </p>
-                                </div>
-                                <Toggle
-                                  checked={form.compactSidebar}
-                                  onChange={(value) =>
-                                    setForm((prev) => ({ ...prev, compactSidebar: value }))
-                                  }
-                                />
-                              </div>
-                            </div>
-
-                            <div className="rounded-[24px] border border-slate-200 p-4">
-                              <p className="text-sm font-medium text-slate-900">Calendar Start Day</p>
-                              <div className="mt-3 flex gap-3">
-                                {(["sunday", "monday"] as const).map((day) => (
-                                  <button
-                                    key={day}
-                                    type="button"
-                                    onClick={() =>
-                                      setForm((prev) => ({ ...prev, calendarStartDay: day }))
-                                    }
-                                    className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${
-                                      form.calendarStartDay === day
-                                        ? "border-primary bg-blue-50 text-primary"
-                                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                  className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${form.density === density
+                                      ? "border-primary bg-blue-50 text-primary"
+                                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
                                     }`}
-                                  >
-                                    {day}
-                                  </button>
-                                ))}
-                              </div>
+                                >
+                                  {density}
+                                </button>
+                              ))}
                             </div>
                           </div>
                         </div>
 
-                        <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                          <div className="flex items-center gap-2 text-primary">
-                            <Sparkles size={16} />
-                            <p className="text-sm font-semibold">Preview</p>
-                          </div>
-                          <div className="mt-4 rounded-[22px] border border-slate-200 bg-white p-4">
-                            <div className="flex items-center justify-between">
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="rounded-2xl border border-slate-200 px-4 py-3">
+                            <div className="flex items-center justify-between gap-3">
                               <div>
-                                <p className="text-sm font-medium text-slate-900">Interface Mood</p>
+                                <p className="text-sm font-medium text-slate-900">Reduced Motion</p>
                                 <p className="mt-1 text-xs text-slate-500">
-                                  {form.density === "compact"
-                                    ? "Denser spacing for more content on screen."
-                                    : "Comfortable spacing for calmer scanning."}
+                                  Minimize animated transitions across the UI.
                                 </p>
                               </div>
-                              <div className="rounded-2xl bg-blue-50 p-3 text-primary">
-                                {form.themeMode === "light" ? <SunMedium size={18} /> : <MoonStar size={18} />}
+                              <Toggle
+                                checked={form.reducedMotion}
+                                onChange={(value) =>
+                                  setForm((prev) => ({ ...prev, reducedMotion: value }))
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          <div className="rounded-2xl border border-slate-200 px-4 py-3">
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm font-medium text-slate-900">Show Weekends</p>
+                                <p className="mt-1 text-xs text-slate-500">
+                                  Display weekends by default in the calendar workspace.
+                                </p>
+                              </div>
+                              <Toggle
+                                checked={form.calendarWeekends}
+                                onChange={(value) =>
+                                  setForm((prev) => ({ ...prev, calendarWeekends: value }))
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          <div className="rounded-2xl border border-slate-200 px-4 py-3">
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm font-medium text-slate-900">Compact Sidebar</p>
+                                <p className="mt-1 text-xs text-slate-500">
+                                  Prefer denser navigation spacing for more room.
+                                </p>
+                              </div>
+                              <Toggle
+                                checked={form.compactSidebar}
+                                onChange={(value) =>
+                                  setForm((prev) => ({ ...prev, compactSidebar: value }))
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          <div className="rounded-[24px] border border-slate-200 p-4">
+                            <p className="text-sm font-medium text-slate-900">Calendar Start Day</p>
+                            <div className="mt-3 flex gap-3">
+                              {(["sunday", "monday"] as const).map((day) => (
+                                <button
+                                  key={day}
+                                  type="button"
+                                  onClick={() =>
+                                    setForm((prev) => ({ ...prev, calendarStartDay: day }))
+                                  }
+                                  className={`rounded-2xl border px-4 py-2.5 text-sm font-medium capitalize transition ${form.calendarStartDay === day
+                                      ? "border-primary bg-blue-50 text-primary"
+                                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                    }`}
+                                >
+                                  {day}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                        <div className="flex items-center gap-2 text-primary">
+                          <Sparkles size={16} />
+                          <p className="text-sm font-semibold">Preview</p>
+                        </div>
+                        <div className="mt-4 rounded-[22px] border border-slate-200 bg-white p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-slate-900">Interface Mood</p>
+                              <p className="mt-1 text-xs text-slate-500">
+                                {form.density === "compact"
+                                  ? "Denser spacing for more content on screen."
+                                  : "Comfortable spacing for calmer scanning."}
+                              </p>
+                            </div>
+                            <div className="rounded-2xl bg-blue-50 p-3 text-primary">
+                              {form.themeMode === "light" ? <SunMedium size={18} /> : <MoonStar size={18} />}
+                            </div>
+                          </div>
+                          <div className="mt-4 space-y-3">
+                            <div className="rounded-2xl border border-slate-200 px-3 py-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-slate-900">Sidebar spacing</span>
+                                <span className="text-xs text-slate-500">
+                                  {form.compactSidebar ? "Compact" : "Standard"}
+                                </span>
                               </div>
                             </div>
-                            <div className="mt-4 space-y-3">
-                              <div className="rounded-2xl border border-slate-200 px-3 py-3">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-sm font-medium text-slate-900">Sidebar spacing</span>
-                                  <span className="text-xs text-slate-500">
-                                    {form.compactSidebar ? "Compact" : "Standard"}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="rounded-2xl border border-slate-200 px-3 py-3">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-sm font-medium text-slate-900">Calendar weekends</span>
-                                  <span className="text-xs text-slate-500">
-                                    {form.calendarWeekends ? "Visible" : "Hidden"}
-                                  </span>
-                                </div>
+                            <div className="rounded-2xl border border-slate-200 px-3 py-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-slate-900">Calendar weekends</span>
+                                <span className="text-xs text-slate-500">
+                                  {form.calendarWeekends ? "Visible" : "Hidden"}
+                                </span>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </SectionCard>
-                  </div>
-                )}
-              </>
-            )}
+                    </div>
+                  </SectionCard>
+                </div>
+              )}
+            </>
+          )
+          }
         </div>
       </div>
     </div>

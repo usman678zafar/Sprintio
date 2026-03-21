@@ -9,7 +9,7 @@ export default function Home() {
         Manage Projects with <span className="text-primary italic">Speed.</span>
       </h1>
       <p className="mb-8 max-w-2xl text-center text-base leading-relaxed text-gray-500 text-balance sm:mb-10 sm:text-xl">
-        Sprintio is the modern task management platform designed for high-performance teams. 
+        Sprinto is the modern task management platform designed for high-performance teams.
         Clean, fast, and remarkably intuitive.
       </p>
       <div className="flex w-full max-w-sm flex-col gap-4 sm:max-w-none sm:flex-row sm:justify-center">

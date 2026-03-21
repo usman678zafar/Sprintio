@@ -4,10 +4,10 @@ import ProjectClient from "./ProjectClient";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const data = await getProjectData(params.id);
-  if (!data) return { title: "Project Not Found | Sprintio" };
+  if (!data) return { title: "Project Not Found | Sprinto" };
 
   return {
-    title: `${data.project.name} | Sprintio`,
+    title: `${data.project.name} | Sprinto`,
     description: data.project.description || "Project management tasks and team progress.",
   };
 }
