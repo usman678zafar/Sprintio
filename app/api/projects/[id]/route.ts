@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Project from "@/models/Project";
@@ -102,6 +103,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ message: "Project not found" }, { status: 404 });
     }
 
+    revalidateTag("dashboard-projects");
+
     return NextResponse.json({ project }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: "Internal server error", error: error.message }, { status: 500 });
@@ -129,6 +132,8 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       Project.findByIdAndDelete(projectId),
       ProjectMember.deleteMany({ projectId })
     ]);
+
+    revalidateTag("dashboard-projects");
 
     return NextResponse.json({ message: "Project deleted successfully" }, { status: 200 });
   } catch (error: any) {

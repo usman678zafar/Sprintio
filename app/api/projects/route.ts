@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Project from "@/models/Project";
@@ -33,27 +34,42 @@ export async function GET(req: Request) {
       {
         $lookup: {
           from: "tasks",
-          localField: "projectId",
-          foreignField: "projectId",
-          as: "tasks"
+          let: { pid: "$projectId" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$projectId", "$$pid"] } } },
+            { $count: "count" }
+          ],
+          as: "taskCountInfo"
         }
       },
       {
         $lookup: {
           from: "projectmembers",
-          localField: "projectId",
-          foreignField: "projectId",
-          as: "members"
+          let: { pid: "$projectId" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$projectId", "$$pid"] } } },
+            { $count: "count" }
+          ],
+          as: "memberCountInfo"
         }
       },
       {
         $addFields: {
-          "project.taskCount": { $size: "$tasks" },
-          "project.memberCount": { $size: "$members" }
+          "project.taskCount": { $ifNull: [{ $arrayElemAt: ["$taskCountInfo.count", 0] }, 0] },
+          "project.memberCount": { $ifNull: [{ $arrayElemAt: ["$memberCountInfo.count", 0] }, 0] }
         }
       },
       {
         $replaceRoot: { newRoot: "$project" }
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          createdAt: 1,
+          taskCount: 1,
+          memberCount: 1,
+        }
       }
     ]);
 
@@ -84,6 +100,8 @@ export async function POST(req: Request) {
       userId,
       role: "MASTER",
     });
+
+    revalidateTag("dashboard-projects");
 
     return NextResponse.json({ project }, { status: 201 });
   } catch (error: any) {

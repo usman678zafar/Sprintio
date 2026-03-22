@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
+const isProduction = process.env.NODE_ENV === "production";
 
 if (!MONGODB_URI) {
-  // Rather than throwing immediately, provide a dummy string locally if not set for dev ease,
-  // but generally it's better to log a warning if we require it for builds
-  console.warn("Please define the MONGODB_URI environment variable inside .env.local");
+  const message = "Please define the MONGODB_URI environment variable.";
+  if (!isProduction) {
+    console.warn(`${message} Falling back to local MongoDB in development.`);
+  }
 }
 
 let cached = (global as any).mongoose;
@@ -24,7 +26,13 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI || "mongodb://127.0.0.1:27017/sprinto", opts).then((mongoose) => {
+    if (!MONGODB_URI && isProduction) {
+      throw new Error("Missing MONGODB_URI in production environment.");
+    }
+
+    const uri = MONGODB_URI || "mongodb://127.0.0.1:27017/sprinto";
+
+    cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
       return mongoose;
     });
   }

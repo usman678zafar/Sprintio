@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import ProjectMember from "@/models/ProjectMember";
@@ -36,6 +37,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     const updatedMember = await ProjectMember.findByIdAndUpdate(memberId, { role }, { new: true });
+    revalidateTag("dashboard-projects");
     return NextResponse.json({ member: updatedMember }, { status: 200 });
 
   } catch (error: any) {
@@ -73,6 +75,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     }
 
     await ProjectMember.findByIdAndDelete(memberId);
+    revalidateTag("dashboard-projects");
     return NextResponse.json({ message: "Member removed" }, { status: 200 });
 
   } catch (error: any) {

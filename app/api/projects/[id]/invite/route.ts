@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import ProjectMember from "@/models/ProjectMember";
@@ -40,6 +41,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       userId: userToInvite._id,
       role: role || "MEMBER",
     });
+
+    revalidateTag("dashboard-projects");
 
     return NextResponse.json({ message: "Member invited", member: newMember }, { status: 201 });
 

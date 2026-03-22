@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Task from "@/models/Task";
@@ -78,6 +79,8 @@ export async function POST(req: Request) {
       parentTaskId: parentTaskId || null,
       status: nextStatus,
     });
+
+    revalidateTag("dashboard-projects");
 
     return NextResponse.json({ task: newTask }, { status: 201 });
   } catch (error: any) {

@@ -17,13 +17,9 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing email or password");
         }
 
-        console.time("connectDB");
         await connectDB();
-        console.timeEnd("connectDB");
 
-        console.time("mongoQuery");
         const user = await User.findOne({ email: credentials.email }).select("+password");
-        console.timeEnd("mongoQuery");
 
         if (!user || !user.password) {
           throw new Error("Invalid email or password");

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Task from "@/models/Task";
@@ -64,6 +65,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     await task.save();
+    revalidateTag("dashboard-projects");
     return NextResponse.json({ task }, { status: 200 });
 
   } catch (error: any) {
@@ -101,6 +103,8 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     }
 
     await Task.deleteMany({ _id: { $in: idsToDelete } });
+
+    revalidateTag("dashboard-projects");
 
     return NextResponse.json({ message: "Task deleted" }, { status: 200 });
 
