@@ -72,7 +72,7 @@ export default function MobileSidebar({ user }: { user: any }) {
     <div className="md:hidden">
       <button
         onClick={() => setIsOpen(true)}
-        className="rounded-xl border border-border-subtle p-2 text-muted transition hover:bg-[var(--color-light-bg)] )]"
+        className="rounded-xl border border-border-subtle bg-surface/80 p-2 text-muted transition hover:bg-base hover:text-text-base"
         aria-label="Open Menu"
       >
         <Menu size={20} />
@@ -80,20 +80,20 @@ export default function MobileSidebar({ user }: { user: any }) {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-surface/30 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 z-40 bg-black/18 backdrop-blur-sm transition-opacity dark:bg-black/45"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <div
-        className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-xl transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] border border-border-subtle bg-surface/94 shadow-[0_24px_72px_rgba(35,31,26,0.18)] backdrop-blur-2xl transition-transform duration-300 ease-in-out dark:shadow-[0_24px_72px_rgba(0,0,0,0.45)] ${isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
         <div className="flex h-16 items-center justify-between border-b border-border-subtle px-5">
           <Logo href="/dashboard" />
           <button
             onClick={() => setIsOpen(false)}
-            className="rounded-xl border border-border-subtle p-2 text-muted transition hover:bg-[var(--color-light-bg)] )]"
+            className="rounded-xl border border-border-subtle p-2 text-muted transition hover:bg-base hover:text-text-base"
             aria-label="Close Menu"
           >
             <X size={20} />
@@ -126,13 +126,13 @@ export default function MobileSidebar({ user }: { user: any }) {
                   key={label}
                   href={href}
                   className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive
-                    ? "bg-brand/10 dark:bg-brand/5 text-primary"
-                    : "text-neutral-600 dark:text-neutral-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                    ? "bg-primary/12 text-primary"
+                    : "text-muted hover:bg-base hover:text-text-base"
                     }`}
                 >
                   <Icon
                     size={20}
-                    className={isActive ? "text-primary" : "text-neutral-500 dark:text-neutral-400"}
+                    className={isActive ? "text-primary" : "text-muted"}
                   />
                   <span>{label}</span>
                 </Link>
@@ -144,16 +144,16 @@ export default function MobileSidebar({ user }: { user: any }) {
         <div className="border-t border-border-subtle px-5 py-4">
           <div className="mb-4 flex items-center gap-3">
             {user?.image ? (
-              <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-[var(--color-light-surface)] )]">
+              <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-surface">
                 <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
               </div>
             ) : (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-sm font-semibold text-muted">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold text-primary">
                 {user?.name?.[0]?.toUpperCase() || "U"}
               </div>
             )}
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-muted">
+              <p className="truncate text-sm font-semibold text-text-base">
                 {user?.name || "Sprinto User"}
               </p>
               <p className="truncate text-xs text-muted">
@@ -165,7 +165,7 @@ export default function MobileSidebar({ user }: { user: any }) {
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border-subtle px-4 py-3 text-sm font-medium text-muted transition hover:border-border-subtle hover:bg-[var(--color-light-bg)] )] disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border-subtle px-4 py-3 text-sm font-medium text-muted transition hover:bg-base hover:text-text-base disabled:opacity-50"
           >
             <LogOut size={18} />
             {isLoggingOut ? "Leaving..." : "Logout"}

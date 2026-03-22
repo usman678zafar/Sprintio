@@ -65,7 +65,7 @@ export default function ProjectSettingsPage() {
   };
 
   return (
-    <div className="min-h-full bg-[#f6f8fc] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div className="min-h-full bg-base px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <div className="mx-auto w-full max-w-4xl">
       <div className="mb-6">
         <Link href={`/project/${projectId}`} className="mb-4 inline-flex items-center gap-2 font-medium text-primary hover:underline">
@@ -75,7 +75,7 @@ export default function ProjectSettingsPage() {
         <h2 className="text-2xl font-semibold text-text-base sm:text-3xl">Project Settings</h2>
       </div>
 
-      <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-sm sm:p-6">
+      <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-5 shadow-sm sm:p-6">
         <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
           <UserPlus size={20} className="text-primary" />
           Invite Team Member
@@ -103,7 +103,7 @@ export default function ProjectSettingsPage() {
             <div>
               <label className="block text-sm font-medium text-muted mb-1">Role</label>
               <select
-                className="w-full px-4 py-2 border border-border-subtle rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-[var(--color-light-surface)] )]"
+                className="w-full px-4 py-2 border border-border-subtle rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-[var(--color-light-surface)]"
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value)}
                 disabled={inviting}
@@ -115,7 +115,7 @@ export default function ProjectSettingsPage() {
             <button
               type="submit"
               disabled={inviting}
-              className="h-[42px] rounded bg-primary px-6 py-2 font-medium text-white transition hover:bg-purple-700 disabled:opacity-70"
+              className="h-[42px] rounded bg-primary px-6 py-2 font-medium text-white transition hover:bg-primary/90 disabled:opacity-70"
             >
               {inviting ? "Inviting..." : "Invite"}
             </button>

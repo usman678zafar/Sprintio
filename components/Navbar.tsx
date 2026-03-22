@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import Logo from "./Logo";
+import MobileSidebar from "./MobileSidebar";
 
 export default function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
@@ -56,9 +57,10 @@ export default function Navbar({ user }: { user: any }) {
   };
 
   return (
-    <header className="border-b border-border-subtle bg-[var(--color-light-surface)] )]">
+    <header className="border-b border-border-subtle bg-surface/78 backdrop-blur-xl">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-5">
-        <div className="shrink-0 md:hidden">
+        <div className="flex items-center gap-3 md:hidden">
+          <MobileSidebar user={user} />
           <Logo href="/dashboard" />
         </div>
 
@@ -73,19 +75,17 @@ export default function Navbar({ user }: { user: any }) {
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder={searchPlaceholder}
-              className="h-11 w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] pl-11 pr-4 text-sm text-muted transition placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+              className="field-surface h-11 pl-11 pr-4"
             />
           </div>
         )}
 
         <div className="ml-auto flex items-center gap-3 sm:gap-4">
-
-
           {(pathname === "/dashboard" || pathname === "/projects" || pathname === "/calendar") && (
             <button
               type="button"
               onClick={handlePrimaryAction}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-3 py-2.5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(37,99,235,0.22)] transition hover:bg-blue-700 sm:px-5"
+              className="btn-primary px-3 sm:px-5"
             >
               <Plus size={18} />
               <span className="hidden sm:inline">
@@ -108,7 +108,7 @@ export default function Navbar({ user }: { user: any }) {
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder={searchPlaceholder}
-              className="h-11 w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] pl-11 pr-4 text-sm text-muted transition placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+              className="field-surface h-11 pl-11 pr-4"
             />
           </div>
         </div>

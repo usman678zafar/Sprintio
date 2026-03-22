@@ -98,10 +98,10 @@ function getToneClasses(tone: StatusTone) {
     }
 
     return {
-        badge: "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/60 backdrop-blur-md border border-primary/20 shadow-[0_2px_10px_rgba(37,99,235,0.04)]",
+        badge: "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/60 backdrop-blur-md border border-primary/20 shadow-[0_2px_10px_rgba(217,119,87,0.04)]",
         text: "bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent",
         icon: "text-primary",
-        bar: "bg-gradient-to-r from-primary to-purple-600 shadow-[0_4px_12px_rgba(37,99,235,0.2)]",
+        bar: "bg-gradient-to-r from-primary to-purple-600 shadow-[0_4px_12px_rgba(217,119,87,0.2)]",
         accent: "text-primary font-semibold",
     };
 }
@@ -328,7 +328,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
         !loading && filteredProjects.length === 0 && projects.length > 0;
 
     return (
-        <div className="min-h-full bg-[#f6f8fc] px-4 py-5 sm:px-5 lg:px-6 lg:py-6">
+        <div className="min-h-full bg-base px-4 py-5 sm:px-5 lg:px-6 lg:py-6">
             <div className="mx-auto w-full max-w-[1040px]">
                 <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                     {[
@@ -342,7 +342,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                             label: "Active Projects",
                             value: metrics.activeProjects,
                             chip: "Steady",
-                            chipClass: "bg-brand/10 text-primary border-blue-500/20 shadow-[0_1px_4px_rgba(37,99,235,0.05)]",
+                            chipClass: "bg-brand/10 text-primary border-primary/20 shadow-[0_1px_4px_rgba(217,119,87,0.05)]",
                         },
                         {
                             label: "Upcoming Deadlines",
@@ -359,7 +359,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                     ].map((card) => (
                         <div
                             key={card.label}
-                            className="flex flex-col justify-between rounded-[20px] border border-border-subtle bg-[var(--color-light-surface)] )] p-4 sm:rounded-[24px] sm:px-5 sm:py-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-transform hover:scale-[1.02]"
+                            className="flex flex-col justify-between rounded-[20px] border border-border-subtle bg-[var(--color-light-surface)] p-4 sm:rounded-[24px] sm:px-5 sm:py-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-transform hover:scale-[1.02]"
                         >
                             <p className="text-[13px] font-medium leading-tight text-muted sm:text-sm">
                                 {card.label}
@@ -402,11 +402,11 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                     </div>
 
                     {loading ? (
-                        <div className="rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-16 text-center text-muted shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                        <div className="rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] px-6 py-16 text-center text-muted shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                             Loading dashboard...
                         </div>
                     ) : noResults ? (
-                        <div className="rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-16 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                        <div className="rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] px-6 py-16 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                             <p className="text-xl font-semibold text-muted">
                                 No projects match "{searchQuery}"
                             </p>
@@ -415,7 +415,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                             </p>
                         </div>
                     ) : projects.length === 0 ? (
-                        <div className="rounded-3xl border border-dashed border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-20 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                        <div className="rounded-3xl border border-dashed border-border-subtle bg-[var(--color-light-surface)] px-6 py-20 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                             <p className="text-xl font-semibold text-muted">
                                 No projects yet
                             </p>
@@ -443,7 +443,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                 router.push(`/project/${project._id}`);
                                             }
                                         }}
-                                        className="cursor-pointer rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] focus:outline-none focus:ring-4 focus:ring-brand/20 transition-transform hover:-translate-y-1"
+                                        className="cursor-pointer rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] focus:outline-none focus:ring-4 focus:ring-brand/20 transition-transform hover:-translate-y-1"
                                     >
                                         <div className="flex items-start justify-between gap-4">
                                             {(() => {
@@ -467,7 +467,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                             openMenuId === project._id ? null : project._id
                                                         );
                                                     }}
-                                                    className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
+                                                    className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] hover:text-muted"
                                                     aria-label={`Open actions for ${project.name}`}
                                                 >
                                                     <MoreHorizontal size={20} />
@@ -475,7 +475,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
 
                                                 {openMenuId === project._id && (
                                                     <div
-                                                        className="absolute right-0 top-12 z-20 w-44 rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] p-2 shadow-xl"
+                                                        className="absolute right-0 top-12 z-20 w-44 rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] p-2 shadow-xl"
                                                         onClick={(event) => event.stopPropagation()}
                                                     >
                                                         <button
@@ -485,7 +485,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                                 setUpdatedName(project.name);
                                                                 setOpenMenuId(null);
                                                             }}
-                                                            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
+                                                            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
                                                         >
                                                             <Pencil size={16} />
                                                             Edit Name
@@ -558,7 +558,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                 </section>
 
                 <section className="mt-6 sm:mt-8 grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
-                    <div className="rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+                    <div className="rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
                         <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
                             Recent Activity
                         </h2>
@@ -577,7 +577,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                         </div>
                     </div>
 
-                    <div className="rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+                    <div className="rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
                         <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
                             Team Status
                         </h2>
@@ -610,7 +610,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
 
                         <button
                             type="button"
-                            className="mt-6 flex w-full items-center justify-center rounded-2xl border border-border-subtle px-4 py-2.5 text-sm font-medium text-muted transition hover:border-border-subtle hover:bg-[var(--color-light-bg)] )]"
+                            className="mt-6 flex w-full items-center justify-center rounded-2xl border border-border-subtle px-4 py-2.5 text-sm font-medium text-muted transition hover:border-border-subtle hover:bg-[var(--color-light-bg)]"
                         >
                             Manage Team
                         </button>
@@ -618,7 +618,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                 </section>
 
                 <section className="mt-8 grid gap-5 lg:grid-cols-3">
-                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                         <div className="flex items-center gap-3">
                             <div className="rounded-2xl bg-brand/10 p-3 text-primary">
                                 <TrendingUp size={22} />
@@ -640,7 +640,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                         </p>
                     </div>
 
-                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                         <div className="flex items-center gap-3">
                             <div className="rounded-2xl bg-amber-50 p-3 text-amber-600">
                                 <CalendarDays size={22} />
@@ -660,7 +660,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                         </p>
                     </div>
 
-                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                         <div className="flex items-center gap-3">
                             <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-600">
                                 <Users size={22} />
@@ -685,7 +685,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
 
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
+                    <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
                         <h3 className="text-2xl font-semibold text-muted">
                             Create New Project
                         </h3>
@@ -709,7 +709,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
+                                    className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
                                     disabled={creating}
                                 >
                                     Cancel
@@ -717,7 +717,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="submit"
                                     disabled={creating}
-                                    className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-70"
+                                    className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-70"
                                 >
                                     {creating ? "Creating..." : "Create"}
                                 </button>
@@ -729,7 +729,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
 
             {editingProject && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
+                    <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
                         <h3 className="text-2xl font-semibold text-muted">
                             Edit Project
                         </h3>
@@ -752,7 +752,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="button"
                                     onClick={() => setEditingProject(null)}
-                                    className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
+                                    className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
                                     disabled={updating}
                                 >
                                     Cancel
@@ -760,7 +760,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="submit"
                                     disabled={updating}
-                                    className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-70"
+                                    className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-70"
                                 >
                                     {updating ? "Saving..." : "Save Changes"}
                                 </button>
@@ -772,3 +772,4 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
         </div>
     );
 }
+

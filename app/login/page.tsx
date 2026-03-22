@@ -47,45 +47,46 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-surface p-4 sm:p-6">
-      <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-6 shadow-sm sm:p-8">
-        <div className="flex flex-col items-center mb-8 text-center">
+    <div className="flex min-h-svh items-center justify-center p-4 sm:p-6">
+      <div className="panel-surface w-full max-w-md p-6 sm:p-8">
+        <div className="mb-8 flex flex-col items-center text-center">
           <Logo className="mb-4" iconSize={28} />
-          <p className="text-muted font-medium">Log in to manage your projects.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-text-base">Welcome back</h1>
+          <p className="mt-2 font-medium text-muted">Log in to manage your projects.</p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 border border-red-200 rounded text-sm">
+          <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">
             {error}
           </div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-muted mb-1">Email</label>
+            <label className="mb-1 block text-sm font-medium text-muted">Email</label>
             <input
               type="email"
               required
-              className="w-full px-4 py-2 border border-border-subtle rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+              className="field-surface px-4 py-3"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-muted mb-1">Password</label>
+            <label className="mb-1 block text-sm font-medium text-muted">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                className="w-full px-4 py-2 border border-border-subtle rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition pr-10"
+                className="field-surface px-4 py-3 pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text-base"
                 onClick={() => setShowPassword(!showPassword)}
                 tabIndex={-1}
               >
@@ -98,18 +99,18 @@ export default function LoginPage() {
             <label className="flex items-center gap-2 cursor-pointer group">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary cursor-pointer"
+                className="h-4 w-4 cursor-pointer rounded border-border-subtle text-primary focus:ring-primary"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
-              <span className="text-sm text-muted group-hover:text-muted transition">Remember me for 30 days</span>
+              <span className="text-sm text-muted transition group-hover:text-text-base">Remember me for 30 days</span>
             </label>
-            <a href="#" className="text-sm text-primary hover:underline font-medium">Forgot?</a>
+            <a href="#" className="text-sm font-medium text-primary hover:underline">Forgot?</a>
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-white py-2 rounded font-medium hover:bg-purple-700 transition disabled:opacity-70"
+            className="btn-primary w-full py-3 text-base"
           >
             {loading ? "Logging in..." : "Log In"}
           </button>

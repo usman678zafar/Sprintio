@@ -52,13 +52,13 @@ export default function Logo({
   return (
     <Link href={href} className={`flex items-center gap-2.5 ${className}`}>
       <div
-        className="flex items-center justify-center rounded-xl bg-primary text-white shadow-[0_10px_20px_rgba(37,99,235,0.2)]"
+        className="flex items-center justify-center rounded-2xl border border-primary/15 bg-primary text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)]"
         style={{ width: iconSize + 14, height: iconSize + 14 }}
       >
         <LogoMark iconSize={iconSize} />
       </div>
       {showText && (
-        <span className="text-xl font-semibold tracking-tight text-muted">
+        <span className="text-xl font-semibold tracking-tight text-text-base">
           Sprinto
         </span>
       )}

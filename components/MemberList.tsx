@@ -69,7 +69,7 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
   if (loading) return <div className="text-muted">Loading members...</div>;
 
   return (
-    <div className="bg-[var(--color-light-surface)] )] )] rounded-xl shadow-sm border border-border-subtle overflow-hidden mt-6 transition-all duration-300">
+    <div className="bg-[var(--color-light-surface)] rounded-xl shadow-sm border border-border-subtle overflow-hidden mt-6 transition-all duration-300">
       <div className="px-6 py-4 border-b border-border-subtle bg-surface">
         <h3 className="font-semibold text-text-base">Project Members</h3>
       </div>
@@ -116,3 +116,4 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
     </div>
   );
 }
+

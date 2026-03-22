@@ -28,7 +28,7 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
   return (
     <div className="relative group">
       <Link href={`/project/${id}`} className="block">
-        <div className="bg-[var(--color-light-surface)] )] )] rounded-xl shadow-sm border border-border-subtle p-6 hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition cursor-pointer h-full">
+        <div className="bg-[var(--color-light-surface)] rounded-xl shadow-sm border border-border-subtle p-6 hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition cursor-pointer h-full">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xl font-semibold text-text-base transition group-hover:text-primary dark:group-hover:text-primary pr-8 truncate">
               {name}
@@ -61,7 +61,7 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
         </button>
 
         {showMenu && (
-          <div className="absolute right-0 mt-1 w-48 bg-[var(--color-light-surface)] )] )] rounded-lg shadow-lg border border-border-subtle py-1 z-10">
+          <div className="absolute right-0 mt-1 w-48 bg-[var(--color-light-surface)] rounded-lg shadow-lg border border-border-subtle py-1 z-10">
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -92,3 +92,4 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
     </div>
   );
 }
+

@@ -99,7 +99,7 @@ function getStatusPill(status: TaskStatus) {
         return `bg-emerald-50/60 text-emerald-700 border border-emerald-200/50 ${common}`;
     }
     if (status === "In Progress") {
-        return `bg-brand/10 dark:bg-brand/5/60 text-primary border border-blue-200/50 ${common}`;
+        return `bg-brand/10 dark:bg-brand/5/60 text-primary border border-primary/20 ${common}`;
     }
     return `bg-amber-50/60 text-amber-700 border border-amber-200/50 ${common}`;
 }
@@ -436,7 +436,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     event.stopPropagation();
                                     if (hasChildren) toggleExpand(task._id);
                                 }}
-                                className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
+                                className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition hover:bg-[var(--color-light-bg)] hover:text-muted"
                             >
                                 {hasChildren ? (
                                     isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />
@@ -461,7 +461,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                                 event.stopPropagation();
                                                 openEditModal(task);
                                             }}
-                                            className="rounded-lg p-1.5 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
+                                            className="rounded-lg p-1.5 text-muted transition hover:bg-[var(--color-light-bg)] hover:text-muted"
                                         >
                                             <Pencil size={14} />
                                         </button>
@@ -471,7 +471,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                                 event.stopPropagation();
                                                 openAddModal(task._id);
                                             }}
-                                            className="rounded-lg p-1.5 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
+                                            className="rounded-lg p-1.5 text-muted transition hover:bg-[var(--color-light-bg)] hover:text-muted"
                                         >
                                             <Plus size={14} />
                                         </button>
@@ -511,7 +511,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                             value={task.status}
                             onClick={(event) => event.stopPropagation()}
                             onChange={(event) => handleStatusChange(task._id, event.target.value)}
-                            className="rounded-xl border border-border-subtle bg-[var(--color-light-surface)] )] px-3 py-2 text-sm text-muted"
+                            className="rounded-xl border border-border-subtle bg-[var(--color-light-surface)] px-3 py-2 text-sm text-muted"
                         >
                             <option value="Pending">To Do</option>
                             <option value="In Progress">In Progress</option>
@@ -579,7 +579,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     event.stopPropagation();
                                     toggleExpand(task._id);
                                 }}
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border-subtle bg-[var(--color-light-surface)] )] text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border-subtle bg-[var(--color-light-surface)] text-muted transition hover:bg-[var(--color-light-bg)] hover:text-muted"
                             >
                                 {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                             </button>
@@ -587,7 +587,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                     </div>
 
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                        <div className="rounded-2xl bg-[var(--color-light-bg)] )] px-3.5 py-3">
+                        <div className="rounded-2xl bg-[var(--color-light-bg)] px-3.5 py-3">
                             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                                 Assignee
                             </p>
@@ -601,7 +601,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                             </div>
                         </div>
 
-                        <div className="rounded-2xl bg-[var(--color-light-bg)] )] px-3.5 py-3">
+                        <div className="rounded-2xl bg-[var(--color-light-bg)] px-3.5 py-3">
                             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                                 Due Date
                             </p>
@@ -614,7 +614,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                             value={task.status}
                             onClick={(event) => event.stopPropagation()}
                             onChange={(event) => handleStatusChange(task._id, event.target.value)}
-                            className="w-full rounded-xl border border-border-subtle bg-[var(--color-light-surface)] )] px-3 py-2.5 text-sm text-muted sm:w-auto"
+                            className="w-full rounded-xl border border-border-subtle bg-[var(--color-light-surface)] px-3 py-2.5 text-sm text-muted sm:w-auto"
                         >
                             <option value="Pending">To Do</option>
                             <option value="In Progress">In Progress</option>
@@ -629,7 +629,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         event.stopPropagation();
                                         openEditModal(task);
                                     }}
-                                    className="rounded-xl border border-border-subtle px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
+                                    className="rounded-xl border border-border-subtle px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
                                 >
                                     Edit
                                 </button>
@@ -639,7 +639,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         event.stopPropagation();
                                         openAddModal(task._id);
                                     }}
-                                    className="rounded-xl border border-border-subtle px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
+                                    className="rounded-xl border border-border-subtle px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
                                 >
                                     Add Subtask
                                 </button>
@@ -673,8 +673,8 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
         });
 
     return (
-        <div className="min-h-full bg-[#f6f8fc]">
-            <section className="border-b border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-7 sm:px-6 lg:px-8">
+        <div className="min-h-full bg-base">
+            <section className="border-b border-border-subtle bg-[var(--color-light-surface)] px-4 py-7 sm:px-6 lg:px-8">
                 <div className="mx-auto flex w-full max-w-[1040px] flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                     <div>
                         <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
@@ -725,7 +725,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                         <button
                             type="button"
                             onClick={() => openAddModal(null)}
-                            className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-[0_16px_32px_rgba(37,99,235,0.24)] transition hover:bg-blue-700 sm:w-auto"
+                            className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)] transition hover:bg-primary/90 sm:w-auto"
                         >
                             <Plus size={20} />
                             Add Task
@@ -736,14 +736,14 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
 
             <section className="px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto w-full max-w-[1040px]">
-                    <div className="overflow-hidden rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                    <div className="overflow-hidden rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                         {loading ? (
                             <div className="px-6 py-10 text-sm text-muted">Loading tasks...</div>
                         ) : tasks.length === 0 ? (
                             <button
                                 type="button"
                                 onClick={() => openAddModal(null)}
-                                className="flex w-full items-center gap-3 px-6 py-5 text-left text-base text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-primary"
+                                className="flex w-full items-center gap-3 px-6 py-5 text-left text-base text-muted transition hover:bg-[var(--color-light-bg)] hover:text-primary"
                             >
                                 <Plus size={18} />
                                 Add a new task...
@@ -755,7 +755,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <div className="hidden lg:block">
                                     <div className="overflow-x-auto">
                                         <div className="min-w-[980px]">
-                                            <div className="grid grid-cols-[minmax(0,1.9fr)_220px_220px_180px] bg-[var(--color-light-bg)] )] px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+                                            <div className="grid grid-cols-[minmax(0,1.9fr)_220px_220px_180px] bg-[var(--color-light-bg)] px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                                                 <div>Task Name</div>
                                                 <div>Assignee</div>
                                                 <div>Due Date</div>
@@ -769,7 +769,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={() => openAddModal(null)}
-                                    className="flex w-full items-center gap-3 border-t border-border-subtle px-4 py-5 text-left text-base text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-primary sm:px-6"
+                                    className="flex w-full items-center gap-3 border-t border-border-subtle px-4 py-5 text-left text-base text-muted transition hover:bg-[var(--color-light-bg)] hover:text-primary sm:px-6"
                                 >
                                     <Plus size={18} />
                                     Add a new task...
@@ -779,15 +779,15 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                     </div>
 
                     <div className="mt-8 grid gap-5 lg:grid-cols-3">
-                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                             <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">Total Tasks</p>
                             <p className="mt-2.5 text-2xl font-semibold tracking-tight text-muted">{stats.total}</p>
                         </div>
-                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                             <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">Completed</p>
                             <p className="mt-2.5 text-2xl font-semibold tracking-tight text-emerald-600">{stats.completed}</p>
                         </div>
-                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                             <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">Deadline</p>
                             <p className={`mt-2.5 text-2xl font-semibold tracking-tight ${stats.deadlineTone}`}>{stats.deadlineLabel}</p>
                         </div>
@@ -798,7 +798,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
 
             {showTaskModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-xl rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
+                    <div className="w-full max-w-xl rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
                         <div className="flex items-center justify-between">
                             <h3 className="text-2xl font-semibold text-muted">
                                 {editingTask ? "Edit Task" : newTaskParent ? "Add Subtask" : "Add New Task"}
@@ -806,7 +806,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                             <button
                                 type="button"
                                 onClick={closeTaskModal}
-                                className="rounded-full p-2 text-muted hover:bg-[var(--color-light-bg)] )] hover:text-muted"
+                                className="rounded-full p-2 text-muted hover:bg-[var(--color-light-bg)] hover:text-muted"
                             >
                                 <X size={20} />
                             </button>
@@ -842,7 +842,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     <div>
                                         <label className="mb-2 block text-sm font-medium text-muted">Assignee</label>
                                         <select
-                                            className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                            className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                                             value={taskForm.assignedTo}
                                             onChange={(e) => setTaskForm({ ...taskForm, assignedTo: e.target.value })}
                                         >
@@ -874,7 +874,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                                 type="button"
                                                 onClick={() => setTaskForm({ ...taskForm, status: s as TaskStatus })}
                                                 className={`rounded-xl border py-3 text-sm font-semibold transition ${taskForm.status === s
-                                                    ? "border-primary bg-primary text-white shadow-[0_12px_24px_rgba(37,99,235,0.2)]"
+                                                    ? "border-primary bg-primary text-white shadow-[0_12px_24px_rgba(217,119,87,0.2)]"
                                                     : "border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] text-neutral-600 dark:text-neutral-400 hover:border-neutral-300 dark:border-neutral-700 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
                                                     }`}
                                             >
@@ -891,7 +891,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={closeTaskModal}
-                                    className="rounded-2xl px-6 py-3 font-medium text-muted hover:bg-[var(--color-light-bg)] )]"
+                                    className="rounded-2xl px-6 py-3 font-medium text-muted hover:bg-[var(--color-light-bg)]"
                                     disabled={submitting}
                                 >
                                     Cancel
@@ -899,7 +899,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="rounded-2xl bg-primary px-8 py-3 font-medium text-white shadow-[0_16px_32px_rgba(37,99,235,0.24)] transition hover:bg-blue-700 disabled:opacity-70"
+                                    className="rounded-2xl bg-primary px-8 py-3 font-medium text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)] transition hover:bg-primary/90 disabled:opacity-70"
                                 >
                                     {submitting ? "Saving..." : editingTask ? "Save Changes" : "Create Task"}
                                 </button>
@@ -911,13 +911,13 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
 
             {showOverviewModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-xl rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
+                    <div className="w-full max-w-xl rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
                         <div className="flex items-center justify-between">
                             <h3 className="text-2xl font-semibold text-muted">Update Project Details</h3>
                             <button
                                 type="button"
                                 onClick={closeOverviewModal}
-                                className="rounded-full p-2 text-muted hover:bg-[var(--color-light-bg)] )] hover:text-muted"
+                                className="rounded-full p-2 text-muted hover:bg-[var(--color-light-bg)] hover:text-muted"
                             >
                                 <X size={20} />
                             </button>
@@ -975,7 +975,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={closeOverviewModal}
-                                    className="rounded-2xl px-6 py-3 font-medium text-muted hover:bg-[var(--color-light-bg)] )]"
+                                    className="rounded-2xl px-6 py-3 font-medium text-muted hover:bg-[var(--color-light-bg)]"
                                     disabled={overviewSubmitting}
                                 >
                                     Cancel
@@ -983,7 +983,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="submit"
                                     disabled={overviewSubmitting}
-                                    className="rounded-2xl bg-primary px-8 py-3 font-medium text-white shadow-[0_16px_32px_rgba(37,99,235,0.24)] transition hover:bg-blue-700 disabled:opacity-70"
+                                    className="rounded-2xl bg-primary px-8 py-3 font-medium text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)] transition hover:bg-primary/90 disabled:opacity-70"
                                 >
                                     {overviewSubmitting ? "Updating..." : "Save Overview"}
                                 </button>

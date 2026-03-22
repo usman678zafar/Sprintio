@@ -80,7 +80,7 @@ export default function Sidebar({ user }: { user: any }) {
 
   return (
     <aside
-      className={`hidden shrink-0 border-r border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] transition-[width] duration-300 ease-out md:flex md:flex-col ${
+      className={`hidden shrink-0 border-r border-border-subtle bg-surface/88 backdrop-blur-xl transition-[width] duration-300 ease-out md:flex md:flex-col ${
         isCollapsed ? "w-[88px]" : "w-64"
       }`}
     >
@@ -91,7 +91,7 @@ export default function Sidebar({ user }: { user: any }) {
         <button
           type="button"
           onClick={toggleCollapsed}
-          className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-xl text-muted transition hover:bg-surface hover:text-muted"
+          className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-xl text-muted transition hover:bg-base hover:text-text-base"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={isCollapsed ? "Expand" : "Collapse"}
         >
@@ -129,14 +129,14 @@ export default function Sidebar({ user }: { user: any }) {
                 className={`relative flex items-center rounded-2xl px-4 py-3 text-sm font-medium transition ${
                   isCollapsed ? "justify-center" : "gap-3"
                 } ${isActive
-                  ? "bg-brand/10 dark:bg-brand/5 text-primary"
-                  : "text-neutral-600 dark:text-neutral-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                  ? "bg-primary/12 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                  : "text-muted hover:bg-base hover:text-text-base"
                   }`}
                 title={isCollapsed ? label : undefined}
               >
                 <Icon
                   size={20}
-                  className={isActive ? "text-primary" : "text-neutral-500 dark:text-neutral-400"}
+                  className={isActive ? "text-primary" : "text-muted"}
                 />
                 <span
                   className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
@@ -154,19 +154,19 @@ export default function Sidebar({ user }: { user: any }) {
         </nav>
       </div>
 
-      <div className={`border-t border-neutral-200 dark:border-neutral-800 py-5 transition-all duration-300 ${isCollapsed ? "px-3" : "px-5"}`}>
+      <div className={`border-t border-border-subtle py-5 transition-all duration-300 ${isCollapsed ? "px-3" : "px-5"}`}>
         <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-4"}`}>
           {user?.image ? (
-            <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-[var(--color-light-surface)] )]">
+            <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-surface">
               <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
             </div>
           ) : (
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-sm font-semibold text-muted">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold text-primary">
               {user?.name?.[0]?.toUpperCase() || "U"}
             </div>
           )}
           <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-300 ${isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"}`}>
-            <p className="truncate text-sm font-semibold text-muted">
+            <p className="truncate text-sm font-semibold text-text-base">
               {user?.name || "Sprinto User"}
             </p>
             <p className="truncate text-sm text-muted">
@@ -178,7 +178,7 @@ export default function Sidebar({ user }: { user: any }) {
         <button
           onClick={handleLogout}
           disabled={isLoggingOut}
-          className={`mt-4 flex w-full items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-400 transition hover:border-neutral-300 dark:border-neutral-700 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] disabled:opacity-50 ${
+          className={`mt-4 flex w-full items-center justify-center rounded-2xl border border-border-subtle px-4 py-3 text-sm font-medium text-muted transition hover:bg-base hover:text-text-base disabled:opacity-50 ${
             isCollapsed ? "gap-0" : "gap-2"
           }`}
           title={isCollapsed ? "Logout" : undefined}
