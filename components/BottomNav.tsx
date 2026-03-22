@@ -8,7 +8,8 @@ import {
     Users,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const navItems = [
     {
@@ -40,6 +41,13 @@ const navItems = [
 
 export default function BottomNav() {
     const pathname = usePathname();
+    const router = useRouter();
+
+    useEffect(() => {
+        navItems.forEach((item) => {
+            router.prefetch(item.href);
+        });
+    }, [router]);
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/80 pb-safe backdrop-blur-lg md:hidden">
@@ -55,6 +63,8 @@ export default function BottomNav() {
                         <Link
                             key={label}
                             href={href}
+                            prefetch
+                            onTouchStart={() => router.prefetch(href)}
                             className={`flex flex-col items-center gap-1 transition-colors ${isActive ? "text-primary" : "text-slate-400 hover:text-slate-600"
                                 }`}
                         >
