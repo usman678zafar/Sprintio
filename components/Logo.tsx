@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 interface LogoProps {
   className?: string;
@@ -7,58 +8,30 @@ interface LogoProps {
   href?: string;
 }
 
-function LogoMark({ iconSize }: { iconSize: number }) {
-  return (
-    <svg
-      width={iconSize}
-      height={iconSize}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <rect
-        x="3"
-        y="3"
-        width="7"
-        height="7"
-        rx="1.25"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <rect
-        x="3"
-        y="14"
-        width="7"
-        height="7"
-        rx="1.25"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <path d="M14 4H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M14 9H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M14 15H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M14 20H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export default function Logo({
   className = "",
-  iconSize = 20,
+  iconSize = 32,
   showText = true,
   href = "/",
 }: LogoProps) {
+  // Using the exact manual logo icon you uploaded locally to the public folder
+  const markWidth = iconSize * 1.2; 
+  const markHeight = iconSize * 1.2;
+
   return (
-    <Link href={href} className={`flex items-center gap-2.5 ${className}`}>
-      <div
-        className="flex items-center justify-center rounded-2xl border border-primary bg-primary text-white"
-        style={{ width: iconSize + 14, height: iconSize + 14 }}
-      >
-        <LogoMark iconSize={iconSize} />
+    <Link href={href} className={`flex items-center gap-3 transition-opacity hover:opacity-90 ${className}`}>
+      <div className="flex items-center justify-center shrink-0">
+        <Image 
+          src="/favicon.svg"
+          alt="Sprinto Logo"
+          width={markWidth}
+          height={markHeight}
+          className="object-contain"
+          priority
+        />
       </div>
       {showText && (
-        <span className="text-xl font-semibold tracking-tight text-text-base">
+        <span className="text-2xl font-bold tracking-tight text-text-base">
           Sprinto
         </span>
       )}

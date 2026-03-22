@@ -8,29 +8,69 @@ import ProjectMember from "@/models/ProjectMember";
 
 const VALID_STATUSES = ["Pending", "In Progress", "Done"];
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
+};
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 // GET all tasks for a project
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const projectId = searchParams.get("projectId");
+    const page = parsePositiveInt(searchParams.get("page"), 1);
+    const limit = Math.min(parsePositiveInt(searchParams.get("limit"), 25), 100);
+    const skip = (page - 1) * limit;
 
-    if (!projectId) return NextResponse.json({ message: "projectId is required" }, { status: 400 });
+    if (!projectId) return NextResponse.json({ message: "projectId is required" }, { status: 400, headers: NO_STORE_HEADERS });
 
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401, headers: NO_STORE_HEADERS });
 
     await connectDB();
     const userId = (session.user as any).id;
 
     // Check member
     const isMember = await ProjectMember.findOne({ projectId, userId });
-    if (!isMember) return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    if (!isMember) return NextResponse.json({ message: "Forbidden" }, { status: 403, headers: NO_STORE_HEADERS });
 
-    const tasks = await Task.find({ projectId }).populate("assignedTo", "name email");
-    return NextResponse.json({ tasks }, { status: 200 });
+    const [tasks, totalItems] = await Promise.all([
+      Task.find({ projectId })
+        .sort({ createdAt: -1, _id: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("assignedTo", "name email"),
+      Task.countDocuments({ projectId }),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+
+    return NextResponse.json(
+      {
+        tasks,
+        pagination: {
+          page,
+          limit,
+          totalItems,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1,
+        },
+      },
+      { status: 200, headers: NO_STORE_HEADERS }
+    );
 
   } catch (error: any) {
-    return NextResponse.json({ message: "Internal server error", error: error.message }, { status: 500 });
+    return NextResponse.json({ message: "Internal server error", error: error.message }, { status: 500, headers: NO_STORE_HEADERS });
   }
 }
 

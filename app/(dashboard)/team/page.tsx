@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -33,9 +33,17 @@ type TeamResponse = {
   currentUserId: string;
   manageableProjects: Array<{ projectId: string; projectName: string }>;
   members: TeamMember[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
 };
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 8;
 
 function roleBadge(role: string) {
   if (role === "Admin") return "bg-brand/20 dark:bg-brand/30 text-primary";
@@ -51,6 +59,14 @@ export default function TeamPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: PAGE_SIZE,
+    totalItems: 0,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
 
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -70,13 +86,26 @@ export default function TeamPage() {
   const [removing, setRemoving] = useState(false);
   const [removeMessage, setRemoveMessage] = useState("");
 
-  const fetchTeam = async () => {
+  const fetchTeam = async (nextPage: number, query: string) => {
     try {
-      const res = await fetch("/api/team");
+      const params = new URLSearchParams({
+        page: String(nextPage),
+        limit: String(PAGE_SIZE),
+      });
+
+      if (query.trim()) {
+        params.set("query", query.trim());
+      }
+
+      const res = await fetch(`/api/team?${params.toString()}`, { cache: "no-store" });
       if (res.ok) {
         const data: TeamResponse = await res.json();
         setMembers(data.members);
         setManageableProjects(data.manageableProjects);
+        setPagination(data.pagination);
+        if (data.pagination.page !== page) {
+          setPage(data.pagination.page);
+        }
         if (!inviteProjectId && data.manageableProjects[0]) {
           setInviteProjectId(data.manageableProjects[0].projectId);
         }
@@ -89,8 +118,8 @@ export default function TeamPage() {
   };
 
   useEffect(() => {
-    fetchTeam();
-  }, []);
+    fetchTeam(page, searchQuery);
+  }, [page, searchQuery]);
 
   useEffect(() => {
     const handleSearch = (event: Event) => {
@@ -102,27 +131,8 @@ export default function TeamPage() {
     return () => window.removeEventListener("team-search", handleSearch as EventListener);
   }, []);
 
-  const filteredMembers = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) return members;
-
-    return members.filter((member) => {
-      const projects = member.assignments.map((assignment) => assignment.projectName.toLowerCase()).join(" ");
-      return (
-        member.name.toLowerCase().includes(query) ||
-        member.email.toLowerCase().includes(query) ||
-        projects.includes(query)
-      );
-    });
-  }, [members, searchQuery]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredMembers.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-
-  const pagedMembers = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredMembers.slice(start, start + PAGE_SIZE);
-  }, [currentPage, filteredMembers]);
+  const currentPage = pagination.page;
+  const totalPages = pagination.totalPages;
 
   const resetInviteModal = () => {
     setShowInviteModal(false);
@@ -150,7 +160,7 @@ export default function TeamPage() {
       const data = await res.json();
       if (res.ok) {
         resetInviteModal();
-        fetchTeam();
+        fetchTeam(currentPage, searchQuery);
       } else {
         setInviteMessage(data.message || "Failed to invite member");
       }
@@ -193,7 +203,7 @@ export default function TeamPage() {
       const data = await res.json();
       if (res.ok) {
         setEditingMember(null);
-        fetchTeam();
+        fetchTeam(currentPage, searchQuery);
       } else {
         setEditMessage(data.message || "Failed to update role");
       }
@@ -235,7 +245,7 @@ export default function TeamPage() {
       const data = await res.json();
       if (res.ok) {
         setRemovingMember(null);
-        fetchTeam();
+        fetchTeam(currentPage, searchQuery);
       } else {
         setRemoveMessage(data.message || "Failed to remove member");
       }
@@ -282,14 +292,14 @@ export default function TeamPage() {
       <section className="mt-10 overflow-hidden rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
         {loading ? (
           <div className="px-6 py-10 text-sm text-muted">Loading team members...</div>
-        ) : filteredMembers.length === 0 ? (
+        ) : members.length === 0 ? (
           <div className="px-6 py-10 text-sm text-muted">
-            {members.length === 0 ? "No members found yet." : `No members match "${searchQuery}".`}
+            {searchQuery.trim() ? `No members match "${searchQuery}".` : "No members found yet."}
           </div>
         ) : (
           <>
             <div className="divide-y divide-slate-200 lg:hidden">
-              {pagedMembers.map((member) => {
+              {members.map((member) => {
                 const canEdit = member.assignments.some((assignment) => assignment.canManage);
                 const canRemove = member.assignments.some(
                   (assignment) => assignment.canManage && !assignment.isSelf
@@ -372,7 +382,7 @@ export default function TeamPage() {
                     <div />
                   </div>
 
-                  {pagedMembers.map((member) => {
+                  {members.map((member) => {
                     const canEdit = member.assignments.some((assignment) => assignment.canManage);
                     const canRemove = member.assignments.some(
                       (assignment) => assignment.canManage && !assignment.isSelf
@@ -444,8 +454,8 @@ export default function TeamPage() {
 
             <div className="flex flex-col gap-5 border-t border-border-subtle px-6 py-4 text-muted sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm">
-                Showing {(currentPage - 1) * PAGE_SIZE + 1} to{" "}
-                {Math.min(currentPage * PAGE_SIZE, filteredMembers.length)} of {filteredMembers.length} members
+                Showing {pagination.totalItems === 0 ? 0 : (currentPage - 1) * pagination.limit + 1} to{" "}
+                {Math.min(currentPage * pagination.limit, pagination.totalItems)} of {pagination.totalItems} members
               </p>
 
               <div className="flex flex-wrap items-center overflow-hidden rounded-2xl border border-border-subtle">

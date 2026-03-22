@@ -5,6 +5,8 @@ export interface IProject extends Document {
   createdBy: mongoose.Types.ObjectId;
   createdAt: Date;
   description?: string;
+  cardColor?: string;
+  languages?: string[];
   documentUrl?: string;
   documentName?: string;
 }
@@ -14,6 +16,8 @@ const ProjectSchema = new Schema<IProject>({
   createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   createdAt: { type: Date, default: Date.now },
   description: { type: String, default: "" },
+  cardColor: { type: String, default: "#D97757" },
+  languages: { type: [String], default: [] },
   documentUrl: { type: String, default: "" },
   documentName: { type: String, default: "" },
 });

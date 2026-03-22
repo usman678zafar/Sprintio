@@ -12,8 +12,16 @@ export const metadata: Metadata = {
   title: "Sprinto",
   description: "Minimal project and task management tool.",
   icons: {
-    icon: "/icon.svg",
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180" },
+    ],
   },
+  manifest: "/site.webmanifest",
 };
 
 import Providers from "@/components/Providers";

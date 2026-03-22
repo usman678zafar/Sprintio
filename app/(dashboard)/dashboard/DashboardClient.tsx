@@ -15,6 +15,7 @@ import {
     AlertCircle,
     Layout,
 } from "lucide-react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 type Project = {
     _id: string;
@@ -127,10 +128,13 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
     const [updating, setUpdating] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
+    const [deletingProject, setDeletingProject] = useState(false);
 
     const fetchProjects = async () => {
         try {
-            const res = await fetch("/api/projects");
+            const params = new URLSearchParams({ page: "1", limit: "100", sort: "recent" });
+            const res = await fetch(`/api/projects?${params.toString()}`, { cache: "no-store" });
             if (res.ok) {
                 const data = await res.json();
                 setProjects(data.projects);
@@ -166,6 +170,14 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
 
         window.addEventListener("click", handleCloseMenus);
         return () => window.removeEventListener("click", handleCloseMenus);
+    }, []);
+
+    useEffect(() => {
+        const interval = window.setInterval(() => {
+            fetchProjects();
+        }, 20000);
+
+        return () => window.clearInterval(interval);
     }, []);
 
     const handleCreateProject = async (e: React.FormEvent) => {
@@ -219,21 +231,16 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
         }
     };
 
-    const handleDeleteProject = async (id: string) => {
-        if (
-            !confirm(
-                "Are you sure you want to delete this project? This will remove all tasks and member associations."
-            )
-        ) {
-            return;
-        }
-
+    const handleDeleteProject = async () => {
+        if (!deletingProjectId) return;
+        setDeletingProject(true);
         try {
-            const res = await fetch(`/api/projects/${id}`, {
+            const res = await fetch(`/api/projects/${deletingProjectId}`, {
                 method: "DELETE",
             });
 
             if (res.ok) {
+                setDeletingProjectId(null);
                 fetchProjects();
             } else {
                 const data = await res.json();
@@ -241,6 +248,8 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setDeletingProject(false);
         }
     };
 
@@ -494,7 +503,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                             type="button"
                                                             onClick={() => {
                                                                 setOpenMenuId(null);
-                                                                handleDeleteProject(project._id);
+                                                                setDeletingProjectId(project._id);
                                                             }}
                                                             className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
                                                         >
@@ -769,6 +778,16 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                     </div>
                 </div>
             )}
+
+            <ConfirmDialog
+                open={!!deletingProjectId}
+                title="Delete Project"
+                description="This project will be removed along with its tasks and member assignments."
+                confirmLabel="Delete Project"
+                loading={deletingProject}
+                onCancel={() => setDeletingProjectId(null)}
+                onConfirm={handleDeleteProject}
+            />
         </div>
     );
 }

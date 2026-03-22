@@ -7,11 +7,30 @@ import connectDB from "@/lib/mongodb";
 import Project from "@/models/Project";
 import ProjectMember from "@/models/ProjectMember";
 
-export async function GET() {
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
+};
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+export async function GET(req: Request) {
   try {
+    const searchParams = new URL(req.url).searchParams;
+    const page = parsePositiveInt(searchParams.get("page"), 1);
+    const limit = Math.min(parsePositiveInt(searchParams.get("limit"), 8), 50);
+    const query = (searchParams.get("query") || "").trim().toLowerCase();
+
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401, headers: NO_STORE_HEADERS });
     }
 
     await connectDB();
@@ -30,8 +49,16 @@ export async function GET() {
           currentUserId: userId,
           manageableProjects: [],
           members: [],
+          pagination: {
+            page,
+            limit,
+            totalItems: 0,
+            totalPages: 1,
+            hasNextPage: false,
+            hasPrevPage: false,
+          },
         },
-        { status: 200 }
+        { status: 200, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -125,7 +152,7 @@ export async function GET() {
       });
     }
 
-    const members = Array.from(grouped.values())
+    const allMembers = Array.from(grouped.values())
       .map((member) => ({
         ...member,
         roleSummary: member.assignments.some((assignment) => assignment.role === "MASTER")
@@ -134,18 +161,47 @@ export async function GET() {
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
 
+    const filteredMembers =
+      query.length === 0
+        ? allMembers
+        : allMembers.filter((member) => {
+            const projectNames = member.assignments
+              .map((assignment) => assignment.projectName.toLowerCase())
+              .join(" ");
+
+            return (
+              member.name.toLowerCase().includes(query) ||
+              member.email.toLowerCase().includes(query) ||
+              projectNames.includes(query)
+            );
+          });
+
+    const totalItems = filteredMembers.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+    const safePage = Math.min(page, totalPages);
+    const safeSkip = (safePage - 1) * limit;
+    const members = filteredMembers.slice(safeSkip, safeSkip + limit);
+
     return NextResponse.json(
       {
         currentUserId: userId,
         manageableProjects,
         members,
+        pagination: {
+          page: safePage,
+          limit,
+          totalItems,
+          totalPages,
+          hasNextPage: safePage < totalPages,
+          hasPrevPage: safePage > 1,
+        },
       },
-      { status: 200 }
+      { status: 200, headers: NO_STORE_HEADERS }
     );
   } catch (error: any) {
     return NextResponse.json(
       { message: "Internal server error", error: error.message },
-      { status: 500 }
+      { status: 500, headers: NO_STORE_HEADERS }
     );
   }
 }

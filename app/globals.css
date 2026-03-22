@@ -44,6 +44,7 @@
     --danger-rgb: 198 74 74;
     --danger-strong-rgb: 166 57 57;
     --bg-modal-rgb: 240 238 230;
+    --sidebar-hover-rgb: 228 223 213;
 
     --bg-base: rgb(var(--bg-base-rgb));
     --bg-surface: rgb(var(--bg-surface-rgb));
@@ -81,6 +82,7 @@
     --danger-rgb: 219 90 90;
     --danger-strong-rgb: 189 73 73;
     --bg-modal-rgb: 20 20 19;
+    --sidebar-hover-rgb: 52 50 47;
 
     color-scheme: dark;
   }
@@ -234,7 +236,7 @@
     gap: 0.5rem;
     border: 1px solid rgb(var(--border-subtle-rgb));
     border-radius: 1rem;
-    background: rgb(var(--bg-surface-rgb) / 0.8);
+    background: rgb(var(--bg-surface-rgb));
     padding: 0.625rem 1rem;
     font-size: 0.875rem;
     font-weight: 500;
@@ -287,6 +289,10 @@
     border: 1px solid rgb(var(--border-subtle-rgb));
     border-radius: 28px;
     background: rgb(var(--bg-modal-rgb));
+  }
+
+  .sidebar-hover-surface:hover {
+    background: rgb(var(--sidebar-hover-rgb));
   }
 
   .field-surface:focus {

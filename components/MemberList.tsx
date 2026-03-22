@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { UserMinus } from "lucide-react";
+import ConfirmDialog from "./ConfirmDialog";
 
 interface MemberListProps {
   projectId: string;
@@ -12,6 +13,8 @@ interface MemberListProps {
 export default function MemberList({ projectId, canManageMembers, refreshKey = 0 }: MemberListProps) {
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [removingMemberId, setRemovingMemberId] = useState<string | null>(null);
+  const [removing, setRemoving] = useState(false);
 
   const fetchMembers = async () => {
     try {
@@ -49,13 +52,15 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
     }
   };
 
-  const handleRemoveMember = async (memberId: string) => {
-    if (!confirm("Remove this member?")) return;
+  const handleRemoveMember = async () => {
+    if (!removingMemberId) return;
+    setRemoving(true);
     try {
-      const res = await fetch(`/api/projects/${projectId}/role?memberId=${memberId}`, {
+      const res = await fetch(`/api/projects/${projectId}/role?memberId=${removingMemberId}`, {
         method: "DELETE",
       });
       if (res.ok) {
+        setRemovingMemberId(null);
         fetchMembers();
       } else {
         const err = await res.json();
@@ -63,12 +68,15 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setRemoving(false);
     }
   };
 
   if (loading) return <div className="text-muted">Loading members...</div>;
 
   return (
+    <>
     <div className="bg-[var(--color-light-surface)] rounded-xl shadow-sm border border-border-subtle overflow-hidden mt-6 transition-all duration-300">
       <div className="px-6 py-4 border-b border-border-subtle bg-surface">
         <h3 className="font-semibold text-text-base">Project Members</h3>
@@ -98,7 +106,7 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
                     <option value="MEMBER" className="">MEMBER</option>
                   </select>
                   <button
-                    onClick={() => handleRemoveMember(m._id)}
+                    onClick={() => setRemovingMemberId(m._id)}
                     className="p-1.5 text-muted hover:text-red-500 dark:hover:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
                   >
                     <UserMinus size={18} />
@@ -114,6 +122,17 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
         ))}
       </div>
     </div>
+
+      <ConfirmDialog
+        open={!!removingMemberId}
+        title="Remove Member"
+        description="This will remove the selected member from this project."
+        confirmLabel="Remove Member"
+        loading={removing}
+        onCancel={() => setRemovingMemberId(null)}
+        onConfirm={handleRemoveMember}
+      />
+    </>
   );
 }
 

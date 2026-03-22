@@ -45,6 +45,11 @@ const navItems = [
   },
 ];
 
+function getUserInitial(user: any) {
+  const source = user?.name?.trim() || user?.email?.trim() || "U";
+  return source.charAt(0).toUpperCase();
+}
+
 export default function MobileSidebar({ user }: { user: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -54,6 +59,8 @@ export default function MobileSidebar({ user }: { user: any }) {
     setIsLoggingOut(true);
     await signOut({ callbackUrl: "/login", redirect: true });
   };
+
+  const userInitial = getUserInitial(user);
 
   useEffect(() => {
     setIsOpen(false);
@@ -123,14 +130,14 @@ export default function MobileSidebar({ user }: { user: any }) {
                   href={href}
                   className={`flex items-center gap-3 rounded-[22px] border px-3 py-3 text-sm font-medium transition-all ${
                     isActive
-                      ? "border-primary bg-primary text-white"
+                      ? "border-[#D97757] bg-[#D97757] text-white"
                       : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
                   }`}
                 >
                   <span
                     className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${
                       isActive
-                        ? "border-white/20 bg-white/10 text-white"
+                        ? "border-[#D97757] bg-[#B96447] text-white"
                         : "border-border-subtle bg-base text-muted"
                     }`}
                   >
@@ -144,17 +151,11 @@ export default function MobileSidebar({ user }: { user: any }) {
         </div>
 
         <div className="border-t border-border-subtle p-4">
-          <div className="rounded-[24px] border border-border-subtle bg-base/72 p-3">
+          <div className="rounded-[24px] border border-border-subtle bg-surface p-3">
             <div className="flex items-center gap-3">
-              {user?.image ? (
-                <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-surface">
-                  <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
-                </div>
-              ) : (
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
-                  {user?.name?.[0]?.toUpperCase() || "U"}
-                </div>
-              )}
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
+                {userInitial}
+              </div>
 
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-text-base">

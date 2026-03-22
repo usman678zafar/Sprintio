@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import {
     CalendarDays,
     ChevronDown,
@@ -148,6 +149,8 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
     const [taskForm, setTaskForm] = useState(DEFAULT_TASK_FORM);
     const [submitting, setSubmitting] = useState(false);
     const [taskMessage, setTaskMessage] = useState("");
+    const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+    const [deletingTask, setDeletingTask] = useState(false);
 
     const [showOverviewModal, setShowOverviewModal] = useState(false);
     const [overviewForm, setOverviewForm] = useState({ description: project.description || "" });
@@ -159,7 +162,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
 
     const fetchProject = async () => {
         try {
-            const res = await fetch(`/api/projects/${projectId}`);
+            const res = await fetch(`/api/projects/${projectId}`, { cache: "no-store" });
             if (res.ok) {
                 const data: ProjectDetails = await res.json();
                 setProject(data.project);
@@ -174,7 +177,12 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
 
     const fetchTasks = async () => {
         try {
-            const res = await fetch(`/api/tasks?projectId=${projectId}`);
+            const params = new URLSearchParams({
+                projectId,
+                page: "1",
+                limit: "200",
+            });
+            const res = await fetch(`/api/tasks?${params.toString()}`, { cache: "no-store" });
             if (res.ok) {
                 const data = await res.json();
                 setTasks(data.tasks);
@@ -219,16 +227,22 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
         }
     };
 
-    const handleDelete = async (taskId: string) => {
-        if (!confirm("Are you sure you want to delete this task?")) return;
-
+    const handleDelete = async () => {
+        if (!deletingTaskId) return;
+        setDeletingTask(true);
         try {
-            const res = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
+            const res = await fetch(`/api/tasks/${deletingTaskId}`, { method: "DELETE" });
             if (res.ok) {
+                if (selectedTaskId === deletingTaskId) {
+                    setSelectedTaskId(null);
+                }
+                setDeletingTaskId(null);
                 fetchTasks();
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setDeletingTask(false);
         }
     };
 
@@ -479,7 +493,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                             type="button"
                                             onClick={(event) => {
                                                 event.stopPropagation();
-                                                handleDelete(task._id);
+                                                setDeletingTaskId(task._id);
                                             }}
                                             className="rounded-lg p-1.5 text-muted transition hover:bg-red-50 hover:text-red-500"
                                         >
@@ -647,7 +661,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     type="button"
                                     onClick={(event) => {
                                         event.stopPropagation();
-                                        handleDelete(task._id);
+                                        setDeletingTaskId(task._id);
                                     }}
                                     className="rounded-xl border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
                                 >
@@ -992,6 +1006,16 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                     </div>
                 </div>
             )}
+
+            <ConfirmDialog
+                open={!!deletingTaskId}
+                title="Delete Task"
+                description="This task will be deleted permanently. Child subtasks will also be removed."
+                confirmLabel="Delete Task"
+                loading={deletingTask}
+                onCancel={() => setDeletingTaskId(null)}
+                onConfirm={handleDelete}
+            />
         </div>
     );
 }

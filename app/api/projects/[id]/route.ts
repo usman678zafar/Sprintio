@@ -6,10 +6,19 @@ import connectDB from "@/lib/mongodb";
 import Project from "@/models/Project";
 import ProjectMember from "@/models/ProjectMember";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
+};
+
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401, headers: NO_STORE_HEADERS });
 
     const projectId = params.id;
     const userId = (session.user as any).id;
@@ -19,7 +28,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     // Check if user is a member of the project
     const membership = await ProjectMember.findOne({ projectId, userId }).lean();
     if (!membership) {
-      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ message: "Forbidden" }, { status: 403, headers: NO_STORE_HEADERS });
     }
 
     const [project, members] = await Promise.all([
@@ -30,7 +39,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     ]);
 
     if (!project) {
-      return NextResponse.json({ message: "Project not found" }, { status: 404 });
+      return NextResponse.json({ message: "Project not found" }, { status: 404, headers: NO_STORE_HEADERS });
     }
 
     const sanitizedMembers = members
@@ -60,10 +69,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         },
         members: sanitizedMembers,
       },
-      { status: 200 }
+      { status: 200, headers: NO_STORE_HEADERS }
     );
   } catch (error: any) {
-    return NextResponse.json({ message: "Internal server error", error: error.message }, { status: 500 });
+    return NextResponse.json({ message: "Internal server error", error: error.message }, { status: 500, headers: NO_STORE_HEADERS });
   }
 }
 
@@ -73,7 +82,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { name, description, documentUrl, documentName } = body;
+    const { name, description, cardColor, languages, documentUrl, documentName } = body;
 
     if (!name) return NextResponse.json({ message: "Project name is required" }, { status: 400 });
 
@@ -90,6 +99,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const updateData: any = { name };
     if (description !== undefined) updateData.description = description;
+    if (cardColor !== undefined) updateData.cardColor = cardColor;
+    if (languages !== undefined) {
+      updateData.languages = Array.isArray(languages)
+        ? languages.map((value: unknown) => String(value).trim()).filter(Boolean).slice(0, 8)
+        : [];
+    }
     if (documentUrl !== undefined) updateData.documentUrl = documentUrl;
     if (documentName !== undefined) updateData.documentName = documentName;
 

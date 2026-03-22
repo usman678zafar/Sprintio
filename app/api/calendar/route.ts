@@ -8,6 +8,15 @@ import Project from "@/models/Project";
 import ProjectMember from "@/models/ProjectMember";
 import Task from "@/models/Task";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
+};
+
 function toObjectIdIfPossible(value: string) {
   return mongoose.Types.ObjectId.isValid(value)
     ? new mongoose.Types.ObjectId(value)
@@ -26,7 +35,7 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401, headers: NO_STORE_HEADERS });
     }
 
     await connectDB();
@@ -43,7 +52,7 @@ export async function GET() {
           members: [],
           tasks: [],
         },
-        { status: 200 }
+        { status: 200, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -181,12 +190,12 @@ export async function GET() {
         ),
         tasks: taskPayload,
       },
-      { status: 200 }
+      { status: 200, headers: NO_STORE_HEADERS }
     );
   } catch (error: any) {
     return NextResponse.json(
       { message: "Internal server error", error: error.message },
-      { status: 500 }
+      { status: 500, headers: NO_STORE_HEADERS }
     );
   }
 }

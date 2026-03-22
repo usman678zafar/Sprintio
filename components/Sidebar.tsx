@@ -45,6 +45,11 @@ const navItems = [
   },
 ];
 
+function getUserInitial(user: any) {
+  const source = user?.name?.trim() || user?.email?.trim() || "U";
+  return source.charAt(0).toUpperCase();
+}
+
 export default function Sidebar({ user }: { user: any }) {
   const pathname = usePathname() ?? "";
   const router = useRouter();
@@ -78,9 +83,11 @@ export default function Sidebar({ user }: { user: any }) {
     await signOut({ callbackUrl: "/login", redirect: true });
   };
 
+  const userInitial = getUserInitial(user);
+
   return (
     <aside
-      className={`hidden shrink-0 bg-base p-3 transition-[width] duration-300 ease-out md:flex md:flex-col ${
+      className={`hidden shrink-0 border-r border-border-subtle bg-surface p-3 transition-[width] duration-300 ease-out md:flex md:flex-col ${
         isCollapsed ? "w-[104px]" : "w-72"
       }`}
     >
@@ -132,16 +139,16 @@ export default function Sidebar({ user }: { user: any }) {
                     isCollapsed ? "justify-center" : "gap-3"
                   } ${
                     isActive
-                      ? "border-primary bg-primary text-white"
-                      : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
+                      ? "border-[#D97757] bg-[#D97757] text-white"
+                      : "sidebar-hover-surface border-transparent text-muted hover:border-border-subtle hover:text-text-base"
                   }`}
                   title={isCollapsed ? label : undefined}
                 >
                   <span
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border transition-all ${
                       isActive
-                        ? "border-white/20 bg-white/10 text-white"
-                        : "border-border-subtle bg-surface text-muted group-hover:border-primary group-hover:text-primary"
+                        ? "border-[#D97757] bg-[#B96447] text-white"
+                        : "border-border-subtle bg-surface text-muted"
                     }`}
                   >
                     <Icon size={18} />
@@ -150,7 +157,7 @@ export default function Sidebar({ user }: { user: any }) {
                   <span
                     className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
                       isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-                    } ${isActive ? "font-semibold" : ""}`}
+                    } ${isActive ? "font-semibold" : "group-hover:font-semibold"}`}
                   >
                     {label}
                   </span>
@@ -162,17 +169,11 @@ export default function Sidebar({ user }: { user: any }) {
         </div>
 
         <div className={`border-t border-border-subtle p-4 transition-all duration-300 ${isCollapsed ? "px-3" : "px-4"}`}>
-          <div className="rounded-[24px] border border-border-subtle bg-base/72 p-3">
+          <div className="rounded-[24px] border border-border-subtle bg-surface p-3">
             <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
-              {user?.image ? (
-                <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-surface">
-                  <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
-                </div>
-              ) : (
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
-                  {user?.name?.[0]?.toUpperCase() || "U"}
-                </div>
-              )}
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
+                {userInitial}
+              </div>
 
               <div
                 className={`min-w-0 flex-1 overflow-hidden transition-all duration-300 ${
@@ -188,23 +189,27 @@ export default function Sidebar({ user }: { user: any }) {
               </div>
             </div>
 
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className={`mt-3 flex w-full items-center justify-center rounded-2xl border border-border-subtle bg-surface px-4 py-3 text-sm font-medium text-muted transition hover:border-primary hover:text-primary disabled:opacity-50 ${
-                isCollapsed ? "gap-0" : "gap-2"
-              }`}
-              title={isCollapsed ? "Logout" : undefined}
-            >
-              <LogOut size={18} />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-                }`}
+            {isCollapsed ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="mt-3 flex h-14 w-full items-center justify-center rounded-2xl border border-border-subtle bg-surface text-text-base transition hover:border-primary hover:text-primary disabled:opacity-50"
+                title="Logout"
               >
-                {isLoggingOut ? "Leaving..." : "Logout"}
-              </span>
-            </button>
+                <LogOut size={20} strokeWidth={2.2} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-border-subtle bg-surface px-4 py-3 text-sm font-medium text-muted transition hover:border-primary hover:text-primary disabled:opacity-50"
+              >
+                <LogOut size={18} />
+                <span>{isLoggingOut ? "Leaving..." : "Logout"}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

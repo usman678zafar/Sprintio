@@ -154,7 +154,7 @@ export default function CalendarPage() {
 
   const fetchCalendar = async () => {
     try {
-      const response = await fetch("/api/calendar");
+      const response = await fetch("/api/calendar", { cache: "no-store" });
       if (response.ok) {
         const data: CalendarResponse = await response.json();
         setProjects(data.projects);
@@ -170,6 +170,14 @@ export default function CalendarPage() {
 
   useEffect(() => {
     fetchCalendar();
+  }, []);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      fetchCalendar();
+    }, 20000);
+
+    return () => window.clearInterval(interval);
   }, []);
 
   const projectColorIndex = useMemo(() => {
