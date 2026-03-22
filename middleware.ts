@@ -15,6 +15,11 @@ export default withAuth(
         callbacks: {
             authorized: ({ token, req }) => {
                 const { pathname } = req.nextUrl;
+                const isPublicAsset = /\.[^/]+$/.test(pathname);
+
+                if (isPublicAsset) {
+                    return true;
+                }
 
                 // Public pages
                 if (pathname === "/" || pathname === "/login" || pathname === "/signup" || pathname.startsWith("/api/auth")) {

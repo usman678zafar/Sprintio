@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
@@ -59,6 +59,8 @@ const sorts: Array<{ key: SortMode; label: string }> = [
 ];
 
 const defaultProjectColor = "#D97757";
+const PROJECT_NAME_MAX = 80;
+const PROJECT_DESCRIPTION_MAX = 1000;
 
 function formatDate(dateString?: string) {
   if (!dateString) return "No date";
@@ -102,16 +104,16 @@ function ProjectCard({
   return (
     <div
       onClick={() => router.push(`/project/${project._id}`)}
-      className="group relative cursor-pointer overflow-hidden rounded-[22px] border border-border-subtle bg-surface p-5 transition-all duration-200 hover:border-border-default"
+      className="group relative cursor-pointer overflow-hidden rounded-[32px] border border-border-subtle bg-surface p-6 pb-7 transition-all duration-300 hover:border-brand/40 hover:bg-surface-elevated hover:shadow-2xl hover:shadow-brand/5 hover:-translate-y-1.5"
     >
-      <div className="absolute inset-x-0 top-0 h-1.5" style={{ backgroundColor: accent }} />
+      <div className="absolute inset-x-0 top-0 h-1.5 opacity-80 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: accent }} />
 
       <div className="flex items-start justify-between gap-4">
         <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white"
-          style={{ backgroundColor: accent }}
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-lg transition-transform group-hover:scale-110"
+          style={{ backgroundColor: accent, boxShadow: `${accent}33 0px 8px 16px` }}
         >
-          <FolderDot size={20} strokeWidth={2.4} />
+          <FolderDot size={22} strokeWidth={2.4} />
         </div>
 
         <div className="relative">
@@ -121,9 +123,9 @@ function ProjectCard({
               event.stopPropagation();
               setShowMenu((prev) => !prev);
             }}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-muted transition hover:bg-base"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl text-muted transition hover:bg-base hover:text-text-base border border-transparent hover:border-border-subtle"
           >
-            <MoreVertical size={18} />
+            <MoreVertical size={20} />
           </button>
 
           {showMenu && (
@@ -136,7 +138,7 @@ function ProjectCard({
                 }}
               />
               <div
-                className="absolute right-0 top-10 z-20 w-48 rounded-2xl border p-2"
+                className="absolute right-0 top-12 z-20 w-52 rounded-2xl border p-2 shadow-2xl animate-fade-in"
                 style={{
                   backgroundColor: "rgb(var(--bg-elevated-rgb))",
                   borderColor: "rgb(var(--border-strong-rgb))",
@@ -149,10 +151,10 @@ function ProjectCard({
                     onEdit(project);
                     setShowMenu(false);
                   }}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-muted transition hover:bg-base"
+                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-muted transition hover:bg-base hover:text-text-base"
                 >
-                  <Pencil size={16} />
-                  Edit Project
+                  <Pencil size={18} />
+                  Edit Details
                 </button>
                 <button
                   type="button"
@@ -160,9 +162,9 @@ function ProjectCard({
                     onDelete(project._id);
                     setShowMenu(false);
                   }}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-red-600 transition hover:bg-base"
+                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-500/10"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={18} />
                   Delete Project
                 </button>
               </div>
@@ -171,26 +173,26 @@ function ProjectCard({
         </div>
       </div>
 
-      <div className="mt-4 space-y-2">
-        <h3 className="text-xl font-bold tracking-tight text-text-base">{project.name}</h3>
-        <p className="line-clamp-2 min-h-11 text-sm leading-6 text-muted">
-          {project.description?.trim() || "No description added yet."}
+      <div className="mt-6 space-y-3">
+        <h3 className="text-2xl font-bold tracking-tight text-text-base group-hover:text-brand transition-colors">{project.name}</h3>
+        <p className="line-clamp-2 min-h-[48px] text-[15px] leading-relaxed text-muted/90">
+          {project.description?.trim() || "Ready for action and mission tracking."}
         </p>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-muted">
-        <div className="flex items-center gap-1.5 rounded-lg border border-border-subtle bg-base px-2 py-1">
-          <CheckCircle2 size={12} />
+      <div className="mt-6 flex flex-wrap items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-2 rounded-xl border border-border-subtle bg-base px-3 py-1.5 text-muted">
+          <CheckCircle2 size={14} className="text-brand" />
           <span>{project.taskCount} Tasks</span>
         </div>
-        <div className="flex items-center gap-1.5 rounded-lg border border-border-subtle bg-base px-2 py-1">
-          <Users size={12} />
+        <div className="flex items-center gap-2 rounded-xl border border-border-subtle bg-base px-3 py-1.5 text-muted">
+          <Users size={14} className="text-brand" />
           <span>{project.memberCount} Members</span>
         </div>
         {languages.map((language) => (
           <div
             key={language}
-            className="rounded-lg px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white"
+            className="rounded-xl px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm"
             style={{ backgroundColor: accent }}
           >
             {language}
@@ -198,21 +200,21 @@ function ProjectCard({
         ))}
       </div>
 
-      <div className="mt-5 space-y-2.5">
-        <div className="flex items-center justify-between text-sm font-bold">
-          <span className="text-muted">Progress</span>
+      <div className="mt-8 space-y-3">
+        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-muted">
+          <span>Project Health</span>
           <span className="text-text-base">{progress}%</span>
         </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-base">
+        <div className="h-2.5 w-full overflow-hidden rounded-full bg-base">
           <div
-            className="h-full rounded-full transition-all duration-500"
+            className="h-full rounded-full transition-all duration-700 ease-spring"
             style={{ width: `${progress}%`, backgroundColor: accent }}
           />
         </div>
       </div>
 
-      <div className="mt-5 flex items-center border-t border-border-subtle pt-4">
-        <div className="flex items-center gap-2 text-xs font-bold text-muted">
+      <div className="mt-8 flex items-center border-t border-border-subtle/50 pt-6 group-hover:border-brand/20 transition-colors">
+        <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted/60">
           <Clock size={14} />
           {formatDate(project.createdAt)}
         </div>
@@ -237,45 +239,53 @@ function ProjectListItem({
   return (
     <div
       onClick={() => router.push(`/project/${project._id}`)}
-      className="group flex cursor-pointer flex-col gap-4 rounded-2xl border border-border-subtle bg-surface p-4 transition-all hover:border-border-default sm:flex-row sm:items-center sm:justify-between"
+      className="group flex cursor-pointer flex-col gap-5 rounded-[28px] border border-border-subtle bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:bg-surface-elevated sm:flex-row sm:items-center sm:justify-between hover:translate-x-1"
     >
-      <div className="flex min-w-0 items-start gap-4">
+      <div className="flex min-w-0 items-center gap-5">
         <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white"
-          style={{ backgroundColor: accent }}
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-white shadow-md transition-transform group-hover:scale-105"
+          style={{ backgroundColor: accent, boxShadow: `${accent}33 0px 4px 12px` }}
         >
-          <FolderDot size={18} />
+          <FolderDot size={24} />
         </div>
 
         <div className="min-w-0">
-          <h3 className="truncate font-bold text-text-base">{project.name}</h3>
-          <p className="mt-1 line-clamp-1 text-sm text-muted">
-            {project.description?.trim() || "No description added yet."}
+          <h3 className="truncate text-lg font-bold tracking-tight text-text-base group-hover:text-brand transition-colors">{project.name}</h3>
+          <p className="mt-1 line-clamp-1 text-sm text-muted/80">
+            {project.description?.trim() || "Track progress and team activity."}
           </p>
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs font-medium text-muted">
-            <span>{formatDate(project.createdAt)}</span>
-            <span>{project.taskCount} Tasks</span>
-            <span>{project.memberCount} Members</span>
-            {!!project.languages?.length && <span>{project.languages.slice(0, 3).join(", ")}</span>}
+          <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px] font-bold uppercase tracking-widest text-muted/60">
+            <span className="flex items-center gap-1.5"><Clock size={12} /> {formatDate(project.createdAt)}</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-brand" /> {project.taskCount} Tasks</span>
+            <span className="flex items-center gap-1.5"><Users size={12} className="text-brand" /> {project.memberCount} Members</span>
           </div>
         </div>
       </div>
 
-      <div className="relative self-end sm:self-auto">
+      <div className="relative self-end sm:self-auto flex items-center gap-4">
+        {!!project.languages?.length && (
+          <div className="hidden lg:flex gap-2">
+            {project.languages.slice(0, 2).map(lang => (
+              <span key={lang} className="px-2.5 py-1 rounded-lg bg-base border border-border-subtle text-[10px] font-bold uppercase text-muted">
+                {lang}
+              </span>
+            ))}
+          </div>
+        )}
         <button
           type="button"
           onClick={(event) => {
             event.stopPropagation();
             setShowMenu((prev) => !prev);
           }}
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-muted transition hover:bg-base"
+          className="flex h-10 w-10 items-center justify-center rounded-2xl text-muted transition hover:bg-base hover:text-text-base border border-transparent hover:border-border-subtle"
         >
-          <MoreVertical size={18} />
+          <MoreVertical size={20} />
         </button>
 
         {showMenu && (
           <div
-            className="absolute right-0 top-10 z-20 w-48 rounded-2xl border p-2"
+            className="absolute right-0 top-12 z-20 w-48 rounded-2xl border p-2 shadow-2xl animate-fade-in"
             style={{
               backgroundColor: "rgb(var(--bg-elevated-rgb))",
               borderColor: "rgb(var(--border-strong-rgb))",
@@ -288,10 +298,10 @@ function ProjectListItem({
                 onEdit(project);
                 setShowMenu(false);
               }}
-              className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-muted hover:bg-base"
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-semibold text-muted hover:bg-base"
             >
               <Pencil size={16} />
-              Edit Project
+              Edit Details
             </button>
             <button
               type="button"
@@ -299,7 +309,7 @@ function ProjectListItem({
                 onDelete(project._id);
                 setShowMenu(false);
               }}
-              className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-red-600 hover:bg-base"
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-500/10"
             >
               <Trash2 size={16} />
               Delete Project
@@ -333,6 +343,8 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
   const [newProjectColor, setNewProjectColor] = useState(defaultProjectColor);
   const [newProjectLanguages, setNewProjectLanguages] = useState("");
   const [newProjectMembers, setNewProjectMembers] = useState("");
+
+  const isMounted = useRef(false);
 
   const [updatedName, setUpdatedName] = useState("");
   const [updatedDescription, setUpdatedDescription] = useState("");
@@ -385,6 +397,10 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
   }, [searchQuery, sortMode]);
 
   useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
     fetchProjects(currentPage);
   }, [currentPage, searchQuery, sortMode]);
 
@@ -513,7 +529,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
       <div className="mx-auto max-w-7xl">
         <section className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-text-base sm:text-4xl">Project Portfolio</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-text-base sm:text-4xl">Project Portfolio</h1>
             <p className="mt-3 text-lg font-medium text-muted">
               Overview of all your active workspaces and team missions.
             </p>
@@ -547,64 +563,86 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
           </div>
         </section>
 
-        <section className="mb-8 border-y border-border-subtle py-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
+        <section className="mb-10 border-y border-border-subtle/50 py-6">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex h-14 items-center rounded-2xl border border-border-subtle bg-surface p-1.5">
               {filters.map((item) => (
                 <button
                   key={item.key}
                   type="button"
                   onClick={() => setFilter(item.key)}
-                  className={`rounded-full px-5 py-2.5 text-sm font-bold transition-all ${
+                  className={`relative h-full rounded-xl px-6 text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
                     filter === item.key
-                      ? "bg-[#D97757] text-white"
-                      : "border border-border-subtle bg-surface text-muted hover:bg-base"
+                      ? "bg-primary text-white shadow-lg shadow-primary/20"
+                      : "text-muted hover:text-text-base hover:bg-base"
                   }`}
                 >
                   {item.label}
+                  {filter === item.key && (
+                    <span 
+                      className="absolute -bottom-1 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full bg-white opacity-50"
+                      style={{ animation: 'float 2s infinite ease-in-out' }}
+                    />
+                  )}
                 </button>
               ))}
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="hidden text-sm font-bold text-muted md:block">Sort by:</span>
-              <select
-                value={sortMode}
-                onChange={(event) => setSortMode(event.target.value as SortMode)}
-                className="rounded-xl border border-border-subtle bg-surface px-4 py-2.5 text-sm font-bold text-text-base outline-none"
-              >
-                {sorts.map((sort) => (
-                  <option key={sort.key} value={sort.key}>
-                    {sort.label}
-                  </option>
-                ))}
-              </select>
+            <div className="flex items-center gap-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-muted/60">Sort by:</span>
+              <div className="relative">
+                <select
+                  value={sortMode}
+                  onChange={(event) => setSortMode(event.target.value as SortMode)}
+                  className="h-14 appearance-none rounded-2xl border border-border-subtle bg-surface pl-6 pr-12 text-sm font-bold uppercase tracking-widest text-text-base outline-none hover:border-brand/40 transition-colors"
+                >
+                  {sorts.map((sort) => (
+                    <option key={sort.key} value={sort.key}>
+                      {sort.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted">
+                  <List size={16} strokeWidth={3} />
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
         {loading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="h-64 animate-pulse rounded-[32px] bg-surface" />
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map((item) => (
+              <div 
+                key={item} 
+                className="h-[310px] rounded-[32px] bg-border-subtle/50 border-none animate-pulse"
+                style={{ animationDelay: `${item * 75}ms` }}
+              />
             ))}
           </div>
         ) : visibleProjects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-[32px] border border-border-subtle bg-surface py-24 text-center">
-            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-base text-muted">
-              <FolderDot size={40} />
+          <div className="flex flex-col items-center justify-center rounded-[40px] border border-border-subtle bg-surface py-32 text-center animate-fade-in">
+            <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-[32px] bg-base text-muted/40">
+              <FolderDot size={48} />
             </div>
-            <h2 className="text-2xl font-bold text-text-base">No projects found</h2>
-            <p className="mt-2 text-muted">Create a project from the button above.</p>
+            <h2 className="text-2xl font-bold tracking-tight text-text-base">No results found</h2>
+            <p className="mt-3 text-muted max-w-xs mx-auto text-[15px]">
+              Try adjusting your search criteria or create a fresh workspace to start your mission.
+            </p>
           </div>
         ) : viewMode === "grid" ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {visibleProjects.map((project) => (
-              <ProjectCard key={project._id} project={project} onEdit={openEditModal} onDelete={setDeletingProjectId} />
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 animate-fade-in" key={`grid-${filter}-${sortMode}-${searchQuery}`}>
+            {visibleProjects.map((project, idx) => (
+              <ProjectCard 
+                key={project._id} 
+                project={project} 
+                onEdit={openEditModal} 
+                onDelete={setDeletingProjectId} 
+              />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5 animate-fade-in" key={`list-${filter}-${sortMode}-${searchQuery}`}>
             {visibleProjects.map((project) => (
               <ProjectListItem
                 key={project._id}
@@ -663,11 +701,13 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                     required
                     autoFocus
                     value={newProjectName}
-                    onChange={(event) => setNewProjectName(event.target.value)}
+                    onChange={(event) => setNewProjectName(event.target.value.slice(0, PROJECT_NAME_MAX))}
                     disabled={creating}
+                    maxLength={PROJECT_NAME_MAX}
                     className="w-full rounded-2xl border border-border-subtle bg-base px-5 py-4 text-text-base outline-none"
                     placeholder="e.g. Apollo Mission"
                   />
+                  <p className="mt-2 text-xs text-muted">{newProjectName.length}/{PROJECT_NAME_MAX}</p>
                 </div>
 
                 <div className="md:col-span-2">
@@ -677,11 +717,15 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                   <textarea
                     rows={3}
                     value={newProjectDescription}
-                    onChange={(event) => setNewProjectDescription(event.target.value)}
+                    onChange={(event) => setNewProjectDescription(event.target.value.slice(0, PROJECT_DESCRIPTION_MAX))}
                     disabled={creating}
+                    maxLength={PROJECT_DESCRIPTION_MAX}
                     className="w-full rounded-2xl border border-border-subtle bg-base px-5 py-4 text-text-base outline-none"
                     placeholder="Short summary of the workspace."
                   />
+                  <p className="mt-2 text-xs text-muted">
+                    {newProjectDescription.length}/{PROJECT_DESCRIPTION_MAX}
+                  </p>
                 </div>
 
                 <div>
@@ -763,10 +807,12 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                     required
                     autoFocus
                     value={updatedName}
-                    onChange={(event) => setUpdatedName(event.target.value)}
+                    onChange={(event) => setUpdatedName(event.target.value.slice(0, PROJECT_NAME_MAX))}
                     disabled={updating}
+                    maxLength={PROJECT_NAME_MAX}
                     className="w-full rounded-2xl border border-border-subtle bg-base px-5 py-4 text-text-base outline-none"
                   />
+                  <p className="mt-2 text-xs text-muted">{updatedName.length}/{PROJECT_NAME_MAX}</p>
                 </div>
 
                 <div className="md:col-span-2">
@@ -776,10 +822,14 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                   <textarea
                     rows={3}
                     value={updatedDescription}
-                    onChange={(event) => setUpdatedDescription(event.target.value)}
+                    onChange={(event) => setUpdatedDescription(event.target.value.slice(0, PROJECT_DESCRIPTION_MAX))}
                     disabled={updating}
+                    maxLength={PROJECT_DESCRIPTION_MAX}
                     className="w-full rounded-2xl border border-border-subtle bg-base px-5 py-4 text-text-base outline-none"
                   />
+                  <p className="mt-2 text-xs text-muted">
+                    {updatedDescription.length}/{PROJECT_DESCRIPTION_MAX}
+                  </p>
                 </div>
 
                 <div>

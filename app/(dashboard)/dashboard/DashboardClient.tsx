@@ -1,794 +1,290 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import {
-    CalendarDays,
-    MoreHorizontal,
-    Pencil,
-    Trash2,
-    TrendingUp,
-    Users,
-    Clock,
-    AlertCircle,
-    Layout,
+import { useMemo } from "react";
+import { 
+  BarChart3, 
+  Calendar, 
+  CheckCircle2, 
+  Layers, 
+  ArrowUpRight,
+  Plus,
+  LayoutGrid,
+  Clock,
+  ChevronRight,
+  Zap
 } from "lucide-react";
-import ConfirmDialog from "@/components/ConfirmDialog";
+import Link from "next/link";
+import ProjectCard from "@/components/ProjectCard";
+
+const RECENT_ACTIVITY_FORMATTER = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
 
 type Project = {
-    _id: string;
-    name: string;
-    memberCount: number;
-    taskCount: number;
-    description?: string;
-    createdAt?: string;
+  _id: string;
+  name: string;
+  memberCount: number;
+  taskCount: number;
+  description?: string;
+  createdAt?: string;
 };
 
-type StatusTone = "progress" | "risk" | "planning";
+type Task = {
+  _id: string;
+  title: string;
+  status: string;
+  createdAt: string;
+  projectId: {
+    _id: string;
+    name: string;
+  };
+};
 
-const teamPalette = [
-    "bg-sky-100 text-sky-700",
-    "bg-emerald-100 text-emerald-700",
-    "bg-amber-100 text-amber-700",
-    "bg-violet-100 text-violet-700",
-];
+type DashboardMetrics = {
+  totalTasks: number;
+  activeProjects: number;
+  upcomingDeadlines: number;
+  efficiency: number;
+};
 
-const mockTeam = [
-    { name: "Sarah Jones", status: "Online" },
-    { name: "Mark Thompson", status: "Away" },
-    { name: "Emily White", status: "Online" },
-];
+export default function DashboardClient({
+  initialProjects,
+  initialMetrics,
+  recentTasks = [],
+  user,
+  renderedAt,
+}: {
+  initialProjects: Project[];
+  initialMetrics: DashboardMetrics;
+  recentTasks?: Task[];
+  user?: any;
+  renderedAt: string;
+}) {
+  const hasProjects = initialProjects.length > 0;
+  const renderDate = useMemo(() => new Date(renderedAt), [renderedAt]);
+  
+  const greeting = useMemo(() => {
+    const hour = renderDate.getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  }, [renderDate]);
 
-function clampProgress(value: number) {
-    return Math.max(10, Math.min(88, value));
-}
+  const metricCards = [
+    {
+      label: "Total Tasks",
+      value: initialMetrics.totalTasks,
+      icon: Layers,
+      color: "brand",
+      helper: "Across all projects",
+    },
+    {
+      label: "Active Projects",
+      value: initialMetrics.activeProjects,
+      icon: LayoutGrid,
+      color: "blue",
+      helper: "Projects you're in",
+    },
+    {
+      label: "Upcoming Deadlines",
+      value: initialMetrics.upcomingDeadlines,
+      icon: Calendar,
+      color: "orange",
+      helper: "Due within 7 days",
+    },
+    {
+      label: "Efficiency",
+      value: `${initialMetrics.efficiency}%`,
+      icon: CheckCircle2,
+      color: "green",
+      helper: "Success rate",
+    },
+  ];
 
-function getProjectTone(project: Project): {
-    label: string;
-    tone: StatusTone;
-    progress: number;
-    timeline: string;
-} {
-    if (project.taskCount === 0) {
-        return {
-            label: "Planning",
-            tone: "planning",
-            progress: 10,
-            timeline: "Starts next week",
-        };
-    }
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const diff = renderDate.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    return RECENT_ACTIVITY_FORMATTER.format(date);
+  };
 
-    if (project.taskCount < 3) {
-        return {
-            label: "At Risk",
-            tone: "risk",
-            progress: clampProgress(22 + project.memberCount * 5),
-            timeline: "Overdue 2 days",
-        };
-    }
-
-    return {
-        label: "In Progress",
-        tone: "progress",
-        progress: clampProgress(46 + project.taskCount * 6),
-        timeline: "Due in 5 days",
-    };
-}
-
-function getToneClasses(tone: StatusTone) {
-    if (tone === "risk") {
-        return {
-            badge: "border border-rose-200 bg-rose-50 text-rose-600",
-            text: "text-rose-600",
-            icon: "text-rose-500",
-            bar: "bg-rose-500",
-            accent: "text-rose-600 font-semibold",
-        };
-    }
-
-    if (tone === "planning") {
-        return {
-            badge: "border border-sky-200 bg-sky-50 text-sky-600",
-            text: "text-sky-600",
-            icon: "text-sky-500",
-            bar: "bg-sky-500",
-            accent: "text-sky-600",
-        };
-    }
-
-    return {
-        badge: "border border-primary/20 bg-primary/10 text-primary",
-        text: "text-primary",
-        icon: "text-primary",
-        bar: "bg-primary",
-        accent: "text-primary font-semibold",
-    };
-}
-
-function getProjectSummary(project: Project) {
-    if (project.description?.trim()) {
-        return project.description;
-    }
-
-    return `Coordinating deliverables, ownership, and task progress for ${project.name}.`;
-}
-
-export default function DashboardClient({ initialProjects }: { initialProjects: Project[] }) {
-    const router = useRouter();
-    const { data: session } = useSession();
-    const [projects, setProjects] = useState<Project[]>(initialProjects);
-    const [loading, setLoading] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [newProjectName, setNewProjectName] = useState("");
-    const [creating, setCreating] = useState(false);
-    const [editingProject, setEditingProject] = useState<Project | null>(null);
-    const [updatedName, setUpdatedName] = useState("");
-    const [updating, setUpdating] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-    const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
-    const [deletingProject, setDeletingProject] = useState(false);
-
-    const fetchProjects = async () => {
-        try {
-            const params = new URLSearchParams({ page: "1", limit: "100", sort: "recent" });
-            const res = await fetch(`/api/projects?${params.toString()}`, { cache: "no-store" });
-            if (res.ok) {
-                const data = await res.json();
-                setProjects(data.projects);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    useEffect(() => {
-        const handleSearch = (event: Event) => {
-            setSearchQuery((event as CustomEvent<string>).detail || "");
-        };
-
-        const handleAddProject = () => {
-            setShowModal(true);
-        };
-
-        window.addEventListener("dashboard-search", handleSearch as EventListener);
-        window.addEventListener("dashboard-add-project", handleAddProject);
-
-        return () => {
-            window.removeEventListener(
-                "dashboard-search",
-                handleSearch as EventListener
-            );
-            window.removeEventListener("dashboard-add-project", handleAddProject);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleCloseMenus = () => setOpenMenuId(null);
-
-        window.addEventListener("click", handleCloseMenus);
-        return () => window.removeEventListener("click", handleCloseMenus);
-    }, []);
-
-    useEffect(() => {
-        const interval = window.setInterval(() => {
-            fetchProjects();
-        }, 20000);
-
-        return () => window.clearInterval(interval);
-    }, []);
-
-    const handleCreateProject = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newProjectName.trim()) return;
-
-        setCreating(true);
-        try {
-            const res = await fetch("/api/projects", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: newProjectName }),
-            });
-
-            if (res.ok) {
-                setNewProjectName("");
-                setShowModal(false);
-                fetchProjects();
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setCreating(false);
-        }
-    };
-
-    const handleUpdateProject = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!updatedName.trim() || !editingProject) return;
-
-        setUpdating(true);
-        try {
-            const res = await fetch(`/api/projects/${editingProject._id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: updatedName }),
-            });
-
-            if (res.ok) {
-                setEditingProject(null);
-                setUpdatedName("");
-                fetchProjects();
-            } else {
-                const data = await res.json();
-                alert(data.message);
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setUpdating(false);
-        }
-    };
-
-    const handleDeleteProject = async () => {
-        if (!deletingProjectId) return;
-        setDeletingProject(true);
-        try {
-            const res = await fetch(`/api/projects/${deletingProjectId}`, {
-                method: "DELETE",
-            });
-
-            if (res.ok) {
-                setDeletingProjectId(null);
-                fetchProjects();
-            } else {
-                const data = await res.json();
-                alert(data.message);
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setDeletingProject(false);
-        }
-    };
-
-    const filteredProjects = useMemo(() => {
-        const query = searchQuery.trim().toLowerCase();
-
-        if (!query) return projects;
-
-        return projects.filter((project) => {
-            const summary = getProjectSummary(project).toLowerCase();
-            return (
-                project.name.toLowerCase().includes(query) || summary.includes(query)
-            );
-        });
-    }, [projects, searchQuery]);
-
-    const metrics = useMemo(() => {
-        const totalTasks = projects.reduce(
-            (sum, project) => sum + project.taskCount,
-            0
-        );
-        const activeProjects = projects.length;
-        const upcomingDeadlines =
-            projects.length === 0
-                ? 0
-                : Math.min(3, Math.max(1, Math.ceil(totalTasks / 4)));
-        const efficiency =
-            projects.length === 0 ? 0 : Math.min(98, 84 + activeProjects * 2);
-
-        return { totalTasks, activeProjects, upcomingDeadlines, efficiency };
-    }, [projects]);
-
-    const featuredProjects = filteredProjects.slice(0, 3);
-
-    const recentActivity = useMemo(() => {
-        const fallback = [
-            {
-                text: "Alex Chen completed the User Dashboard Mockup task.",
-                meta: "2 hours ago",
-                color: "bg-brand",
-            },
-            {
-                text: "New project Q4 Marketing Campaign was created by Admin.",
-                meta: "5 hours ago",
-                color: "bg-slate-300",
-            },
-            {
-                text: "Deadline for API Documentation was moved to tomorrow.",
-                meta: "Yesterday at 4:30 PM",
-                color: "bg-amber-500",
-            },
-        ];
-
-        if (projects.length === 0) return fallback;
-
-        return projects.slice(0, 3).map((project, index) => ({
-            text:
-                index === 0
-                    ? `${session?.user?.name || "Admin"} is leading ${project.name}.`
-                    : index === 1
-                        ? `${project.name} has ${project.taskCount} active tracked tasks.`
-                        : `${project.name} currently has ${project.memberCount} team members assigned.`,
-            meta:
-                index === 0
-                    ? "2 hours ago"
-                    : index === 1
-                        ? "5 hours ago"
-                        : "Yesterday at 4:30 PM",
-            color:
-                index === 2 ? "bg-amber-500" : index === 1 ? "bg-slate-300" : "bg-brand",
-        }));
-    }, [projects, session?.user?.name]);
-
-    const teamMembers = useMemo(() => {
-        return [
-            {
-                name: session?.user?.name || "Sarah Jones",
-                status: "Online",
-            },
-            ...mockTeam.slice(0, 2),
-        ];
-    }, [session?.user?.name]);
-
-    const noResults =
-        !loading && filteredProjects.length === 0 && projects.length > 0;
-
-    return (
-        <div className="min-h-full bg-base px-4 py-5 sm:px-5 lg:px-6 lg:py-6">
-            <div className="mx-auto w-full max-w-[1040px]">
-                <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-                    {[
-                        {
-                            label: "Total Tasks",
-                            value: metrics.totalTasks,
-                            chip: "+12%",
-                            chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-                        },
-                        {
-                            label: "Active Projects",
-                            value: metrics.activeProjects,
-                            chip: "Steady",
-                            chipClass: "bg-brand/10 text-primary border-primary/20",
-                        },
-                        {
-                            label: "Upcoming Deadlines",
-                            value: metrics.upcomingDeadlines,
-                            chip: "Attention",
-                            chipClass: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-                        },
-                        {
-                            label: "Efficiency",
-                            value: `${metrics.efficiency}%`,
-                            chip: "+4%",
-                            chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-                        },
-                    ].map((card) => (
-                        <div
-                            key={card.label}
-                            className="flex flex-col justify-between rounded-[20px] border border-border-subtle bg-[var(--color-light-surface)] p-4 sm:rounded-[24px] sm:px-5 sm:py-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-transform hover:scale-[1.02]"
-                        >
-                            <p className="text-[13px] font-medium leading-tight text-muted sm:text-sm">
-                                {card.label}
-                            </p>
-                            <div className="mt-2.5 flex flex-wrap items-baseline gap-2 sm:mt-3 sm:items-center sm:gap-3">
-                                <span className="text-2xl font-bold tracking-tight text-muted sm:text-3xl">
-                                    {card.value}
-                                </span>
-                                <span
-                                    className={`shrink-0 rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider shadow-sm sm:px-2.5 sm:text-[10px] ${card.chipClass}`}
-                                >
-                                    {card.chip}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </section>
-
-                <section className="mt-8">
-                    <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
-                                Active Projects
-                            </h1>
-                            <p className="mt-1 text-sm text-muted">
-                                Focused delivery across your most important workspaces.
-                            </p>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={() =>
-                                document
-                                    .getElementById("active-projects")
-                                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
-                            }
-                            className="text-base font-medium text-primary transition hover:text-brand"
-                        >
-                            View All Projects
-                        </button>
-                    </div>
-
-                    {loading ? (
-                        <div className="rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] px-6 py-16 text-center text-muted shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                            Loading dashboard...
-                        </div>
-                    ) : noResults ? (
-                        <div className="rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] px-6 py-16 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                            <p className="text-xl font-semibold text-muted">
-                                No projects match "{searchQuery}"
-                            </p>
-                            <p className="mt-2 text-muted">
-                                Try a different search term from the top bar.
-                            </p>
-                        </div>
-                    ) : projects.length === 0 ? (
-                        <div className="rounded-3xl border border-dashed border-border-subtle bg-[var(--color-light-surface)] px-6 py-20 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                            <p className="text-xl font-semibold text-muted">
-                                No projects yet
-                            </p>
-                            <p className="mt-2 text-muted">
-                                Use the Add New Project button to create your first workspace.
-                            </p>
-                        </div>
-                    ) : (
-                        <div id="active-projects" className="grid gap-4 sm:gap-5 xl:grid-cols-3">
-                            {featuredProjects.map((project, index) => {
-                                const tone = getProjectTone(project);
-                                const toneClasses = getToneClasses(tone.tone);
-                                const avatarCount = Math.max(Math.min(project.memberCount, 2), 1);
-                                const extraMembers = Math.max(project.memberCount - avatarCount, 0);
-
-                                return (
-                                    <article
-                                        key={project._id}
-                                        role="link"
-                                        tabIndex={0}
-                                        onClick={() => router.push(`/project/${project._id}`)}
-                                        onKeyDown={(event) => {
-                                            if (event.key === "Enter" || event.key === " ") {
-                                                event.preventDefault();
-                                                router.push(`/project/${project._id}`);
-                                            }
-                                        }}
-                                        className="cursor-pointer rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] focus:outline-none focus:ring-4 focus:ring-brand/20 transition-transform hover:-translate-y-1"
-                                    >
-                                        <div className="flex items-start justify-between gap-4">
-                                            {(() => {
-                                                const Icon = tone.tone === 'risk' ? AlertCircle : tone.tone === 'planning' ? Layout : Clock;
-                                                return (
-                                                    <span
-                                                        className={`flex items-center gap-2 rounded-xl px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest ${toneClasses.badge}`}
-                                                    >
-                                                        <Icon size={13} className={toneClasses.icon} />
-                                                        <span className={toneClasses.text}>{tone.label}</span>
-                                                    </span>
-                                                );
-                                            })()}
-
-                                            <div className="relative">
-                                                <button
-                                                    type="button"
-                                                    onClick={(event) => {
-                                                        event.stopPropagation();
-                                                        setOpenMenuId(
-                                                            openMenuId === project._id ? null : project._id
-                                                        );
-                                                    }}
-                                                    className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] hover:text-muted"
-                                                    aria-label={`Open actions for ${project.name}`}
-                                                >
-                                                    <MoreHorizontal size={20} />
-                                                </button>
-
-                                                {openMenuId === project._id && (
-                                                    <div
-                                                        className="absolute right-0 top-12 z-20 w-44 rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] p-2 shadow-xl"
-                                                        onClick={(event) => event.stopPropagation()}
-                                                    >
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                setEditingProject(project);
-                                                                setUpdatedName(project.name);
-                                                                setOpenMenuId(null);
-                                                            }}
-                                                            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
-                                                        >
-                                                            <Pencil size={16} />
-                                                            Edit Name
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                setOpenMenuId(null);
-                                                                setDeletingProjectId(project._id);
-                                                            }}
-                                                            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                            Delete Project
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <Link href={`/project/${project._id}`} className="mt-4 sm:mt-5 block">
-                                            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
-                                                {project.name}
-                                            </h2>
-                                            <p className="mt-2 sm:mt-3 min-h-12 text-sm sm:text-base leading-relaxed text-muted">
-                                                {getProjectSummary(project)}
-                                            </p>
-
-                                            <div className="mt-5 sm:mt-6">
-                                                <div className="mb-3 flex items-center justify-between text-sm font-medium text-muted">
-                                                    <span>Progress</span>
-                                                    <span>{tone.progress}%</span>
-                                                </div>
-                                                <div className="h-2.5 rounded-full bg-surface">
-                                                    <div
-                                                        className={`h-full rounded-full ${toneClasses.bar}`}
-                                                        style={{ width: `${tone.progress}%` }}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="mt-6 flex items-center justify-between gap-4">
-                                                <div className="flex items-center">
-                                                    {Array.from({ length: avatarCount }).map((_, avatarIndex) => (
-                                                        <span
-                                                            key={`${project._id}-avatar-${avatarIndex}`}
-                                                            className={`-ml-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white text-xs font-semibold first:ml-0 ${teamPalette[(index + avatarIndex) % teamPalette.length]}`}
-                                                        >
-                                                            {project.name.charAt(avatarIndex).toUpperCase() || "P"}
-                                                        </span>
-                                                    ))}
-                                                    {extraMembers > 0 && (
-                                                        <span className="-ml-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-surface text-xs font-semibold text-muted">
-                                                            +{extraMembers}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <span
-                                                    className={`text-sm font-medium ${toneClasses.accent}`}
-                                                >
-                                                    {tone.timeline}
-                                                </span>
-                                            </div>
-                                        </Link>
-                                    </article>
-                                );
-                            })}
-                        </div>
-                    )}
-                </section>
-
-                <section className="mt-6 sm:mt-8 grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
-                    <div className="rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
-                            Recent Activity
-                        </h2>
-                        <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
-                            {recentActivity.map((item) => (
-                                <div key={`${item.text}-${item.meta}`} className="flex gap-4">
-                                    <span
-                                        className={`mt-1.5 sm:mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${item.color}`}
-                                    />
-                                    <div>
-                                        <p className="text-sm sm:text-base leading-relaxed text-muted">{item.text}</p>
-                                        <p className="mt-1 text-xs sm:text-sm text-muted">{item.meta}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
-                            Team Status
-                        </h2>
-                        <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-5">
-                            {teamMembers.map((member, index) => (
-                                <div key={`${member.name}-${index}`} className="flex items-center gap-4">
-                                    <div className="relative">
-                                        <div
-                                            className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-semibold ${teamPalette[index % teamPalette.length]}`}
-                                        >
-                                            {member.name
-                                                .split(" ")
-                                                .map((part) => part[0])
-                                                .join("")
-                                                .slice(0, 2)
-                                                .toUpperCase()}
-                                        </div>
-                                        <span
-                                            className={`absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-white ${member.status === "Online" ? "bg-emerald-500" : "bg-amber-400"
-                                                }`}
-                                        />
-                                    </div>
-                                    <div className="min-w-0 flex-1">
-                                        <p className="truncate text-base text-muted">{member.name}</p>
-                                    </div>
-                                    <span className="text-sm text-muted">{member.status}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        <button
-                            type="button"
-                            className="mt-6 flex w-full items-center justify-center rounded-2xl border border-border-subtle px-4 py-2.5 text-sm font-medium text-muted transition hover:border-border-subtle hover:bg-[var(--color-light-bg)]"
-                        >
-                            Manage Team
-                        </button>
-                    </div>
-                </section>
-
-                <section className="mt-8 grid gap-5 lg:grid-cols-3">
-                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                        <div className="flex items-center gap-3">
-                            <div className="rounded-2xl bg-brand/10 p-3 text-primary">
-                                <TrendingUp size={22} />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-muted">
-                                    Workload Trend
-                                </h3>
-                                <p className="text-sm text-muted">Current delivery pace</p>
-                            </div>
-                        </div>
-                        <div className="mt-5 text-3xl font-semibold tracking-tight text-muted">
-                            {metrics.activeProjects === 0
-                                ? "0%"
-                                : `${Math.min(24 + metrics.totalTasks * 3, 89)}%`}
-                        </div>
-                        <p className="mt-2 text-sm leading-6 text-muted">
-                            Healthy momentum across active projects with balanced task ownership.
-                        </p>
-                    </div>
-
-                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                        <div className="flex items-center gap-3">
-                            <div className="rounded-2xl bg-amber-50 p-3 text-amber-600">
-                                <CalendarDays size={22} />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-muted">
-                                    Priority Window
-                                </h3>
-                                <p className="text-sm text-muted">Deadlines to watch</p>
-                            </div>
-                        </div>
-                        <div className="mt-5 text-3xl font-semibold tracking-tight text-muted">
-                            {metrics.upcomingDeadlines}
-                        </div>
-                        <p className="mt-2 text-sm leading-6 text-muted">
-                            Projects currently flagged for closer deadline coordination this week.
-                        </p>
-                    </div>
-
-                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                        <div className="flex items-center gap-3">
-                            <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-600">
-                                <Users size={22} />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-muted">
-                                    Team Coverage
-                                </h3>
-                                <p className="text-sm text-muted">Assigned collaborators</p>
-                            </div>
-                        </div>
-                        <div className="mt-5 text-3xl font-semibold tracking-tight text-muted">
-                            {projects.reduce((sum, project) => sum + project.memberCount, 0)}
-                        </div>
-                        <p className="mt-2 text-sm leading-6 text-muted">
-                            Combined member assignments across all workspaces currently in view.
-                        </p>
-                    </div>
-                </section>
-
+  return (
+    <div className="min-h-full bg-base px-4 py-8 sm:px-8 lg:px-10">
+      <div className="mx-auto w-full max-w-[1240px]">
+        {/* Header Section */}
+        <header className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex h-6 items-center justify-center rounded-full bg-brand/10 px-3 py-1">
+                <Zap size={12} className="text-brand mr-1.5 fill-brand" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand">Dashboard Active</span>
+              </div>
             </div>
+            <h1 className="text-4xl font-extrabold tracking-tight text-text-base sm:text-5xl">
+              {greeting}, <span className="text-brand">{user?.name?.split(' ')[0] || 'User'}</span>
+            </h1>
+            <p className="mt-3 text-lg text-muted max-w-2xl leading-relaxed">
+              Welcome back to Sprinto. You have <span className="text-text-base font-semibold">{initialMetrics.upcomingDeadlines} urgent deadlines</span> this week.
+            </p>
+          </div>
+          
+          <Link 
+            href="/projects" 
+            className="btn-primary group h-12 px-6 text-base shadow-lg shadow-brand/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Plus size={20} className="transition-transform group-hover:rotate-90" />
+            Create Project
+          </Link>
+        </header>
 
-            {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
-                    <div className="modal-surface w-full max-w-md p-7">
-                        <h3 className="text-2xl font-semibold text-muted">
-                            Create New Project
-                        </h3>
-                        <form onSubmit={handleCreateProject}>
-                            <div className="mb-6 mt-6">
-                                <label className="mb-2 block text-sm font-medium text-muted">
-                                    Project Name
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted transition focus:border-primary"
-                                    placeholder="Enter project name..."
-                                    value={newProjectName}
-                                    onChange={(e) => setNewProjectName(e.target.value)}
-                                    disabled={creating}
-                                />
-                            </div>
-                            <div className="flex justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                    className="btn-danger px-4 py-3"
-                                    disabled={creating}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={creating}
-                                    className="btn-success px-5 py-3"
-                                >
-                                    {creating ? "Creating..." : "Create"}
-                                </button>
-                            </div>
-                        </form>
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+          {/* Main Content */}
+          <div className="lg:col-span-8">
+            {/* Stats Grid */}
+            <section className="mb-12 grid grid-cols-1 gap-5 sm:grid-cols-2">
+              {metricCards.map((card) => {
+                const Icon = card.icon;
+                return (
+                  <article
+                    key={card.label}
+                    className="group relative overflow-hidden rounded-[32px] border border-border-subtle bg-surface p-7 transition-all hover:border-brand/40 hover:bg-surface-elevated"
+                  >
+                    <div className="relative z-10 flex items-start justify-between">
+                      <div>
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-base text-brand group-hover:bg-brand group-hover:text-white transition-all duration-300">
+                          <Icon size={24} />
+                        </div>
+                        <p className="mt-6 text-sm font-semibold text-muted uppercase tracking-wider">{card.label}</p>
+                        <p className="mt-1 text-4xl font-black tracking-tight text-text-base">{card.value}</p>
+                        <p className="mt-2 text-xs font-medium text-muted/70">{card.helper}</p>
+                      </div>
+                      <ArrowUpRight size={20} className="text-muted/40 group-hover:text-brand transition-colors" />
                     </div>
-                </div>
-            )}
+                    
+                    {/* Decorative background accent */}
+                    <div className="absolute -right-6 -bottom-6 h-32 w-32 rounded-full bg-brand/5 blur-2xl transition-all group-hover:bg-brand/10" />
+                  </article>
+                );
+              })}
+            </section>
 
-            {editingProject && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
-                    <div className="modal-surface w-full max-w-md p-7">
-                        <h3 className="text-2xl font-semibold text-muted">
-                            Edit Project
-                        </h3>
-                        <form onSubmit={handleUpdateProject}>
-                            <div className="mb-6 mt-6">
-                                <label className="mb-2 block text-sm font-medium text-muted">
-                                    Project Name
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted transition focus:border-primary"
-                                    value={updatedName}
-                                    onChange={(e) => setUpdatedName(e.target.value)}
-                                    disabled={updating}
-                                />
-                            </div>
-                            <div className="flex justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setEditingProject(null)}
-                                    className="btn-danger px-4 py-3"
-                                    disabled={updating}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={updating}
-                                    className="btn-warning px-5 py-3"
-                                >
-                                    {updating ? "Saving..." : "Save Changes"}
-                                </button>
-                            </div>
-                        </form>
+            {/* Projects Section */}
+            <section>
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl font-bold text-text-base flex items-center gap-3">
+                  <BarChart3 size={24} className="text-brand" />
+                  Active Projects
+                </h2>
+                {hasProjects && (
+                  <Link href="/projects" className="flex items-center gap-1 text-sm font-semibold text-brand hover:underline group">
+                    View Gallery
+                    <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                )}
+              </div>
+
+              {hasProjects ? (
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  {initialProjects.slice(0, 4).map((project) => (
+                    <ProjectCard
+                      key={project._id}
+                      id={project._id}
+                      name={project.name}
+                      memberCount={project.memberCount}
+                      taskCount={project.taskCount}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-border-subtle bg-surface/30 p-16 text-center">
+                  <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-muted/10 text-muted mb-6">
+                    <LayoutGrid size={40} />
+                  </div>
+                  <h3 className="text-xl font-bold text-text-base">No workspace activity</h3>
+                  <p className="mt-3 text-muted max-w-sm text-base leading-relaxed">
+                    Ready to start something new? Create your first project and invite your team to begin.
+                  </p>
+                  <Link 
+                    href="/projects" 
+                    className="mt-8 btn-primary px-8"
+                  >
+                    Get Started
+                  </Link>
+                </div>
+              )}
+            </section>
+          </div>
+
+          {/* Sidebar Area */}
+          <div className="lg:col-span-4">
+            <section className="sticky top-6 rounded-[32px] border border-border-subtle bg-surface/50 p-8 backdrop-blur-sm">
+              <h3 className="text-xl font-bold text-text-base flex items-center gap-3 mb-8">
+                <Clock size={22} className="text-brand" />
+                Recent Activity
+              </h3>
+              
+              <div className="space-y-8">
+                {recentTasks.length > 0 ? (
+                  recentTasks.map((task) => (
+                    <div key={task._id} className="group relative flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className="h-3 w-3 rounded-full bg-brand ring-4 ring-brand/10 z-10" />
+                        <div className="h-full w-0.5 bg-border-subtle group-last:hidden mt-2" />
+                      </div>
+                      <div className="pb-4">
+                        <p className="text-xs font-bold text-brand uppercase tracking-widest mb-1">
+                          {task.projectId.name}
+                        </p>
+                        <h4 className="text-[15px] font-semibold text-text-base line-clamp-1 group-hover:text-brand transition-colors cursor-pointer">
+                          {task.title}
+                        </h4>
+                        <div className="mt-2 flex items-center gap-3 text-xs text-muted">
+                          <span className="flex items-center gap-1.5">
+                            <Clock size={12} />
+                            {formatTime(task.createdAt)}
+                          </span>
+                          <span className="h-1 w-1 rounded-full bg-muted/40" />
+                          <span className={`${
+                            task.status === 'Done' ? 'text-green-600' : 
+                            task.status === 'In Progress' ? 'text-blue-500' : 'text-orange-500'
+                          } font-medium`}>
+                            {task.status}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                </div>
-            )}
+                  ))
+                ) : (
+                  <div className="py-12 text-center">
+                    <div className="bg-muted/10 h-12 w-12 rounded-full flex items-center justify-center mx-auto mb-4 text-muted/50">
+                      <Clock size={20} />
+                    </div>
+                    <p className="text-sm text-muted">No recent tasks found.</p>
+                  </div>
+                )}
+              </div>
 
-            <ConfirmDialog
-                open={!!deletingProjectId}
-                title="Delete Project"
-                description="This project will be removed along with its tasks and member assignments."
-                confirmLabel="Delete Project"
-                loading={deletingProject}
-                onCancel={() => setDeletingProjectId(null)}
-                onConfirm={handleDeleteProject}
-            />
+              <div className="mt-10 pt-8 border-t border-border-subtle/50">
+                <p className="text-sm font-semibold text-text-base mb-2">New to Sprinto?</p>
+                <p className="text-xs text-muted mb-6 leading-relaxed">
+                  Join our community of 10k+ developers moving faster with better project management.
+                </p>
+                <button className="w-full btn-secondary text-sm h-11">
+                  View Docs
+                </button>
+              </div>
+            </section>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
-

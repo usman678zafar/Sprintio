@@ -15,5 +15,5 @@ export default async function ProjectPage({ params }: { params: { id: string } }
     notFound();
   }
 
-  return <ProjectClient initialData={data} />;
+  return <ProjectClient initialData={data} renderedAt={new Date().toISOString()} />;
 }

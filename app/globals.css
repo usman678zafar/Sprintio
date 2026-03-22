@@ -24,6 +24,15 @@
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
 @layer base {
   :root {
     --bg-base-rgb: 250 249 245;
@@ -155,6 +164,12 @@
   input,
   textarea,
   select {
+    color: var(--text-base);
+  }
+
+  select,
+  select option {
+    background-color: var(--bg-base);
     color: var(--text-base);
   }
 

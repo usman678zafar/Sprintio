@@ -7,6 +7,7 @@ import Task from "@/models/Task";
 import ProjectMember from "@/models/ProjectMember";
 
 const VALID_STATUSES = ["Pending", "In Progress", "Done"];
+const VALID_TYPES = ["Task", "Bug", "Feature", "Improvement", "Chore"];
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -43,27 +44,27 @@ export async function GET(req: Request) {
     const isMember = await ProjectMember.findOne({ projectId, userId });
     if (!isMember) return NextResponse.json({ message: "Forbidden" }, { status: 403, headers: NO_STORE_HEADERS });
 
-    const [tasks, totalItems] = await Promise.all([
-      Task.find({ projectId })
-        .sort({ createdAt: -1, _id: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate("assignedTo", "name email"),
-      Task.countDocuments({ projectId }),
-    ]);
-
+    const totalItems = await Task.countDocuments({ projectId });
     const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+    const safePage = Math.min(page, totalPages);
+    const safeSkip = (safePage - 1) * limit;
+
+    const tasks = await Task.find({ projectId })
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(safeSkip)
+      .limit(limit)
+      .populate("assignedTo", "name email");
 
     return NextResponse.json(
       {
         tasks,
         pagination: {
-          page,
+          page: safePage,
           limit,
           totalItems,
           totalPages,
-          hasNextPage: page < totalPages,
-          hasPrevPage: page > 1,
+          hasNextPage: safePage < totalPages,
+          hasPrevPage: safePage > 1,
         },
       },
       { status: 200, headers: NO_STORE_HEADERS }
@@ -80,7 +81,7 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const { projectId, title, description, assignedTo, deadline, parentTaskId, status } = await req.json();
+    const { projectId, title, description, assignedTo, startDate, deadline, parentTaskId, status, type } = await req.json();
     if (!projectId || !title) return NextResponse.json({ message: "projectId and title are required" }, { status: 400 });
 
     await connectDB();
@@ -109,15 +110,18 @@ export async function POST(req: Request) {
     }
 
     const nextStatus = VALID_STATUSES.includes(status) ? status : "Pending";
+    const nextType = VALID_TYPES.includes(type) ? type : "Task";
 
     const newTask = await Task.create({
       projectId,
       title,
       description,
       assignedTo: assignedTo || null,
+      startDate: startDate || null,
       deadline: deadline || null,
       parentTaskId: parentTaskId || null,
       status: nextStatus,
+      type: nextType,
     });
 
     revalidateTag("dashboard-projects");

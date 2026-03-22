@@ -78,10 +78,62 @@ async function getDashboardProjects(userId: string) {
 
 export async function getDashboardData() {
     const session = await getServerSession(authOptions);
-    if (!session) return { projects: [] };
+    if (!session) {
+        return {
+            projects: [],
+            metrics: {
+                totalTasks: 0,
+                activeProjects: 0,
+                upcomingDeadlines: 0,
+                efficiency: 0,
+            },
+        };
+    }
+
+    const projects = await getDashboardProjects((session.user as any).id);
+    const projectIds = projects.map((project: any) => project._id).filter(Boolean);
+    const totalTasks = projects.reduce((sum: number, project: any) => sum + (project.taskCount || 0), 0);
+
+    let upcomingDeadlines = 0;
+    let completedTasks = 0;
+    let recentTasks: any[] = [];
+
+    if (projectIds.length > 0) {
+        const now = new Date();
+        const sevenDaysAhead = new Date();
+        sevenDaysAhead.setDate(sevenDaysAhead.getDate() + 7);
+
+        upcomingDeadlines = await Task.countDocuments({
+            projectId: { $in: projectIds },
+            deadline: { $gte: now, $lte: sevenDaysAhead },
+            status: { $ne: "Done" },
+        });
+
+        completedTasks = await Task.countDocuments({
+            projectId: { $in: projectIds },
+            status: "Done",
+        });
+
+        recentTasks = await Task.find({
+            projectId: { $in: projectIds }
+        })
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .populate("projectId", "name")
+        .lean();
+    }
+
+    const efficiency = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
     return {
-        projects: await getDashboardProjects((session.user as any).id)
+        projects,
+        recentTasks: JSON.parse(JSON.stringify(recentTasks)),
+        metrics: {
+            totalTasks,
+            activeProjects: projects.length,
+            upcomingDeadlines,
+            efficiency,
+        },
     };
 }
 

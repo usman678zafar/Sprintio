@@ -9,6 +9,9 @@ import ProjectMember from "@/models/ProjectMember";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+const PROJECT_NAME_MAX = 80;
+const PROJECT_DESCRIPTION_MAX = 1000;
+
 const NO_STORE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
   Pragma: "no-cache",
@@ -84,7 +87,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const body = await req.json();
     const { name, description, cardColor, languages, documentUrl, documentName } = body;
 
-    if (!name) return NextResponse.json({ message: "Project name is required" }, { status: 400 });
+    const normalizedName = String(name || "").trim().slice(0, PROJECT_NAME_MAX);
+    const normalizedDescription = description === undefined ? undefined : String(description || "").trim().slice(0, PROJECT_DESCRIPTION_MAX);
+
+    if (!normalizedName) return NextResponse.json({ message: "Project name is required" }, { status: 400 });
 
     const projectId = params.id;
     const userId = (session.user as any).id;
@@ -97,8 +103,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ message: "Only MASTER can edit project details" }, { status: 403 });
     }
 
-    const updateData: any = { name };
-    if (description !== undefined) updateData.description = description;
+    const updateData: any = { name: normalizedName };
+    if (normalizedDescription !== undefined) updateData.description = normalizedDescription;
     if (cardColor !== undefined) updateData.cardColor = cardColor;
     if (languages !== undefined) {
       updateData.languages = Array.isArray(languages)

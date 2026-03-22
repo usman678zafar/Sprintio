@@ -12,10 +12,10 @@ export interface IProject extends Document {
 }
 
 const ProjectSchema = new Schema<IProject>({
-  name: { type: String, required: true },
+  name: { type: String, required: true, trim: true, maxlength: 80 },
   createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   createdAt: { type: Date, default: Date.now },
-  description: { type: String, default: "" },
+  description: { type: String, default: "", trim: true, maxlength: 1000 },
   cardColor: { type: String, default: "#D97757" },
   languages: { type: [String], default: [] },
   documentUrl: { type: String, default: "" },

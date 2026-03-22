@@ -28,6 +28,7 @@ export default function Logo({
           height={markHeight}
           className="object-contain"
           priority
+          unoptimized
         />
       </div>
       {showText && (

@@ -13,6 +13,9 @@ import mongoose from "mongoose";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+const PROJECT_NAME_MAX = 80;
+const PROJECT_DESCRIPTION_MAX = 1000;
+
 const NO_STORE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
   Pragma: "no-cache",
@@ -163,6 +166,12 @@ export async function POST(req: Request) {
     } = await req.json();
     if (!name) return NextResponse.json({ message: "Project name is required" }, { status: 400 });
 
+    const normalizedName = String(name).trim().slice(0, PROJECT_NAME_MAX);
+    const normalizedDescription = String(description || "").trim().slice(0, PROJECT_DESCRIPTION_MAX);
+    if (!normalizedName) {
+      return NextResponse.json({ message: "Project name is required" }, { status: 400 });
+    }
+
     await connectDB();
     const userId = (session.user as any).id;
     const normalizedLanguages = Array.isArray(languages)
@@ -176,8 +185,8 @@ export async function POST(req: Request) {
       : [];
 
     const project = await Project.create({
-      name,
-      description,
+      name: normalizedName,
+      description: normalizedDescription,
       cardColor,
       languages: normalizedLanguages,
       createdBy: userId,
