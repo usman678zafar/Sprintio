@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 
 export default function MarkdownPreview({ content }: { content: string }) {
   return (
-    <div className="h-full overflow-y-auto bg-white p-5">
+    <div className="h-full overflow-y-auto bg-white p-4">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

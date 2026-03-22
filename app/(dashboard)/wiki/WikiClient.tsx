@@ -241,31 +241,28 @@ export default function WikiClient() {
   };
 
   return (
-    <div className="min-h-full bg-base px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div className="min-h-full bg-base px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
 
       <div className="mx-auto w-full max-w-[1200px]">
         <section className="panel-surface overflow-hidden p-0">
           <div className="min-w-0 bg-white">
-            <div className="border-b border-border-subtle px-5 py-5 sm:px-6 xl:px-8">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+            <div className="border-b border-border-subtle px-5 py-4 sm:px-6 xl:px-8">
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
                   <div className="min-w-0 flex-1 xl:max-w-[760px]">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-muted">
-                      {selectedProject ? `${selectedProject.name} / Wiki` : "Wiki"}
-                    </p>
                     <input
                       type="text"
                       value={draftTitle}
                       onChange={(event) => setDraftTitle(event.target.value)}
                       disabled={!activePage}
                       placeholder={activePage ? "Page title" : "Select or create a page from the sidebar"}
-                      className="mt-3 h-12 w-full rounded-[18px] border border-border-subtle bg-white px-4 text-lg font-semibold tracking-tight text-text-base outline-none transition focus:border-primary disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:px-5 sm:text-[28px]"
+                      className="h-11 w-full border border-border-subtle bg-white px-4 text-lg font-semibold tracking-tight text-text-base outline-none transition focus:border-primary disabled:cursor-not-allowed disabled:opacity-60 sm:h-12 sm:text-[28px]"
                     />
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 self-start xl:justify-end">
-                    <div className="inline-flex flex-wrap items-center gap-2 rounded-[18px] border border-border-subtle bg-white p-1.5">
+                    <div className="inline-flex flex-wrap items-center gap-1 border border-border-subtle bg-white p-1">
                       {([
                         { key: "edit", label: "Edit", icon: Pencil },
                         { key: "split", label: "Split", icon: Columns2 },
@@ -275,7 +272,7 @@ export default function WikiClient() {
                           key={key}
                           type="button"
                           onClick={() => setViewMode(key)}
-                          className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
+                          className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-medium transition ${
                             viewMode === key ? "bg-[#D97757] text-white" : "text-text-base hover:bg-base"
                           }`}
                         >
@@ -289,7 +286,7 @@ export default function WikiClient() {
                       type="button"
                       onClick={deletePage}
                       disabled={!activePage || deleting}
-                      className="btn-secondary h-11 rounded-[16px] px-4"
+                      className="btn-secondary h-11 px-4"
                     >
                       {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                       Delete
@@ -299,17 +296,13 @@ export default function WikiClient() {
                       type="button"
                       onClick={savePage}
                       disabled={!activePage || !isDirty || saving}
-                      className="btn-primary h-11 rounded-[16px] px-5"
+                      className="btn-primary h-11 px-5"
                     >
                       {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                       Save
                     </button>
                   </div>
                 </div>
-
-                <p className="text-sm text-muted">
-                  Markdown supported. Paste images with Ctrl + V or use the image button to upload to R2.
-                </p>
 
                 {notice ? (
                   <div className="rounded-2xl border border-primary/15 bg-primary/8 px-4 py-3 text-sm font-medium text-primary">
@@ -330,7 +323,7 @@ export default function WikiClient() {
               </div>
             ) : (
               <>
-                <div className="border-b border-border-subtle bg-[#fcfaf6] px-5 py-3 sm:px-6 xl:px-8">
+                <div className="border-b border-border-subtle bg-[#fcfaf6] px-5 py-2.5 sm:px-6 xl:px-8">
                   <div className="flex flex-wrap items-center gap-2">
                     {[
                       { label: "Heading", icon: Heading2, action: () => applySelection((selected) => `## ${selected || "Section title"}`) },
@@ -345,7 +338,7 @@ export default function WikiClient() {
                         key={label}
                         type="button"
                         onClick={action}
-                        className="inline-flex items-center gap-2 rounded-xl border border-border-subtle bg-white px-3 py-2 text-sm font-medium text-muted transition hover:border-primary hover:text-primary"
+                        className="inline-flex items-center gap-2 border border-border-subtle bg-white px-3 py-2 text-sm font-medium text-muted transition hover:border-primary hover:text-primary"
                       >
                         <Icon size={15} />
                         {label}
@@ -354,7 +347,7 @@ export default function WikiClient() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="inline-flex items-center gap-2 rounded-xl border border-border-subtle bg-white px-3 py-2 text-sm font-medium text-muted transition hover:border-primary hover:text-primary"
+                      className="inline-flex items-center gap-2 border border-border-subtle bg-white px-3 py-2 text-sm font-medium text-muted transition hover:border-primary hover:text-primary"
                     >
                       {uploading ? <Loader2 size={15} className="animate-spin" /> : <ImagePlus size={15} />}
                       Image
@@ -365,13 +358,13 @@ export default function WikiClient() {
                 <div className={`grid min-h-[680px] ${viewMode === "split" ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" : "grid-cols-1"}`}>
                   {viewMode !== "preview" ? (
                     <div className="border-b border-border-subtle lg:border-b-0 lg:border-r">
-                      <div className="h-full bg-[#fffdf9] p-5">
+                      <div className="h-full bg-[#fffdf9] p-4">
                         <textarea
                           ref={textareaRef}
                           value={draftContent}
                           onChange={(event) => setDraftContent(event.target.value)}
                           onPaste={onPaste}
-                          className="h-[560px] w-full resize-none rounded-[24px] border border-border-subtle bg-white px-5 py-5 font-mono text-[15px] leading-7 text-text-base outline-none transition focus:border-primary"
+                          className="h-[560px] w-full resize-none border border-border-subtle bg-white px-4 py-4 font-mono text-[15px] leading-7 text-text-base outline-none transition focus:border-primary"
                           placeholder={`# Welcome to the wiki\n\nStart documenting the project here.`}
                         />
                       </div>
