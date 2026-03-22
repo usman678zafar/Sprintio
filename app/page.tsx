@@ -31,13 +31,13 @@ export default function Home() {
           </div>
 
           <div className="mt-14 grid gap-3 text-sm text-muted sm:grid-cols-3 sm:text-base">
-            <div className="rounded-2xl border border-border-subtle bg-base px-4 py-4">
+            <div className="rounded-2xl bg-base px-4 py-4">
               Warm light and dark themes with system-aware switching.
             </div>
-            <div className="rounded-2xl border border-border-subtle bg-base px-4 py-4">
+            <div className="rounded-2xl bg-base px-4 py-4">
               Structured navigation, cleaner cards, and gentler spacing.
             </div>
-            <div className="rounded-2xl border border-border-subtle bg-base px-4 py-4">
+            <div className="rounded-2xl bg-base px-4 py-4">
               Fast enough for heavy work without looking loud or harsh.
             </div>
           </div>

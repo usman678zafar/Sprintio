@@ -76,6 +76,12 @@ export default function Sidebar({ user }: { user: any }) {
     });
   }, [router]);
 
+  useEffect(() => {
+    if (!pathname.startsWith("/wiki")) return;
+    setIsCollapsed(false);
+    window.localStorage.setItem("sprinto-sidebar-collapsed", "0");
+  }, [pathname]);
+
   const toggleCollapsed = () => {
     setIsCollapsed((prev) => {
       const next = !prev;

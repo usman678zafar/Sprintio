@@ -157,7 +157,7 @@ export default function MobileSidebar({ user }: { user: any }) {
         </div>
 
         <div className="border-t border-border-subtle p-4">
-          <div className="rounded-[24px] border border-border-subtle bg-surface p-3">
+          <div className="rounded-[24px] bg-surface p-3">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
                 {userInitial}

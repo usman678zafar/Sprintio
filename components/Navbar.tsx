@@ -61,7 +61,7 @@ export default function Navbar({ user }: { user: any }) {
   };
 
   return (
-    <header className="border-b border-border-subtle bg-surface/78 backdrop-blur-xl">
+    <header className="bg-surface/78 backdrop-blur-xl">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-5">
         <div className="flex items-center gap-3 md:hidden">
           <MobileSidebar user={user} />
@@ -101,7 +101,7 @@ export default function Navbar({ user }: { user: any }) {
       </div>
 
       {pathname !== "/dashboard" && (
-        <div className="border-t border-border-subtle px-4 pb-4 sm:hidden">
+        <div className="px-4 pb-4 sm:hidden">
           <div className="relative">
             <Search
               size={18}

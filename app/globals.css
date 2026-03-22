@@ -215,7 +215,7 @@
 
 @layer components {
   .panel-surface {
-    border: 1px solid rgb(var(--border-subtle-rgb));
+    border: none;
     border-radius: 28px;
     background: rgb(var(--bg-surface-rgb));
   }
@@ -301,7 +301,7 @@
   }
 
   .modal-surface {
-    border: 1px solid rgb(var(--border-subtle-rgb));
+    border: none;
     border-radius: 28px;
     background: rgb(var(--bg-modal-rgb));
   }
@@ -382,5 +382,13 @@
 
   .text-balance {
     text-wrap: balance;
+  }
+
+  [class*="rounded-[24px]"][class*="border-border-subtle"],
+  [class*="rounded-[26px]"][class*="border-border-subtle"],
+  [class*="rounded-[28px]"][class*="border-border-subtle"],
+  [class*="rounded-[32px]"][class*="border-border-subtle"],
+  [class*="rounded-[40px]"][class*="border-border-subtle"] {
+    border-color: transparent !important;
   }
 }

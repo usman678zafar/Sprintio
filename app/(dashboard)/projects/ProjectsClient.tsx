@@ -563,7 +563,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
           </div>
         </section>
 
-        <section className="mb-10 border-y border-border-subtle/50 py-6">
+        <section className="mb-10 py-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex h-14 items-center rounded-2xl border border-border-subtle bg-surface p-1.5">
               {filters.map((item) => (

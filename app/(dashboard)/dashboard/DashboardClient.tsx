@@ -272,7 +272,7 @@ export default function DashboardClient({
                 )}
               </div>
 
-              <div className="mt-10 pt-8 border-t border-border-subtle/50">
+              <div className="mt-10 pt-8">
                 <p className="text-sm font-semibold text-text-base mb-2">New to Sprinto?</p>
                 <p className="text-xs text-muted mb-6 leading-relaxed">
                   Join our community of 10k+ developers moving faster with better project management.
