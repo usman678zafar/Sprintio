@@ -13,6 +13,8 @@ export default function Navbar({ user }: { user: any }) {
   const searchPlaceholder =
     pathname === "/calendar"
       ? "Search tasks..."
+      : pathname === "/wiki"
+        ? "Search wiki pages..."
       : pathname === "/settings"
         ? "Search settings..."
         : "Search projects or tasks...";
@@ -25,6 +27,8 @@ export default function Navbar({ user }: { user: any }) {
           ? "projects-search"
           : pathname === "/calendar"
             ? "calendar-search"
+            : pathname === "/wiki"
+              ? "wiki-search"
             : pathname === "/settings"
               ? "settings-search"
               : pathname === "/team"

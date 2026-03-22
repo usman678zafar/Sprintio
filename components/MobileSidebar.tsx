@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+  BookOpen,
   CalendarDays,
   FolderKanban,
   LayoutDashboard,
@@ -37,6 +38,11 @@ const navItems = [
     label: "Calendar",
     href: "/calendar",
     icon: CalendarDays,
+  },
+  {
+    label: "Wiki",
+    href: "/wiki",
+    icon: BookOpen,
   },
   {
     label: "Settings",

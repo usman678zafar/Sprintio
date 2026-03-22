@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BookOpen,
   CalendarDays,
   FolderKanban,
   LayoutDashboard,
@@ -37,6 +38,11 @@ const navItems = [
     label: "Calendar",
     href: "/calendar",
     icon: CalendarDays,
+  },
+  {
+    label: "Wiki",
+    href: "/wiki",
+    icon: BookOpen,
   },
   {
     label: "Settings",
@@ -91,8 +97,8 @@ export default function Sidebar({ user }: { user: any }) {
         isCollapsed ? "w-[104px]" : "w-72"
       }`}
     >
-      <div className="panel-surface flex h-[calc(100svh-1.5rem)] flex-col overflow-hidden bg-surface">
-        <div className="flex h-16 items-center justify-between border-b border-border-subtle px-4">
+      <div className="flex h-[calc(100svh-1.5rem)] flex-col overflow-hidden bg-surface">
+        <div className="flex h-16 items-center justify-between px-4">
           <div
             className={`overflow-hidden transition-all duration-300 ${
               isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
@@ -168,8 +174,8 @@ export default function Sidebar({ user }: { user: any }) {
           </nav>
         </div>
 
-        <div className={`border-t border-border-subtle p-4 transition-all duration-300 ${isCollapsed ? "px-3" : "px-4"}`}>
-          <div className="rounded-[24px] border border-border-subtle bg-surface p-3">
+        <div className={`p-4 transition-all duration-300 ${isCollapsed ? "px-3" : "px-4"}`}>
+          <div className="bg-surface p-3">
             <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
                 {userInitial}
