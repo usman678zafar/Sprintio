@@ -8,7 +8,7 @@ import Logo from "./Logo";
 import MobileSidebar from "./MobileSidebar";
 
 export default function Navbar({ user }: { user: any }) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const [searchQuery, setSearchQuery] = useState("");
   const searchPlaceholder =
     pathname === "/calendar"

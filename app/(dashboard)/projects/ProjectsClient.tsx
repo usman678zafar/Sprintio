@@ -294,14 +294,11 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
         const handleSearch = (event: Event) => {
             setSearchQuery((event as CustomEvent<string>).detail || "");
         };
-        const handleAddProject = () => setShowModal(true);
 
         window.addEventListener("projects-search", handleSearch as EventListener);
-        window.addEventListener("projects-add-project", handleAddProject);
 
         return () => {
             window.removeEventListener("projects-search", handleSearch as EventListener);
-            window.removeEventListener("projects-add-project", handleAddProject);
         };
     }, []);
 
@@ -388,7 +385,15 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={() => setShowModal(true)}
+                            className="btn-primary px-4 py-2.5"
+                        >
+                            <Plus size={18} />
+                            Add New Project
+                        </button>
                         <div className="flex h-11 items-center rounded-full border border-border-subtle bg-[var(--color-light-surface)] p-1 shadow-sm">
                             <button
                                 onClick={() => setViewMode("grid")}
@@ -453,7 +458,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                         <p className="mt-2 text-muted">Try adjusting your search or filters.</p>
                         <button
                             onClick={() => setShowModal(true)}
-                            className="mt-8 rounded-2xl bg-primary px-8 py-3 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-primary/90"
+                            className="btn-primary mt-8 px-8 py-3 text-sm font-bold"
                         >
                             Create First Project
                         </button>
@@ -512,8 +517,8 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
 
             {/* Modals */}
             {showModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-surface/40 p-4 backdrop-blur-sm animate-in fade-in">
-                    <div className="w-full max-w-md rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/35 p-4 animate-in fade-in">
+                    <div className="modal-surface w-full max-w-md p-8 animate-in zoom-in-95 duration-300">
                         <h3 className="text-2xl font-bold text-muted">Create Workspace</h3>
                         <p className="mt-2 text-muted">A new environment for your team to thrive.</p>
                         <form onSubmit={handleCreateProject} className="mt-8">
@@ -523,7 +528,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                                     type="text"
                                     required
                                     autoFocus
-                                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-bg)] px-5 py-4 text-muted outline-none transition focus:border-primary focus:bg-[var(--color-light-surface)] focus:ring-4 focus:ring-brand/20"
+                                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-bg)] px-5 py-4 text-muted outline-none transition focus:border-primary"
                                     placeholder="e.g. Apollo Mission 🚀"
                                     value={newProjectName}
                                     onChange={(e) => setNewProjectName(e.target.value)}
@@ -531,8 +536,8 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                                 />
                             </div>
                             <div className="flex gap-3">
-                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 rounded-2xl border border-border-subtle px-6 py-4 font-bold text-muted transition hover:bg-[var(--color-light-bg)]" disabled={creating}>Discard</button>
-                                <button type="submit" disabled={creating} className="flex-1 rounded-2xl bg-primary px-6 py-4 font-bold text-white shadow-xl shadow-primary/20 transition hover:bg-primary/90 disabled:opacity-70">
+                                <button type="button" onClick={() => setShowModal(false)} className="btn-danger flex-1 px-6 py-4 font-bold" disabled={creating}>Discard</button>
+                                <button type="submit" disabled={creating} className="btn-success flex-1 px-6 py-4 font-bold">
                                     {creating ? "Launching..." : "Launch Project"}
                                 </button>
                             </div>
@@ -542,8 +547,8 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
             )}
 
             {editingProject && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-surface/40 p-4 backdrop-blur-sm animate-in fade-in">
-                    <div className="w-full max-w-md rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/35 p-4 animate-in fade-in">
+                    <div className="modal-surface w-full max-w-md p-8 animate-in zoom-in-95 duration-300">
                         <h3 className="text-2xl font-bold text-muted">Rename Workspace</h3>
                         <form onSubmit={handleUpdateProject} className="mt-8">
                             <div className="mb-8">
@@ -552,15 +557,15 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                                     type="text"
                                     required
                                     autoFocus
-                                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-bg)] px-5 py-4 text-muted outline-none transition focus:border-primary focus:bg-[var(--color-light-surface)] focus:ring-4 focus:ring-brand/20"
+                                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-bg)] px-5 py-4 text-muted outline-none transition focus:border-primary"
                                     value={updatedName}
                                     onChange={(e) => setUpdatedName(e.target.value)}
                                     disabled={updating}
                                 />
                             </div>
                             <div className="flex gap-3">
-                                <button type="button" onClick={() => setEditingProject(null)} className="flex-1 rounded-2xl border border-border-subtle px-6 py-4 font-bold text-muted transition hover:bg-[var(--color-light-bg)]" disabled={updating}>Cancel</button>
-                                <button type="submit" disabled={updating} className="flex-1 rounded-2xl bg-primary px-6 py-4 font-bold text-white shadow-xl shadow-primary/20 transition hover:bg-primary/90 disabled:opacity-70">
+                                <button type="button" onClick={() => setEditingProject(null)} className="btn-danger flex-1 px-6 py-4 font-bold" disabled={updating}>Cancel</button>
+                                <button type="submit" disabled={updating} className="btn-warning flex-1 px-6 py-4 font-bold">
                                     {updating ? "Saving..." : "Save Changes"}
                                 </button>
                             </div>

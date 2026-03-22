@@ -1,83 +1,91 @@
 "use client";
 
 import {
-    CalendarDays,
-    FolderKanban,
-    LayoutDashboard,
-    Settings,
-    Users,
+  CalendarDays,
+  FolderKanban,
+  LayoutDashboard,
+  Settings,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const navItems = [
-    {
-        label: "Home",
-        href: "/dashboard",
-        icon: LayoutDashboard,
-    },
-    {
-        label: "Projects",
-        href: "/projects",
-        icon: FolderKanban,
-    },
-    {
-        label: "Team",
-        href: "/team",
-        icon: Users,
-    },
-    {
-        label: "Events",
-        href: "/calendar",
-        icon: CalendarDays,
-    },
-    {
-        label: "Settings",
-        href: "/settings",
-        icon: Settings,
-    },
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Projects",
+    href: "/projects",
+    icon: FolderKanban,
+  },
+  {
+    label: "Team",
+    href: "/team",
+    icon: Users,
+  },
+  {
+    label: "Calendar",
+    href: "/calendar",
+    icon: CalendarDays,
+  },
+  {
+    label: "Settings",
+    href: "/settings",
+    icon: Settings,
+  },
 ];
 
 export default function BottomNav() {
-    const pathname = usePathname();
-    const router = useRouter();
+  const pathname = usePathname() ?? "";
+  const router = useRouter();
 
-    useEffect(() => {
-        navItems.forEach((item) => {
-            router.prefetch(item.href);
-        });
-    }, [router]);
+  useEffect(() => {
+    navItems.forEach((item) => {
+      router.prefetch(item.href);
+    });
+  }, [router]);
 
-    return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border-subtle bg-surface/92 pb-safe backdrop-blur-xl md:hidden">
-            <div className="flex h-16 items-center justify-around px-2">
-                {navItems.map(({ label, href, icon: Icon }) => {
-                    const isActive = href
-                        ? pathname === href ||
-                        (href === "/projects" && pathname.startsWith("/project/")) ||
-                        (href === "/settings" && pathname.startsWith("/settings"))
-                        : false;
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle bg-surface md:hidden">
+      <div className="scrollbar-none overflow-x-auto px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-3">
+        <div className="flex min-w-max gap-2">
+          {navItems.map(({ label, href, icon: Icon }) => {
+            const isActive =
+              pathname === href ||
+              (href === "/projects" && pathname.startsWith("/project/")) ||
+              (href === "/settings" && pathname.startsWith("/settings"));
 
-                    return (
-                        <Link
-                            key={label}
-                            href={href}
-                            prefetch
-                            onTouchStart={() => router.prefetch(href)}
-                            className={`flex flex-col items-center gap-1 transition-colors ${isActive ? "text-primary" : "text-muted hover:text-text-base"
-                                }`}
-                        >
-                            <div className={`relative flex h-8 w-12 items-center justify-center rounded-2xl transition-all ${isActive ? "bg-primary/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" : ""}`}>
-                                <Icon size={22} className={isActive ? "text-primary" : "text-muted"} />
-                            </div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider">
-                                {label}
-                            </span>
-                        </Link>
-                    );
-                })}
-            </div>
-        </nav>
-    );
+            return (
+              <Link
+                key={label}
+                href={href}
+                prefetch
+                onTouchStart={() => router.prefetch(href)}
+                className={`flex min-w-[122px] items-center gap-3 rounded-[22px] border px-3 py-3 text-sm font-medium transition-all ${
+                  isActive
+                    ? "border-primary bg-primary text-white"
+                    : "border-border-subtle bg-base text-muted"
+                }`}
+              >
+                <span
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${
+                    isActive
+                      ? "border-white/20 bg-white/10 text-white"
+                      : "border-border-subtle bg-surface text-muted"
+                  }`}
+                >
+                  <Icon size={18} />
+                </span>
+                <span className="whitespace-nowrap">{label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </nav>
+  );
 }

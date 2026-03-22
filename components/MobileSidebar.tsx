@@ -47,9 +47,8 @@ const navItems = [
 
 export default function MobileSidebar({ user }: { user: any }) {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const pathname = usePathname() ?? "";
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -72,7 +71,7 @@ export default function MobileSidebar({ user }: { user: any }) {
     <div className="md:hidden">
       <button
         onClick={() => setIsOpen(true)}
-        className="rounded-xl border border-border-subtle bg-surface/80 p-2 text-muted transition hover:bg-base hover:text-text-base"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-border-subtle bg-surface text-muted transition hover:border-primary hover:text-primary"
         aria-label="Open Menu"
       >
         <Menu size={20} />
@@ -80,96 +79,102 @@ export default function MobileSidebar({ user }: { user: any }) {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/18 backdrop-blur-sm transition-opacity dark:bg-black/45"
+          className="fixed inset-0 z-40 bg-black/40 transition-opacity"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <div
-        className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] border border-border-subtle bg-surface/94 shadow-[0_24px_72px_rgba(35,31,26,0.18)] backdrop-blur-2xl transition-transform duration-300 ease-in-out dark:shadow-[0_24px_72px_rgba(0,0,0,0.45)] ${isOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+        className={`fixed inset-y-2 left-2 z-50 flex w-[min(21rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[32px] border border-border-subtle bg-surface transition-transform duration-300 ease-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="flex h-16 items-center justify-between border-b border-border-subtle px-5">
           <Logo href="/dashboard" />
           <button
             onClick={() => setIsOpen(false)}
-            className="rounded-xl border border-border-subtle p-2 text-muted transition hover:bg-base hover:text-text-base"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-base text-muted transition hover:border-primary hover:text-primary"
             aria-label="Close Menu"
           >
             <X size={20} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-6">
+        <div className="border-b border-border-subtle px-5 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted">
+            Workspace
+          </p>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            Swipe the bottom navigation left and right for quick access on mobile.
+          </p>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-4 py-5">
           <nav className="space-y-2">
             {navItems.map(({ label, href, icon: Icon }) => {
-              const isActive = href
-                ? pathname === href ||
+              const isActive =
+                pathname === href ||
                 (href === "/projects" && pathname.startsWith("/project/")) ||
-                (href === "/settings" && pathname.startsWith("/settings"))
-                : false;
-
-              if (!href) {
-                return (
-                  <div
-                    key={label}
-                    className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-muted"
-                  >
-                    <Icon size={20} className="text-muted" />
-                    <span>{label}</span>
-                  </div>
-                );
-              }
+                (href === "/settings" && pathname.startsWith("/settings"));
 
               return (
                 <Link
                   key={label}
                   href={href}
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive
-                    ? "bg-primary/12 text-primary"
-                    : "text-muted hover:bg-base hover:text-text-base"
-                    }`}
+                  className={`flex items-center gap-3 rounded-[22px] border px-3 py-3 text-sm font-medium transition-all ${
+                    isActive
+                      ? "border-primary bg-primary text-white"
+                      : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
+                  }`}
                 >
-                  <Icon
-                    size={20}
-                    className={isActive ? "text-primary" : "text-muted"}
-                  />
-                  <span>{label}</span>
+                  <span
+                    className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${
+                      isActive
+                        ? "border-white/20 bg-white/10 text-white"
+                        : "border-border-subtle bg-base text-muted"
+                    }`}
+                  >
+                    <Icon size={18} />
+                  </span>
+                  <span className={isActive ? "font-semibold" : ""}>{label}</span>
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        <div className="border-t border-border-subtle px-5 py-4">
-          <div className="mb-4 flex items-center gap-3">
-            {user?.image ? (
-              <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-surface">
-                <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
-              </div>
-            ) : (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold text-primary">
-                {user?.name?.[0]?.toUpperCase() || "U"}
-              </div>
-            )}
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-text-base">
-                {user?.name || "Sprinto User"}
-              </p>
-              <p className="truncate text-xs text-muted">
-                {user?.email || "Admin Account"}
-              </p>
-            </div>
-          </div>
+        <div className="border-t border-border-subtle p-4">
+          <div className="rounded-[24px] border border-border-subtle bg-base/72 p-3">
+            <div className="flex items-center gap-3">
+              {user?.image ? (
+                <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-surface">
+                  <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
+                </div>
+              ) : (
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+                  {user?.name?.[0]?.toUpperCase() || "U"}
+                </div>
+              )}
 
-          <button
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border-subtle px-4 py-3 text-sm font-medium text-muted transition hover:bg-base hover:text-text-base disabled:opacity-50"
-          >
-            <LogOut size={18} />
-            {isLoggingOut ? "Leaving..." : "Logout"}
-          </button>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-text-base">
+                  {user?.name || "Sprinto User"}
+                </p>
+                <p className="truncate text-xs text-muted">
+                  {user?.email || "Admin Account"}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-border-subtle bg-surface px-4 py-3 text-sm font-medium text-muted transition hover:border-primary hover:text-primary disabled:opacity-50"
+            >
+              <LogOut size={18} />
+              {isLoggingOut ? "Leaving..." : "Logout"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

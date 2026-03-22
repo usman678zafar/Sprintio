@@ -497,7 +497,7 @@ export default function CalendarPage() {
       {/* Task Modal (Common for both) */}
       {showTaskModal && (
         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-surface/40 p-0 backdrop-blur-md sm:items-center sm:p-4 animate-in fade-in duration-300">
-          <div className="w-full max-w-lg rounded-t-[48px] bg-[var(--color-light-surface)] p-10 shadow-2xl sm:rounded-[48px] animate-in slide-in-from-bottom-full sm:zoom-in-95">
+          <div className="modal-surface w-full max-w-lg rounded-t-[48px] p-10 sm:rounded-[48px] animate-in slide-in-from-bottom-full sm:zoom-in-95">
             <div className="mb-10 flex items-center justify-between">
               <h3 className="text-2xl font-black text-muted">New Mission</h3>
               <button onClick={() => setShowTaskModal(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--color-light-bg)] text-muted"><X size={20} /></button>
@@ -519,7 +519,7 @@ export default function CalendarPage() {
                   </select>
                 </div>
               </div>
-              <button className="w-full rounded-[24px] bg-surface py-5 text-sm font-black uppercase tracking-widest text-white shadow-2xl shadow-slate-300 transition hover:bg-surface">Identify Mission</button>
+              <button className="btn-success w-full py-5 text-sm font-black uppercase tracking-widest">Identify Mission</button>
             </form>
           </div>
         </div>

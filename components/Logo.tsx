@@ -52,7 +52,7 @@ export default function Logo({
   return (
     <Link href={href} className={`flex items-center gap-2.5 ${className}`}>
       <div
-        className="flex items-center justify-center rounded-2xl border border-primary/15 bg-primary text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)]"
+        className="flex items-center justify-center rounded-2xl border border-primary bg-primary text-white"
         style={{ width: iconSize + 14, height: iconSize + 14 }}
       >
         <LogoMark iconSize={iconSize} />

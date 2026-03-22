@@ -272,7 +272,7 @@ export default function TeamPage() {
           type="button"
           onClick={() => setShowInviteModal(true)}
           disabled={manageableProjects.length === 0}
-          className="inline-flex items-center gap-2.5 self-start rounded-2xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)] transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn-primary self-start px-4 py-2.5 disabled:cursor-not-allowed"
         >
           <Plus size={20} />
           Invite New Member
@@ -491,8 +491,8 @@ export default function TeamPage() {
       </div>
 
       {showInviteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+          <div className="modal-surface w-full max-w-lg p-7">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-xl font-semibold text-muted">Invite Team Member</h3>
@@ -523,7 +523,7 @@ export default function TeamPage() {
                     required
                     value={inviteEmail}
                     onChange={(event) => setInviteEmail(event.target.value)}
-                    className="w-full rounded-2xl border border-border-subtle px-12 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                    className="w-full rounded-2xl border border-border-subtle px-12 py-3 text-muted focus:border-primary"
                   />
                 </div>
               </div>
@@ -534,7 +534,7 @@ export default function TeamPage() {
                   <select
                     value={inviteProjectId}
                     onChange={(event) => setInviteProjectId(event.target.value)}
-                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary"
                   >
                     {manageableProjects.map((project) => (
                       <option key={project.projectId} value={project.projectId}>
@@ -548,7 +548,7 @@ export default function TeamPage() {
                   <select
                     value={inviteRole}
                     onChange={(event) => setInviteRole(event.target.value)}
-                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary"
                   >
                     <option value="MEMBER">Member</option>
                     <option value="MASTER">Admin</option>
@@ -560,7 +560,7 @@ export default function TeamPage() {
                 <button
                   type="button"
                   onClick={resetInviteModal}
-                  className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
+                  className="btn-danger px-4 py-3"
                   disabled={inviting}
                 >
                   Cancel
@@ -568,7 +568,7 @@ export default function TeamPage() {
                 <button
                   type="submit"
                   disabled={inviting}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-70"
+                  className="btn-success px-5 py-3"
                 >
                   <UserPlus size={18} />
                   {inviting ? "Inviting..." : "Invite Member"}
@@ -580,8 +580,8 @@ export default function TeamPage() {
       )}
 
       {editingMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+          <div className="modal-surface w-full max-w-lg p-7">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-2xl font-semibold text-muted">Edit Member Role</h3>
@@ -615,7 +615,7 @@ export default function TeamPage() {
                       setSelectedRole(assignment.role);
                     }
                   }}
-                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary"
                 >
                   {assignmentOptions.map((assignment) => (
                     <option key={assignment.membershipId} value={assignment.membershipId}>
@@ -630,7 +630,7 @@ export default function TeamPage() {
                 <select
                   value={selectedRole}
                   onChange={(event) => setSelectedRole(event.target.value)}
-                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary"
                 >
                   <option value="MEMBER">Member</option>
                   <option value="MASTER">Admin</option>
@@ -641,7 +641,7 @@ export default function TeamPage() {
                 <button
                   type="button"
                   onClick={() => setEditingMember(null)}
-                  className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
+                  className="btn-danger px-4 py-3"
                   disabled={editing}
                 >
                   Cancel
@@ -649,7 +649,7 @@ export default function TeamPage() {
                 <button
                   type="submit"
                   disabled={editing}
-                  className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-70"
+                  className="btn-warning px-5 py-3"
                 >
                   {editing ? "Saving..." : "Save Changes"}
                 </button>
@@ -660,8 +660,8 @@ export default function TeamPage() {
       )}
 
       {removingMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+          <div className="modal-surface w-full max-w-lg p-7">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-2xl font-semibold text-muted">Remove Member Assignment</h3>
@@ -688,7 +688,7 @@ export default function TeamPage() {
                 <select
                   value={removeAssignmentId}
                   onChange={(event) => setRemoveAssignmentId(event.target.value)}
-                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary"
                 >
                   {removableOptions.map((assignment) => (
                     <option key={assignment.membershipId} value={assignment.membershipId}>
@@ -706,7 +706,7 @@ export default function TeamPage() {
                 <button
                   type="button"
                   onClick={() => setRemovingMember(null)}
-                  className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
+                  className="btn-danger px-4 py-3"
                   disabled={removing}
                 >
                   Cancel
@@ -715,7 +715,7 @@ export default function TeamPage() {
                   type="button"
                   onClick={submitRemoval}
                   disabled={removing}
-                  className="rounded-2xl bg-red-500 px-5 py-3 font-medium text-white transition hover:bg-red-600 disabled:opacity-70"
+                  className="btn-danger px-5 py-3"
                 >
                   {removing ? "Removing..." : "Remove Assignment"}
                 </button>

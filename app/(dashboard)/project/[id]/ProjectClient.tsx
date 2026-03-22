@@ -94,7 +94,7 @@ function formatDate(date?: string | null) {
 }
 
 function getStatusPill(status: TaskStatus) {
-    const common = "px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm";
+    const common = "px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider";
     if (status === "Done") {
         return `bg-emerald-50/60 text-emerald-700 border border-emerald-200/50 ${common}`;
     }
@@ -128,8 +128,8 @@ function getPriority(task: TaskNode | null) {
 }
 
 export default function ProjectClient({ initialData }: { initialData: ProjectDetails }) {
-    const params = useParams();
-    const projectId = params.id as string;
+    const params = useParams<{ id: string }>();
+    const projectId = params?.id ?? initialData.project._id;
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [project, setProject] = useState<ProjectDetails["project"]>(initialData.project);
@@ -725,7 +725,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                         <button
                             type="button"
                             onClick={() => openAddModal(null)}
-                            className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)] transition hover:bg-primary/90 sm:w-auto"
+                            className="btn-primary w-full px-4 py-2.5 sm:w-auto"
                         >
                             <Plus size={20} />
                             Add Task
@@ -797,8 +797,8 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
             </section>
 
             {showTaskModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-xl rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+                    <div className="modal-surface w-full max-w-xl p-7">
                         <div className="flex items-center justify-between">
                             <h3 className="text-2xl font-semibold text-muted">
                                 {editingTask ? "Edit Task" : newTaskParent ? "Add Subtask" : "Add New Task"}
@@ -820,7 +820,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         type="text"
                                         required
                                         autoFocus
-                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary"
                                         placeholder="What needs to be done?"
                                         value={taskForm.title}
                                         onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
@@ -831,7 +831,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     <label className="mb-2 block text-sm font-medium text-muted">Description</label>
                                     <textarea
                                         rows={3}
-                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20 placeholder:text-muted"
+                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary placeholder:text-muted"
                                         placeholder="Add more details about this task..."
                                         value={taskForm.description}
                                         onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
@@ -842,7 +842,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     <div>
                                         <label className="mb-2 block text-sm font-medium text-muted">Assignee</label>
                                         <select
-                                            className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                            className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] px-4 py-3 text-muted focus:border-primary"
                                             value={taskForm.assignedTo}
                                             onChange={(e) => setTaskForm({ ...taskForm, assignedTo: e.target.value })}
                                         >
@@ -858,7 +858,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         <label className="mb-2 block text-sm font-medium text-muted">Due Date</label>
                                         <input
                                             type="date"
-                                            className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                            className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary"
                                             value={taskForm.deadline}
                                             onChange={(e) => setTaskForm({ ...taskForm, deadline: e.target.value })}
                                         />
@@ -874,7 +874,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                                 type="button"
                                                 onClick={() => setTaskForm({ ...taskForm, status: s as TaskStatus })}
                                                 className={`rounded-xl border py-3 text-sm font-semibold transition ${taskForm.status === s
-                                                    ? "border-primary bg-primary text-white shadow-[0_12px_24px_rgba(217,119,87,0.2)]"
+                                                    ? "border-primary bg-primary text-white"
                                                     : "border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] text-neutral-600 dark:text-neutral-400 hover:border-neutral-300 dark:border-neutral-700 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
                                                     }`}
                                             >
@@ -891,7 +891,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={closeTaskModal}
-                                    className="rounded-2xl px-6 py-3 font-medium text-muted hover:bg-[var(--color-light-bg)]"
+                                    className="btn-danger px-6 py-3"
                                     disabled={submitting}
                                 >
                                     Cancel
@@ -899,7 +899,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="rounded-2xl bg-primary px-8 py-3 font-medium text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)] transition hover:bg-primary/90 disabled:opacity-70"
+                                    className={`${editingTask ? "btn-warning" : "btn-success"} px-8 py-3`}
                                 >
                                     {submitting ? "Saving..." : editingTask ? "Save Changes" : "Create Task"}
                                 </button>
@@ -910,8 +910,8 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
             )}
 
             {showOverviewModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-xl rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+                    <div className="modal-surface w-full max-w-xl p-7">
                         <div className="flex items-center justify-between">
                             <h3 className="text-2xl font-semibold text-muted">Update Project Details</h3>
                             <button
@@ -929,7 +929,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     <label className="mb-2 block text-sm font-medium text-muted">Project Description</label>
                                     <textarea
                                         rows={4}
-                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary"
                                         placeholder="What is this project about?"
                                         value={overviewForm.description}
                                         onChange={(e) => setOverviewForm({ ...overviewForm, description: e.target.value })}
@@ -948,7 +948,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         <button
                                             type="button"
                                             onClick={() => fileInputRef.current?.click()}
-                                            className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border-subtle bg-[var(--color-light-bg)] py-8 text-muted transition hover:border-primary/50 hover:bg-brand/10"
+                                            className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border-subtle bg-[var(--color-light-bg)] py-8 text-muted transition hover:border-primary hover:bg-base"
                                         >
                                             {selectedFile ? (
                                                 <div className="flex items-center gap-2 font-medium text-muted">
@@ -975,7 +975,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={closeOverviewModal}
-                                    className="rounded-2xl px-6 py-3 font-medium text-muted hover:bg-[var(--color-light-bg)]"
+                                    className="btn-danger px-6 py-3"
                                     disabled={overviewSubmitting}
                                 >
                                     Cancel
@@ -983,7 +983,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="submit"
                                     disabled={overviewSubmitting}
-                                    className="rounded-2xl bg-primary px-8 py-3 font-medium text-white shadow-[0_16px_32px_rgba(217,119,87,0.24)] transition hover:bg-primary/90 disabled:opacity-70"
+                                    className="btn-warning px-8 py-3"
                                 >
                                     {overviewSubmitting ? "Updating..." : "Save Overview"}
                                 </button>

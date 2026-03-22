@@ -7,8 +7,8 @@ import Link from "next/link";
 import { ArrowLeft, UserPlus } from "lucide-react";
 
 export default function ProjectSettingsPage() {
-  const params = useParams();
-  const projectId = params.id as string;
+  const params = useParams<{ id: string }>();
+  const projectId = params?.id ?? "";
 
   const [project, setProject] = useState<any>(null);
   const [inviteEmail, setInviteEmail] = useState("");

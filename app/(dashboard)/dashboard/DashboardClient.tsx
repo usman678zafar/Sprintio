@@ -79,29 +79,29 @@ function getProjectTone(project: Project): {
 function getToneClasses(tone: StatusTone) {
     if (tone === "risk") {
         return {
-            badge: "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/60 backdrop-blur-md border border-rose-100 shadow-[0_2px_10px_rgba(225,29,72,0.04)]",
-            text: "bg-gradient-to-r from-rose-600 to-red-500 bg-clip-text text-transparent",
+            badge: "border border-rose-200 bg-rose-50 text-rose-600",
+            text: "text-rose-600",
             icon: "text-rose-500",
-            bar: "bg-gradient-to-r from-rose-500 to-red-500 shadow-[0_4px_12px_rgba(225,29,72,0.2)]",
+            bar: "bg-rose-500",
             accent: "text-rose-600 font-semibold",
         };
     }
 
     if (tone === "planning") {
         return {
-            badge: "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/60 backdrop-blur-md border border-indigo-100 shadow-[0_2px_10px_rgba(79,70,229,0.04)]",
-            text: "bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent",
-            icon: "text-indigo-500",
-            bar: "bg-gradient-to-r from-indigo-500 to-blue-500 shadow-[0_4px_12px_rgba(79,70,229,0.2)]",
-            accent: "text-indigo-600",
+            badge: "border border-sky-200 bg-sky-50 text-sky-600",
+            text: "text-sky-600",
+            icon: "text-sky-500",
+            bar: "bg-sky-500",
+            accent: "text-sky-600",
         };
     }
 
     return {
-        badge: "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/60 backdrop-blur-md border border-primary/20 shadow-[0_2px_10px_rgba(217,119,87,0.04)]",
-        text: "bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent",
+        badge: "border border-primary/20 bg-primary/10 text-primary",
+        text: "text-primary",
         icon: "text-primary",
-        bar: "bg-gradient-to-r from-primary to-purple-600 shadow-[0_4px_12px_rgba(217,119,87,0.2)]",
+        bar: "bg-primary",
         accent: "text-primary font-semibold",
     };
 }
@@ -336,25 +336,25 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                             label: "Total Tasks",
                             value: metrics.totalTasks,
                             chip: "+12%",
-                            chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 shadow-[0_1px_4px_rgba(16,185,129,0.05)]",
+                            chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
                         },
                         {
                             label: "Active Projects",
                             value: metrics.activeProjects,
                             chip: "Steady",
-                            chipClass: "bg-brand/10 text-primary border-primary/20 shadow-[0_1px_4px_rgba(217,119,87,0.05)]",
+                            chipClass: "bg-brand/10 text-primary border-primary/20",
                         },
                         {
                             label: "Upcoming Deadlines",
                             value: metrics.upcomingDeadlines,
                             chip: "Attention",
-                            chipClass: "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_1px_4px_rgba(245,158,11,0.05)]",
+                            chipClass: "bg-amber-500/10 text-amber-600 border-amber-500/20",
                         },
                         {
                             label: "Efficiency",
                             value: `${metrics.efficiency}%`,
                             chip: "+4%",
-                            chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 shadow-[0_1px_4px_rgba(16,185,129,0.05)]",
+                            chipClass: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
                         },
                     ].map((card) => (
                         <div
@@ -684,8 +684,8 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
             </div>
 
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+                    <div className="modal-surface w-full max-w-md p-7">
                         <h3 className="text-2xl font-semibold text-muted">
                             Create New Project
                         </h3>
@@ -698,7 +698,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                     type="text"
                                     required
                                     autoFocus
-                                    className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted transition focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                    className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted transition focus:border-primary"
                                     placeholder="Enter project name..."
                                     value={newProjectName}
                                     onChange={(e) => setNewProjectName(e.target.value)}
@@ -709,7 +709,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
+                                    className="btn-danger px-4 py-3"
                                     disabled={creating}
                                 >
                                     Cancel
@@ -717,7 +717,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="submit"
                                     disabled={creating}
-                                    className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-70"
+                                    className="btn-success px-5 py-3"
                                 >
                                     {creating ? "Creating..." : "Create"}
                                 </button>
@@ -728,8 +728,8 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
             )}
 
             {editingProject && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] p-7 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+                    <div className="modal-surface w-full max-w-md p-7">
                         <h3 className="text-2xl font-semibold text-muted">
                             Edit Project
                         </h3>
@@ -742,7 +742,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                     type="text"
                                     required
                                     autoFocus
-                                    className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted transition focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                    className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted transition focus:border-primary"
                                     value={updatedName}
                                     onChange={(e) => setUpdatedName(e.target.value)}
                                     disabled={updating}
@@ -752,7 +752,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="button"
                                     onClick={() => setEditingProject(null)}
-                                    className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)]"
+                                    className="btn-danger px-4 py-3"
                                     disabled={updating}
                                 >
                                     Cancel
@@ -760,7 +760,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="submit"
                                     disabled={updating}
-                                    className="rounded-2xl bg-primary px-5 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-70"
+                                    className="btn-warning px-5 py-3"
                                 >
                                     {updating ? "Saving..." : "Save Changes"}
                                 </button>
