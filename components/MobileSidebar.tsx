@@ -72,7 +72,7 @@ export default function MobileSidebar({ user }: { user: any }) {
     <div className="md:hidden">
       <button
         onClick={() => setIsOpen(true)}
-        className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-2 text-neutral-600 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+        className="rounded-xl border border-border-subtle p-2 text-muted transition hover:bg-[var(--color-light-bg)] )]"
         aria-label="Open Menu"
       >
         <Menu size={20} />
@@ -80,7 +80,7 @@ export default function MobileSidebar({ user }: { user: any }) {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-950/30 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 z-40 bg-surface/30 backdrop-blur-sm transition-opacity"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -89,11 +89,11 @@ export default function MobileSidebar({ user }: { user: any }) {
         className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-xl transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-neutral-200 dark:border-neutral-800 px-5">
+        <div className="flex h-16 items-center justify-between border-b border-border-subtle px-5">
           <Logo href="/dashboard" />
           <button
             onClick={() => setIsOpen(false)}
-            className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-2 text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+            className="rounded-xl border border-border-subtle p-2 text-muted transition hover:bg-[var(--color-light-bg)] )]"
             aria-label="Close Menu"
           >
             <X size={20} />
@@ -113,9 +113,9 @@ export default function MobileSidebar({ user }: { user: any }) {
                 return (
                   <div
                     key={label}
-                    className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-400"
+                    className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-muted"
                   >
-                    <Icon size={20} className="text-neutral-500 dark:text-neutral-400" />
+                    <Icon size={20} className="text-muted" />
                     <span>{label}</span>
                   </div>
                 );
@@ -141,22 +141,22 @@ export default function MobileSidebar({ user }: { user: any }) {
           </nav>
         </div>
 
-        <div className="border-t border-neutral-200 dark:border-neutral-800 px-5 py-4">
+        <div className="border-t border-border-subtle px-5 py-4">
           <div className="mb-4 flex items-center gap-3">
             {user?.image ? (
-              <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]">
+              <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-[var(--color-light-surface)] )]">
                 <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
               </div>
             ) : (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-sm font-semibold text-muted">
                 {user?.name?.[0]?.toUpperCase() || "U"}
               </div>
             )}
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+              <p className="truncate text-sm font-semibold text-muted">
                 {user?.name || "Sprinto User"}
               </p>
-              <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
+              <p className="truncate text-xs text-muted">
                 {user?.email || "Admin Account"}
               </p>
             </div>
@@ -165,7 +165,7 @@ export default function MobileSidebar({ user }: { user: any }) {
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-400 transition hover:border-neutral-300 dark:border-neutral-700 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border-subtle px-4 py-3 text-sm font-medium text-muted transition hover:border-border-subtle hover:bg-[var(--color-light-bg)] )] disabled:opacity-50"
           >
             <LogOut size={18} />
             {isLoggingOut ? "Leaving..." : "Logout"}

@@ -5,10 +5,10 @@ export default function Home() {
     <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-50 via-white to-white px-4 py-12 sm:px-6">
       <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-primary via-purple-400 to-primary" />
       <Logo className="mb-8 scale-100 sm:mb-10 sm:scale-110" iconSize={40} />
-      <h1 className="mb-5 max-w-4xl text-center text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+      <h1 className="mb-5 max-w-4xl text-center text-4xl font-extrabold tracking-tight text-text-base sm:text-5xl lg:text-6xl">
         Manage Projects with <span className="text-primary italic">Speed.</span>
       </h1>
-      <p className="mb-8 max-w-2xl text-center text-base leading-relaxed text-gray-500 text-balance sm:mb-10 sm:text-xl">
+      <p className="mb-8 max-w-2xl text-center text-base leading-relaxed text-muted text-balance sm:mb-10 sm:text-xl">
         Sprinto is the modern task management platform designed for high-performance teams.
         Clean, fast, and remarkably intuitive.
       </p>
@@ -16,7 +16,7 @@ export default function Home() {
         <a href="/login" className="rounded-xl bg-primary px-8 py-3 text-center font-semibold text-white shadow-lg shadow-purple-200 transition-all duration-200 hover:-translate-y-0.5 hover:bg-purple-700">
           Get Started Free
         </a>
-        <a href="/signup" className="rounded-xl border border-gray-200 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-8 py-3 text-center font-semibold text-gray-700 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50">
+        <a href="/signup" className="rounded-xl border border-border-subtle bg-[var(--color-light-surface)] )] px-8 py-3 text-center font-semibold text-muted transition-all duration-200 hover:border-border-subtle hover:bg-surface">
           Create Account
         </a>
       </div>

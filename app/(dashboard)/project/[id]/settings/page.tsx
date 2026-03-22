@@ -72,10 +72,10 @@ export default function ProjectSettingsPage() {
           <ArrowLeft size={18} />
           Back to {project?.project ? project.project.name : "Project"}
         </Link>
-        <h2 className="text-2xl font-semibold text-gray-800 sm:text-3xl">Project Settings</h2>
+        <h2 className="text-2xl font-semibold text-text-base sm:text-3xl">Project Settings</h2>
       </div>
 
-      <div className="rounded-[24px] border border-gray-200 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-5 shadow-sm sm:p-6">
+      <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-sm sm:p-6">
         <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
           <UserPlus size={20} className="text-primary" />
           Invite Team Member
@@ -90,20 +90,20 @@ export default function ProjectSettingsPage() {
         {canManageMembers ? (
           <form onSubmit={handleInvite} className="grid max-w-2xl gap-4 lg:grid-cols-[minmax(0,1fr)_160px_auto] lg:items-end">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-muted mb-1">Email Address</label>
               <input
                 type="email"
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                className="w-full px-4 py-2 border border-border-subtle rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 disabled={inviting}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <label className="block text-sm font-medium text-muted mb-1">Role</label>
               <select
-                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]"
+                className="w-full px-4 py-2 border border-border-subtle rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-[var(--color-light-surface)] )]"
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value)}
                 disabled={inviting}
@@ -121,7 +121,7 @@ export default function ProjectSettingsPage() {
             </button>
           </form>
         ) : (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted">
             You can view project members here, but only a MASTER can invite people or change roles.
           </p>
         )}

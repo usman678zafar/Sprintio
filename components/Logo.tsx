@@ -58,7 +58,7 @@ export default function Logo({
         <LogoMark iconSize={iconSize} />
       </div>
       {showText && (
-        <span className="text-xl font-semibold tracking-tight text-neutral-800 dark:text-neutral-200">
+        <span className="text-xl font-semibold tracking-tight text-muted">
           Sprinto
         </span>
       )}

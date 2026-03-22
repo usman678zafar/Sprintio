@@ -219,15 +219,15 @@ export default function CalendarPage() {
   return (
     <div className="min-h-full bg-[#f8fafc] pb-24 md:pb-8">
       {/* Mobile Sticky Header */}
-      <section className="sticky top-0 z-40 border-b border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/90 px-4 py-4 backdrop-blur-xl md:hidden">
+      <section className="sticky top-0 z-40 border-b border-border-subtle bg-[var(--color-light-surface)] px-4 py-4 backdrop-blur-xl md:hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black text-neutral-800 dark:text-neutral-200">{formatMonthYear(currentDate)}</h1>
-            <button onClick={() => setViewMode(viewMode === "month" ? "day" : "month")} className="text-slate-400">
+            <h1 className="text-xl font-black text-muted">{formatMonthYear(currentDate)}</h1>
+            <button onClick={() => setViewMode(viewMode === "month" ? "day" : "month")} className="text-muted">
               <ChevronDown size={18} className={`transition-transform ${viewMode === "month" ? "rotate-180" : ""}`} />
             </button>
           </div>
-          <button onClick={() => setShowFilters(true)} className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-neutral-600 dark:text-neutral-400">
+          <button onClick={() => setShowFilters(true)} className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-light-bg)] )] text-muted">
             <Filter size={18} />
           </button>
         </div>
@@ -256,21 +256,21 @@ export default function CalendarPage() {
       </section>
 
       {/* Desktop Header */}
-      <header className="hidden bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] border-b border-slate-100 px-8 py-6 md:block">
+      <header className="hidden bg-[var(--color-light-surface)] )] border-b border-border-subtle px-8 py-6 md:block">
         <div className="mx-auto max-w-[1240px] flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-black text-neutral-800 dark:text-neutral-200">{formatMonthYear(currentDate)}</h1>
-            <p className="mt-1 text-sm font-medium text-neutral-500 dark:text-neutral-400">Coordinate releases and team sprints.</p>
+            <h1 className="text-3xl font-black text-muted">{formatMonthYear(currentDate)}</h1>
+            <p className="mt-1 text-sm font-medium text-muted">Coordinate releases and team sprints.</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] p-1">
-              <button onClick={() => handleNavigate(-1)} className="p-2 text-slate-400 hover:text-neutral-800 dark:text-neutral-200 transition"><ChevronLeft size={20} /></button>
-              <button onClick={() => handleSelectDay(today)} className="px-4 text-sm font-black uppercase text-neutral-600 dark:text-neutral-400">Today</button>
-              <button onClick={() => handleNavigate(1)} className="p-2 text-slate-400 hover:text-neutral-800 dark:text-neutral-200 transition"><ChevronRight size={20} /></button>
+            <div className="flex rounded-xl bg-[var(--color-light-bg)] )] p-1">
+              <button onClick={() => handleNavigate(-1)} className="p-2 text-muted hover:text-muted transition"><ChevronLeft size={20} /></button>
+              <button onClick={() => handleSelectDay(today)} className="px-4 text-sm font-black uppercase text-muted">Today</button>
+              <button onClick={() => handleNavigate(1)} className="p-2 text-muted hover:text-muted transition"><ChevronRight size={20} /></button>
             </div>
             <button
               onClick={() => setShowTaskModal(true)}
-              className="flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-xl shadow-slate-200 transition hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 rounded-2xl bg-surface px-6 py-3 text-sm font-bold text-white shadow-xl shadow-slate-200 transition hover:scale-105 active:scale-95"
             >
               <Plus size={18} />
               New Event
@@ -280,11 +280,11 @@ export default function CalendarPage() {
       </header>
 
       {/* Desktop Filter Bar - Sticky */}
-      <div className="sticky top-0 z-30 hidden border-b border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/80 py-3 backdrop-blur-xl md:block">
+      <div className="sticky top-0 z-30 hidden border-b border-border-subtle bg-[var(--color-light-surface)] py-3 backdrop-blur-xl md:block">
         <div className="mx-auto flex max-w-[1240px] items-center justify-between px-8">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Stream:</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Stream:</span>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSelectedProjectId("all")}
@@ -326,10 +326,10 @@ export default function CalendarPage() {
         {/* Mobile View: Tasks for selected day */}
         <div className="md:hidden">
           {viewMode === "month" && (
-            <div className="mb-8 overflow-hidden rounded-[28px] border border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-sm">
-              <div className="grid grid-cols-7 border-b border-slate-50 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/50">
+            <div className="mb-8 overflow-hidden rounded-[28px] border border-border-subtle bg-[var(--color-light-surface)] )] shadow-sm">
+              <div className="grid grid-cols-7 border-b border-border-subtle bg-[var(--color-light-bg)]">
                 {DAY_LABELS.map((dayLabel) => (
-                  <div key={dayLabel} className="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <div key={dayLabel} className="py-3 text-center text-[10px] font-black uppercase tracking-widest text-muted">
                     {dayLabel.substring(0, 3)}
                   </div>
                 ))}
@@ -355,27 +355,27 @@ export default function CalendarPage() {
           )}
 
           <div className="space-y-4">
-            <h2 className="text-sm font-black uppercase tracking-widest text-slate-400">Schedule</h2>
+            <h2 className="text-sm font-black uppercase tracking-widest text-muted">Schedule</h2>
             {selectedDayTasks.length === 0 ? (
-              <div className="rounded-[32px] border border-dashed border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] py-14 text-center">
-                <CalendarIcon size={40} className="mx-auto text-slate-100 mb-4" />
-                <p className="text-sm font-bold text-slate-400">No events found.</p>
+              <div className="rounded-[32px] border border-dashed border-border-subtle bg-[var(--color-light-surface)] )] py-14 text-center">
+                <CalendarIcon size={40} className="mx-auto text-muted mb-4" />
+                <p className="text-sm font-bold text-muted">No events found.</p>
               </div>
             ) : (
               selectedDayTasks.map(task => {
                 const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
                 return (
-                  <div key={task._id} className="group flex items-start gap-4 rounded-[32px] border border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-5 shadow-sm transition hover:shadow-md">
+                  <div key={task._id} className="group flex items-start gap-4 rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-sm transition hover:shadow-md">
                     <div className={`mt-1.5 h-3 w-3 shrink-0 rounded-full ${color.dot} shadow-lg shadow-${color.dot.split('-')[1]}-200`} />
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{task.projectTag}</span>
-                        <span className="text-[10px] font-bold text-slate-400">{new Date(task.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted">{task.projectTag}</span>
+                        <span className="text-[10px] font-bold text-muted">{new Date(task.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
-                      <h3 className="mt-1 text-lg font-black text-neutral-800 dark:text-neutral-200">{task.title}</h3>
+                      <h3 className="mt-1 text-lg font-black text-muted">{task.title}</h3>
                       <div className="mt-4 flex items-center justify-between">
                         <div className="flex -space-x-2">
-                          <div className="h-7 w-7 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[10px] font-bold">
+                          <div className="h-7 w-7 rounded-full bg-surface border-2 border-white flex items-center justify-center text-[10px] font-bold">
                             {task.assignedTo?.name.charAt(0) || "U"}
                           </div>
                         </div>
@@ -391,10 +391,10 @@ export default function CalendarPage() {
 
         {/* Desktop View: Full Month Grid */}
         <div className="hidden md:grid gap-8 xl:grid-cols-[1fr_320px]">
-          <div className="rounded-[40px] border border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-sm overflow-hidden">
-            <div className="grid grid-cols-7 border-b border-slate-50 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/50">
+          <div className="rounded-[40px] border border-border-subtle bg-[var(--color-light-surface)] )] shadow-sm overflow-hidden">
+            <div className="grid grid-cols-7 border-b border-border-subtle bg-[var(--color-light-bg)]">
               {DAY_LABELS.map(l => (
-                <div key={l} className="py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{l}</div>
+                <div key={l} className="py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-muted">{l}</div>
               ))}
             </div>
             <div className="grid grid-cols-7">
@@ -413,7 +413,7 @@ export default function CalendarPage() {
                   >
                     <div className="mb-4 flex items-center justify-between">
                       <span className={`flex h-8 w-8 items-center justify-center rounded-xl text-sm font-black ${isToday ? "bg-primary text-white shadow-lg shadow-primary/20" : inMonth ? "text-neutral-800 dark:text-neutral-200" : "text-slate-300"}`}>{day.getDate()}</span>
-                      {dayTasks.length > 0 && <span className="text-[10px] font-black text-slate-400">{dayTasks.length} E</span>}
+                      {dayTasks.length > 0 && <span className="text-[10px] font-black text-muted">{dayTasks.length} E</span>}
                     </div>
                     <div className="space-y-2">
                       {dayTasks.slice(0, 2).map(t => {
@@ -424,7 +424,7 @@ export default function CalendarPage() {
                           </div>
                         );
                       })}
-                      {dayTasks.length > 2 && <p className="text-[9px] font-black uppercase text-slate-400">+{dayTasks.length - 2} More</p>}
+                      {dayTasks.length > 2 && <p className="text-[9px] font-black uppercase text-muted">+{dayTasks.length - 2} More</p>}
                     </div>
                   </div>
                 );
@@ -434,39 +434,39 @@ export default function CalendarPage() {
 
           <aside className="space-y-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-2xl font-black text-neutral-800 dark:text-neutral-200 tracking-tight">Upcoming Deadlines</h3>
-              <button className="text-slate-300 hover:text-neutral-600 dark:text-neutral-400 transition"><MoreVertical size={20} /></button>
+              <h3 className="text-2xl font-black text-muted tracking-tight">Upcoming Deadlines</h3>
+              <button className="text-muted hover:text-muted transition"><MoreVertical size={20} /></button>
             </div>
 
             <div className="space-y-4">
               {upcomingDeadlines.length === 0 ? (
-                <p className="text-sm font-bold text-slate-400">All clear for now.</p>
+                <p className="text-sm font-bold text-muted">All clear for now.</p>
               ) : (
                 upcomingDeadlines.map(task => {
                   const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
                   const priority = getPriority(task);
                   return (
-                    <div key={task._id} className="group relative rounded-[32px] border border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-6 shadow-sm transition hover:shadow-xl hover:shadow-slate-200/50">
+                    <div key={task._id} className="group relative rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] )] p-6 shadow-sm transition hover:shadow-xl hover:shadow-slate-200/50">
                       <div className="flex items-center justify-between mb-4">
                         <span className={`rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest ${color.badge}`}>
                           {priority.label}
                         </span>
-                        <span className="text-xs font-bold text-slate-400">
+                        <span className="text-xs font-bold text-muted">
                           {new Date(task.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                         </span>
                       </div>
-                      <h4 className="text-lg font-black text-neutral-800 dark:text-neutral-200 group-hover:text-primary transition-colors leading-tight">{task.title}</h4>
-                      <p className="mt-2 text-sm font-medium text-slate-400 line-clamp-2">
+                      <h4 className="text-lg font-black text-muted group-hover:text-primary transition-colors leading-tight">{task.title}</h4>
+                      <p className="mt-2 text-sm font-medium text-muted line-clamp-2">
                         {task.description || "Review alignment and confirm deliverables before the final demo."}
                       </p>
                       <div className="mt-6 flex items-center justify-between">
                         <div className="flex -space-x-1.5">
-                          <div className="h-8 w-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold">
+                          <div className="h-8 w-8 rounded-full border-2 border-white bg-surface flex items-center justify-center text-[10px] font-bold">
                             {task.assignedTo?.name.charAt(0) || "U"}
                           </div>
-                          <div className="h-8 w-8 rounded-full border-2 border-white bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] flex items-center justify-center" />
+                          <div className="h-8 w-8 rounded-full border-2 border-white bg-[var(--color-light-bg)] )] flex items-center justify-center" />
                         </div>
-                        <ArrowRight size={18} className="text-slate-100 transition-colors group-hover:text-primary" />
+                        <ArrowRight size={18} className="text-muted transition-colors group-hover:text-primary" />
                       </div>
                     </div>
                   );
@@ -474,12 +474,12 @@ export default function CalendarPage() {
               )}
 
               {/* Schedule a Meeting Placeholder */}
-              <button className="w-full flex flex-col items-center justify-center rounded-[32px] border-2 border-dashed border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/30 py-8 transition hover:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] hover:border-primary group">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-brand/20 dark:bg-brand/30/50 text-brand transition group-hover:bg-primary group-hover:text-white">
+              <button className="w-full flex flex-col items-center justify-center rounded-[32px] border-2 border-dashed border-border-subtle bg-[var(--color-light-bg)] py-8 transition hover:bg-[var(--color-light-surface)] )] hover:border-primary group">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-brand/20 text-brand transition group-hover:bg-primary group-hover:text-white">
                   <Plus size={20} />
                 </div>
-                <h5 className="text-sm font-black text-neutral-800 dark:text-neutral-200">Schedule a Meeting</h5>
-                <p className="mt-1 text-xs font-bold text-slate-400">Find time for the whole team.</p>
+                <h5 className="text-sm font-black text-muted">Schedule a Meeting</h5>
+                <p className="mt-1 text-xs font-bold text-muted">Find time for the whole team.</p>
               </button>
             </div>
           </aside>
@@ -489,37 +489,37 @@ export default function CalendarPage() {
       {/* Mobile FAB */}
       <button
         onClick={() => setShowTaskModal(true)}
-        className="fixed bottom-24 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-slate-900 text-white shadow-2xl transition-all hover:scale-110 active:scale-95 md:hidden"
+        className="fixed bottom-24 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-surface text-white shadow-2xl transition-all hover:scale-110 active:scale-95 md:hidden"
       >
         <Plus size={32} />
       </button>
 
       {/* Task Modal (Common for both) */}
       {showTaskModal && (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/40 p-0 backdrop-blur-md sm:items-center sm:p-4 animate-in fade-in duration-300">
-          <div className="w-full max-w-lg rounded-t-[48px] bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-10 shadow-2xl sm:rounded-[48px] animate-in slide-in-from-bottom-full sm:zoom-in-95">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-surface/40 p-0 backdrop-blur-md sm:items-center sm:p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-lg rounded-t-[48px] bg-[var(--color-light-surface)] )] p-10 shadow-2xl sm:rounded-[48px] animate-in slide-in-from-bottom-full sm:zoom-in-95">
             <div className="mb-10 flex items-center justify-between">
-              <h3 className="text-2xl font-black text-neutral-800 dark:text-neutral-200">New Mission</h3>
-              <button onClick={() => setShowTaskModal(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-slate-400"><X size={20} /></button>
+              <h3 className="text-2xl font-black text-muted">New Mission</h3>
+              <button onClick={() => setShowTaskModal(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--color-light-bg)] )] text-muted"><X size={20} /></button>
             </div>
             <form className="space-y-8">
               <div>
-                <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-slate-400">Objective</label>
-                <input type="text" required placeholder="What needs to be done?" className="w-full rounded-2xl border border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] transition-all" />
+                <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-muted">Objective</label>
+                <input type="text" required placeholder="What needs to be done?" className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-bg)] )] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] )] transition-all" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-slate-400">Deadline</label>
-                  <input type="date" required className="w-full rounded-2xl border border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]" />
+                  <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-muted">Deadline</label>
+                  <input type="date" required className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-bg)] )] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] )]" />
                 </div>
                 <div>
-                  <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-slate-400">Workspace</label>
-                  <select className="w-full rounded-2xl border border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]">
+                  <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-muted">Workspace</label>
+                  <select className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-bg)] )] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] )]">
                     {projects.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
                   </select>
                 </div>
               </div>
-              <button className="w-full rounded-[24px] bg-slate-950 py-5 text-sm font-black uppercase tracking-widest text-white shadow-2xl shadow-slate-300 transition hover:bg-slate-800">Identify Mission</button>
+              <button className="w-full rounded-[24px] bg-surface py-5 text-sm font-black uppercase tracking-widest text-white shadow-2xl shadow-slate-300 transition hover:bg-surface">Identify Mission</button>
             </form>
           </div>
         </div>
@@ -527,15 +527,15 @@ export default function CalendarPage() {
 
       {/* Filters Overlay */}
       {showFilters && (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="w-full rounded-t-[48px] bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-10 shadow-2xl animate-in slide-in-from-bottom-full">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-surface/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="w-full rounded-t-[48px] bg-[var(--color-light-surface)] )] p-10 shadow-2xl animate-in slide-in-from-bottom-full">
             <div className="mb-10 flex items-center justify-between">
-              <h3 className="text-xl font-black text-neutral-800 dark:text-neutral-200">Workspace Hub</h3>
-              <button onClick={() => setShowFilters(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-slate-400"><X size={20} /></button>
+              <h3 className="text-xl font-black text-muted">Workspace Hub</h3>
+              <button onClick={() => setShowFilters(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--color-light-bg)] )] text-muted"><X size={20} /></button>
             </div>
             <div className="space-y-8">
               <div>
-                <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-slate-400">Active Field</label>
+                <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-muted">Active Field</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => { setSelectedProjectId("all"); setShowFilters(false); }}
@@ -554,7 +554,7 @@ export default function CalendarPage() {
                   ))}
                 </div>
               </div>
-              <button onClick={() => setShowFilters(false)} className="w-full rounded-[24px] bg-slate-950 py-5 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-slate-200">Return to Field</button>
+              <button onClick={() => setShowFilters(false)} className="w-full rounded-[24px] bg-surface py-5 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-slate-200">Return to Field</button>
             </div>
           </div>
         </div>

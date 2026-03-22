@@ -80,7 +80,7 @@ export default function TaskTree({
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500 dark:text-neutral-500 dark:text-neutral-400 border border-dashed border-gray-200 dark:border-neutral-800 rounded-lg">
+      <div className="text-center py-12 text-muted border border-dashed border-border-subtle rounded-lg">
         No tasks found. Click "Add Task" to create one.
       </div>
     );

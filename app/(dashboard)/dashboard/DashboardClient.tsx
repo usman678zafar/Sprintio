@@ -359,13 +359,13 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                     ].map((card) => (
                         <div
                             key={card.label}
-                            className="flex flex-col justify-between rounded-[20px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-4 sm:rounded-[24px] sm:px-5 sm:py-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-transform hover:scale-[1.02]"
+                            className="flex flex-col justify-between rounded-[20px] border border-border-subtle bg-[var(--color-light-surface)] )] p-4 sm:rounded-[24px] sm:px-5 sm:py-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-transform hover:scale-[1.02]"
                         >
-                            <p className="text-[13px] font-medium leading-tight text-neutral-500 dark:text-neutral-400 sm:text-sm">
+                            <p className="text-[13px] font-medium leading-tight text-muted sm:text-sm">
                                 {card.label}
                             </p>
                             <div className="mt-2.5 flex flex-wrap items-baseline gap-2 sm:mt-3 sm:items-center sm:gap-3">
-                                <span className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+                                <span className="text-2xl font-bold tracking-tight text-muted sm:text-3xl">
                                     {card.value}
                                 </span>
                                 <span
@@ -381,10 +381,10 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                 <section className="mt-8">
                     <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-950">
+                            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
                                 Active Projects
                             </h1>
-                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-1 text-sm text-muted">
                                 Focused delivery across your most important workspaces.
                             </p>
                         </div>
@@ -395,31 +395,31 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                     .getElementById("active-projects")
                                     ?.scrollIntoView({ behavior: "smooth", block: "start" })
                             }
-                            className="text-base font-medium text-primary transition hover:text-brand dark:text-brand"
+                            className="text-base font-medium text-primary transition hover:text-brand"
                         >
                             View All Projects
                         </button>
                     </div>
 
                     {loading ? (
-                        <div className="rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-6 py-16 text-center text-neutral-500 dark:text-neutral-400 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                        <div className="rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-16 text-center text-muted shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                             Loading dashboard...
                         </div>
                     ) : noResults ? (
-                        <div className="rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-6 py-16 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                            <p className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+                        <div className="rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-16 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                            <p className="text-xl font-semibold text-muted">
                                 No projects match "{searchQuery}"
                             </p>
-                            <p className="mt-2 text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-2 text-muted">
                                 Try a different search term from the top bar.
                             </p>
                         </div>
                     ) : projects.length === 0 ? (
-                        <div className="rounded-3xl border border-dashed border-neutral-300 dark:border-neutral-700 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-6 py-20 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                            <p className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+                        <div className="rounded-3xl border border-dashed border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-20 text-center shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                            <p className="text-xl font-semibold text-muted">
                                 No projects yet
                             </p>
-                            <p className="mt-2 text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-2 text-muted">
                                 Use the Add New Project button to create your first workspace.
                             </p>
                         </div>
@@ -443,7 +443,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                 router.push(`/project/${project._id}`);
                                             }
                                         }}
-                                        className="cursor-pointer rounded-[20px] sm:rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] focus:outline-none focus:ring-4 focus:ring-brand/20 transition-transform hover:-translate-y-1"
+                                        className="cursor-pointer rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] focus:outline-none focus:ring-4 focus:ring-brand/20 transition-transform hover:-translate-y-1"
                                     >
                                         <div className="flex items-start justify-between gap-4">
                                             {(() => {
@@ -467,7 +467,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                             openMenuId === project._id ? null : project._id
                                                         );
                                                     }}
-                                                    className="rounded-xl p-2 text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                                                    className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
                                                     aria-label={`Open actions for ${project.name}`}
                                                 >
                                                     <MoreHorizontal size={20} />
@@ -475,7 +475,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
 
                                                 {openMenuId === project._id && (
                                                     <div
-                                                        className="absolute right-0 top-12 z-20 w-44 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-2 shadow-xl"
+                                                        className="absolute right-0 top-12 z-20 w-44 rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] p-2 shadow-xl"
                                                         onClick={(event) => event.stopPropagation()}
                                                     >
                                                         <button
@@ -485,7 +485,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                                 setUpdatedName(project.name);
                                                                 setOpenMenuId(null);
                                                             }}
-                                                            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                                                            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
                                                         >
                                                             <Pencil size={16} />
                                                             Edit Name
@@ -507,19 +507,19 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                         </div>
 
                                         <Link href={`/project/${project._id}`} className="mt-4 sm:mt-5 block">
-                                            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-950">
+                                            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
                                                 {project.name}
                                             </h2>
-                                            <p className="mt-2 sm:mt-3 min-h-12 text-sm sm:text-base leading-relaxed text-neutral-500 dark:text-neutral-400">
+                                            <p className="mt-2 sm:mt-3 min-h-12 text-sm sm:text-base leading-relaxed text-muted">
                                                 {getProjectSummary(project)}
                                             </p>
 
                                             <div className="mt-5 sm:mt-6">
-                                                <div className="mb-3 flex items-center justify-between text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                                                <div className="mb-3 flex items-center justify-between text-sm font-medium text-muted">
                                                     <span>Progress</span>
                                                     <span>{tone.progress}%</span>
                                                 </div>
-                                                <div className="h-2.5 rounded-full bg-slate-100">
+                                                <div className="h-2.5 rounded-full bg-surface">
                                                     <div
                                                         className={`h-full rounded-full ${toneClasses.bar}`}
                                                         style={{ width: `${tone.progress}%` }}
@@ -538,7 +538,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                                         </span>
                                                     ))}
                                                     {extraMembers > 0 && (
-                                                        <span className="-ml-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-slate-100 text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+                                                        <span className="-ml-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-surface text-xs font-semibold text-muted">
                                                             +{extraMembers}
                                                         </span>
                                                     )}
@@ -558,8 +558,8 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                 </section>
 
                 <section className="mt-6 sm:mt-8 grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
-                    <div className="rounded-[20px] sm:rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-950">
+                    <div className="rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
                             Recent Activity
                         </h2>
                         <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
@@ -569,16 +569,16 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                         className={`mt-1.5 sm:mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${item.color}`}
                                     />
                                     <div>
-                                        <p className="text-sm sm:text-base leading-relaxed text-neutral-800 dark:text-neutral-200">{item.text}</p>
-                                        <p className="mt-1 text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">{item.meta}</p>
+                                        <p className="text-sm sm:text-base leading-relaxed text-muted">{item.text}</p>
+                                        <p className="mt-1 text-xs sm:text-sm text-muted">{item.meta}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="rounded-[20px] sm:rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-950">
+                    <div className="rounded-[20px] sm:rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-4 sm:p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-muted">
                             Team Status
                         </h2>
                         <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-5">
@@ -601,16 +601,16 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                         />
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <p className="truncate text-base text-neutral-800 dark:text-neutral-200">{member.name}</p>
+                                        <p className="truncate text-base text-muted">{member.name}</p>
                                     </div>
-                                    <span className="text-sm text-slate-400">{member.status}</span>
+                                    <span className="text-sm text-muted">{member.status}</span>
                                 </div>
                             ))}
                         </div>
 
                         <button
                             type="button"
-                            className="mt-6 flex w-full items-center justify-center rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-2.5 text-sm font-medium text-neutral-600 dark:text-neutral-400 transition hover:border-neutral-300 dark:border-neutral-700 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                            className="mt-6 flex w-full items-center justify-center rounded-2xl border border-border-subtle px-4 py-2.5 text-sm font-medium text-muted transition hover:border-border-subtle hover:bg-[var(--color-light-bg)] )]"
                         >
                             Manage Team
                         </button>
@@ -618,64 +618,64 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                 </section>
 
                 <section className="mt-8 grid gap-5 lg:grid-cols-3">
-                    <div className="rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                         <div className="flex items-center gap-3">
-                            <div className="rounded-2xl bg-brand/10 dark:bg-brand/5 p-3 text-primary">
+                            <div className="rounded-2xl bg-brand/10 p-3 text-primary">
                                 <TrendingUp size={22} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                                <h3 className="text-lg font-semibold text-muted">
                                     Workload Trend
                                 </h3>
-                                <p className="text-sm text-neutral-500 dark:text-neutral-400">Current delivery pace</p>
+                                <p className="text-sm text-muted">Current delivery pace</p>
                             </div>
                         </div>
-                        <div className="mt-5 text-3xl font-semibold tracking-tight text-slate-950">
+                        <div className="mt-5 text-3xl font-semibold tracking-tight text-muted">
                             {metrics.activeProjects === 0
                                 ? "0%"
                                 : `${Math.min(24 + metrics.totalTasks * 3, 89)}%`}
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+                        <p className="mt-2 text-sm leading-6 text-muted">
                             Healthy momentum across active projects with balanced task ownership.
                         </p>
                     </div>
 
-                    <div className="rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                         <div className="flex items-center gap-3">
                             <div className="rounded-2xl bg-amber-50 p-3 text-amber-600">
                                 <CalendarDays size={22} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                                <h3 className="text-lg font-semibold text-muted">
                                     Priority Window
                                 </h3>
-                                <p className="text-sm text-neutral-500 dark:text-neutral-400">Deadlines to watch</p>
+                                <p className="text-sm text-muted">Deadlines to watch</p>
                             </div>
                         </div>
-                        <div className="mt-5 text-3xl font-semibold tracking-tight text-slate-950">
+                        <div className="mt-5 text-3xl font-semibold tracking-tight text-muted">
                             {metrics.upcomingDeadlines}
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+                        <p className="mt-2 text-sm leading-6 text-muted">
                             Projects currently flagged for closer deadline coordination this week.
                         </p>
                     </div>
 
-                    <div className="rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                    <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] p-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                         <div className="flex items-center gap-3">
                             <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-600">
                                 <Users size={22} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+                                <h3 className="text-lg font-semibold text-muted">
                                     Team Coverage
                                 </h3>
-                                <p className="text-sm text-neutral-500 dark:text-neutral-400">Assigned collaborators</p>
+                                <p className="text-sm text-muted">Assigned collaborators</p>
                             </div>
                         </div>
-                        <div className="mt-5 text-3xl font-semibold tracking-tight text-slate-950">
+                        <div className="mt-5 text-3xl font-semibold tracking-tight text-muted">
                             {projects.reduce((sum, project) => sum + project.memberCount, 0)}
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+                        <p className="mt-2 text-sm leading-6 text-muted">
                             Combined member assignments across all workspaces currently in view.
                         </p>
                     </div>
@@ -684,21 +684,21 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
             </div>
 
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-7 shadow-2xl">
-                        <h3 className="text-2xl font-semibold text-slate-950">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
+                    <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
+                        <h3 className="text-2xl font-semibold text-muted">
                             Create New Project
                         </h3>
                         <form onSubmit={handleCreateProject}>
                             <div className="mb-6 mt-6">
-                                <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                                <label className="mb-2 block text-sm font-medium text-muted">
                                     Project Name
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     autoFocus
-                                    className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-neutral-800 dark:text-neutral-200 transition focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                    className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted transition focus:border-primary focus:ring-4 focus:ring-brand/20"
                                     placeholder="Enter project name..."
                                     value={newProjectName}
                                     onChange={(e) => setNewProjectName(e.target.value)}
@@ -709,7 +709,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="rounded-2xl px-4 py-3 font-medium text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                                    className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
                                     disabled={creating}
                                 >
                                     Cancel
@@ -728,21 +728,21 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
             )}
 
             {editingProject && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-7 shadow-2xl">
-                        <h3 className="text-2xl font-semibold text-slate-950">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
+                    <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
+                        <h3 className="text-2xl font-semibold text-muted">
                             Edit Project
                         </h3>
                         <form onSubmit={handleUpdateProject}>
                             <div className="mb-6 mt-6">
-                                <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                                <label className="mb-2 block text-sm font-medium text-muted">
                                     Project Name
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     autoFocus
-                                    className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-neutral-800 dark:text-neutral-200 transition focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                    className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted transition focus:border-primary focus:ring-4 focus:ring-brand/20"
                                     value={updatedName}
                                     onChange={(e) => setUpdatedName(e.target.value)}
                                     disabled={updating}
@@ -752,7 +752,7 @@ export default function DashboardClient({ initialProjects }: { initialProjects: 
                                 <button
                                     type="button"
                                     onClick={() => setEditingProject(null)}
-                                    className="rounded-2xl px-4 py-3 font-medium text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                                    className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
                                     disabled={updating}
                                 >
                                     Cancel

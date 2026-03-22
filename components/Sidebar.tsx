@@ -84,14 +84,14 @@ export default function Sidebar({ user }: { user: any }) {
         isCollapsed ? "w-[88px]" : "w-64"
       }`}
     >
-      <div className="flex h-16 items-center justify-between border-b border-neutral-200 dark:border-neutral-800 px-4">
+      <div className="flex h-16 items-center justify-between border-b border-border-subtle px-4">
         <div className={`overflow-hidden transition-all duration-300 ${isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"}`}>
           <Logo href="/dashboard" />
         </div>
         <button
           type="button"
           onClick={toggleCollapsed}
-          className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-xl text-neutral-500 dark:text-neutral-400 transition hover:bg-slate-100 hover:text-neutral-700 dark:text-neutral-300"
+          className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-xl text-muted transition hover:bg-surface hover:text-muted"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={isCollapsed ? "Expand" : "Collapse"}
         >
@@ -112,9 +112,9 @@ export default function Sidebar({ user }: { user: any }) {
               return (
                 <div
                   key={label}
-                  className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-400"
+                  className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-muted"
                 >
-                  <Icon size={20} className="text-neutral-500 dark:text-neutral-400" />
+                  <Icon size={20} className="text-muted" />
                   <span>{label}</span>
                 </div>
               );
@@ -157,19 +157,19 @@ export default function Sidebar({ user }: { user: any }) {
       <div className={`border-t border-neutral-200 dark:border-neutral-800 py-5 transition-all duration-300 ${isCollapsed ? "px-3" : "px-5"}`}>
         <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-4"}`}>
           {user?.image ? (
-            <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]">
+            <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-[var(--color-light-surface)] )]">
               <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
             </div>
           ) : (
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-sm font-semibold text-muted">
               {user?.name?.[0]?.toUpperCase() || "U"}
             </div>
           )}
           <div className={`min-w-0 flex-1 overflow-hidden transition-all duration-300 ${isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"}`}>
-            <p className="truncate text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+            <p className="truncate text-sm font-semibold text-muted">
               {user?.name || "Sprinto User"}
             </p>
-            <p className="truncate text-sm text-neutral-500 dark:text-neutral-400">
+            <p className="truncate text-sm text-muted">
               {user?.email || "Admin Account"}
             </p>
           </div>

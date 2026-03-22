@@ -436,16 +436,16 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     event.stopPropagation();
                                     if (hasChildren) toggleExpand(task._id);
                                 }}
-                                className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                                className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
                             >
                                 {hasChildren ? (
                                     isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />
                                 ) : (
-                                    <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+                                    <span className="h-1.5 w-1.5 rounded-full bg-surface" />
                                 )}
                             </button>
                         ) : (
-                            <span className="ml-1 h-2 w-2 rounded-full bg-slate-200" />
+                            <span className="ml-1 h-2 w-2 rounded-full bg-surface" />
                         )}
 
                         <div className="min-w-0">
@@ -461,7 +461,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                                 event.stopPropagation();
                                                 openEditModal(task);
                                             }}
-                                            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                                            className="rounded-lg p-1.5 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
                                         >
                                             <Pencil size={14} />
                                         </button>
@@ -471,7 +471,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                                 event.stopPropagation();
                                                 openAddModal(task._id);
                                             }}
-                                            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                                            className="rounded-lg p-1.5 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
                                         >
                                             <Plus size={14} />
                                         </button>
@@ -481,7 +481,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                                 event.stopPropagation();
                                                 handleDelete(task._id);
                                             }}
-                                            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                                            className="rounded-lg p-1.5 text-muted transition hover:bg-red-50 hover:text-red-500"
                                         >
                                             <X size={14} />
                                         </button>
@@ -489,19 +489,19 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 )}
                             </div>
                             {task.description && level === 0 && (
-                                <p className="mt-2 truncate text-sm text-neutral-500 dark:text-neutral-400">{task.description}</p>
+                                <p className="mt-2 truncate text-sm text-muted">{task.description}</p>
                             )}
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 text-neutral-600 dark:text-neutral-400">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                    <div className="flex items-center gap-3 text-muted">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-xs font-semibold text-muted">
                             {avatar || "NA"}
                         </div>
                         <span>{task.assignedTo?.name || "Unassigned"}</span>
                     </div>
 
-                    <div className="text-neutral-600 dark:text-neutral-400">{formatDate(task.deadline)}</div>
+                    <div className="text-muted">{formatDate(task.deadline)}</div>
 
                     <div className="flex items-center gap-3">
                         <span className={`rounded-full ${getStatusPill(task.status)}`}>
@@ -511,7 +511,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                             value={task.status}
                             onClick={(event) => event.stopPropagation()}
                             onChange={(event) => handleStatusChange(task._id, event.target.value)}
-                            className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-3 py-2 text-sm text-neutral-500 dark:text-neutral-400"
+                            className="rounded-xl border border-border-subtle bg-[var(--color-light-surface)] )] px-3 py-2 text-sm text-muted"
                         >
                             <option value="Pending">To Do</option>
                             <option value="In Progress">In Progress</option>
@@ -554,7 +554,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                         <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
                                 {level > 0 ? (
-                                    <span className="rounded-full bg-slate-100/60 border border-neutral-200 dark:border-neutral-800/50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400 backdrop-blur-sm">
+                                    <span className="rounded-full bg-surface/60 border border-border-subtle px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-muted backdrop-blur-sm">
                                         Subtask
                                     </span>
                                 ) : null}
@@ -563,12 +563,12 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 </span>
                             </div>
 
-                            <h3 className="mt-3 text-lg font-semibold tracking-tight text-slate-950">
+                            <h3 className="mt-3 text-lg font-semibold tracking-tight text-muted">
                                 {task.title}
                             </h3>
 
                             {task.description ? (
-                                <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">{task.description}</p>
+                                <p className="mt-2 text-sm leading-6 text-muted">{task.description}</p>
                             ) : null}
                         </div>
 
@@ -579,7 +579,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     event.stopPropagation();
                                     toggleExpand(task._id);
                                 }}
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-700 dark:text-neutral-300"
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border-subtle bg-[var(--color-light-surface)] )] text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
                             >
                                 {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                             </button>
@@ -587,25 +587,25 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                     </div>
 
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                        <div className="rounded-2xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-3.5 py-3">
-                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        <div className="rounded-2xl bg-[var(--color-light-bg)] )] px-3.5 py-3">
+                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                                 Assignee
                             </p>
                             <div className="mt-2 flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-xs font-semibold text-muted">
                                     {avatar || "NA"}
                                 </div>
-                                <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                                <span className="text-sm text-muted">
                                     {task.assignedTo?.name || "Unassigned"}
                                 </span>
                             </div>
                         </div>
 
-                        <div className="rounded-2xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-3.5 py-3">
-                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        <div className="rounded-2xl bg-[var(--color-light-bg)] )] px-3.5 py-3">
+                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                                 Due Date
                             </p>
-                            <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">{formatDate(task.deadline)}</p>
+                            <p className="mt-2 text-sm text-muted">{formatDate(task.deadline)}</p>
                         </div>
                     </div>
 
@@ -614,7 +614,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                             value={task.status}
                             onClick={(event) => event.stopPropagation()}
                             onChange={(event) => handleStatusChange(task._id, event.target.value)}
-                            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-3 py-2.5 text-sm text-neutral-500 dark:text-neutral-400 sm:w-auto"
+                            className="w-full rounded-xl border border-border-subtle bg-[var(--color-light-surface)] )] px-3 py-2.5 text-sm text-muted sm:w-auto"
                         >
                             <option value="Pending">To Do</option>
                             <option value="In Progress">In Progress</option>
@@ -629,7 +629,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         event.stopPropagation();
                                         openEditModal(task);
                                     }}
-                                    className="rounded-xl border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                                    className="rounded-xl border border-border-subtle px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
                                 >
                                     Edit
                                 </button>
@@ -639,7 +639,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         event.stopPropagation();
                                         openAddModal(task._id);
                                     }}
-                                    className="rounded-xl border border-neutral-200 dark:border-neutral-800 px-3 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                                    className="rounded-xl border border-border-subtle px-3 py-2 text-sm font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
                                 >
                                     Add Subtask
                                 </button>
@@ -663,7 +663,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                 hasChildren && isExpanded ? (
                     <div
                         key={`children-${task._id}`}
-                        className="ml-4 border-l border-dashed border-neutral-200 dark:border-neutral-800 pl-4"
+                        className="ml-4 border-l border-dashed border-border-subtle pl-4"
                     >
                         <div className="space-y-3">{renderMobileCards(task.children, level + 1)}</div>
                     </div>
@@ -674,26 +674,26 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
 
     return (
         <div className="min-h-full bg-[#f6f8fc]">
-            <section className="border-b border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-7 sm:px-6 lg:px-8">
+            <section className="border-b border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-7 sm:px-6 lg:px-8">
                 <div className="mx-auto flex w-full max-w-[1040px] flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
                             <Link href="/projects" className="hover:text-primary">
                                 Projects
                             </Link>
                             <span>/</span>
-                            <span className="text-neutral-600 dark:text-neutral-400">{project?.name || "Project Workspace"}</span>
+                            <span className="text-muted">{project?.name || "Project Workspace"}</span>
                         </div>
 
-                        <h1 className="mt-2.5 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
+                        <h1 className="mt-2.5 text-2xl font-semibold tracking-tight text-muted sm:text-3xl">
                             {project?.name || "Project Workspace"}
                         </h1>
-                        <p className="mt-2.5 max-w-4xl text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+                        <p className="mt-2.5 max-w-4xl text-sm leading-6 text-muted">
                             {project?.description || "Design and implementation work is organized here with tasks, owners, and due dates."}
                         </p>
 
                         <div className="mt-5 flex flex-wrap items-center gap-4 text-sm">
-                            <Link href={`/project/${projectId}/settings`} className="inline-flex items-center gap-2 text-neutral-500 dark:text-neutral-400 transition hover:text-primary">
+                            <Link href={`/project/${projectId}/settings`} className="inline-flex items-center gap-2 text-muted transition hover:text-primary">
                                 <Settings size={16} />
                                 Project settings
                             </Link>
@@ -702,7 +702,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                     href={project.documentUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 text-neutral-500 dark:text-neutral-400 transition hover:text-primary"
+                                    className="inline-flex items-center gap-2 text-muted transition hover:text-primary"
                                 >
                                     <FileText size={16} />
                                     {project.documentName || "View document"}
@@ -712,7 +712,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={openOverviewModal}
-                                    className="inline-flex items-center gap-2 text-neutral-500 dark:text-neutral-400 transition hover:text-primary"
+                                    className="inline-flex items-center gap-2 text-muted transition hover:text-primary"
                                 >
                                     <Pencil size={16} />
                                     Edit overview
@@ -736,14 +736,14 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
 
             <section className="px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mx-auto w-full max-w-[1040px]">
-                    <div className="overflow-hidden rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                    <div className="overflow-hidden rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
                         {loading ? (
-                            <div className="px-6 py-10 text-sm text-neutral-500 dark:text-neutral-400">Loading tasks...</div>
+                            <div className="px-6 py-10 text-sm text-muted">Loading tasks...</div>
                         ) : tasks.length === 0 ? (
                             <button
                                 type="button"
                                 onClick={() => openAddModal(null)}
-                                className="flex w-full items-center gap-3 px-6 py-5 text-left text-base text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-primary"
+                                className="flex w-full items-center gap-3 px-6 py-5 text-left text-base text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-primary"
                             >
                                 <Plus size={18} />
                                 Add a new task...
@@ -755,7 +755,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <div className="hidden lg:block">
                                     <div className="overflow-x-auto">
                                         <div className="min-w-[980px]">
-                                            <div className="grid grid-cols-[minmax(0,1.9fr)_220px_220px_180px] bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+                                            <div className="grid grid-cols-[minmax(0,1.9fr)_220px_220px_180px] bg-[var(--color-light-bg)] )] px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                                                 <div>Task Name</div>
                                                 <div>Assignee</div>
                                                 <div>Due Date</div>
@@ -769,7 +769,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={() => openAddModal(null)}
-                                    className="flex w-full items-center gap-3 border-t border-neutral-200 dark:border-neutral-800 px-4 py-5 text-left text-base text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-primary sm:px-6"
+                                    className="flex w-full items-center gap-3 border-t border-border-subtle px-4 py-5 text-left text-base text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-primary sm:px-6"
                                 >
                                     <Plus size={18} />
                                     Add a new task...
@@ -779,16 +779,16 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                     </div>
 
                     <div className="mt-8 grid gap-5 lg:grid-cols-3">
-                        <div className="rounded-[22px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">Total Tasks</p>
-                            <p className="mt-2.5 text-2xl font-semibold tracking-tight text-slate-950">{stats.total}</p>
+                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">Total Tasks</p>
+                            <p className="mt-2.5 text-2xl font-semibold tracking-tight text-muted">{stats.total}</p>
                         </div>
-                        <div className="rounded-[22px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">Completed</p>
+                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">Completed</p>
                             <p className="mt-2.5 text-2xl font-semibold tracking-tight text-emerald-600">{stats.completed}</p>
                         </div>
-                        <div className="rounded-[22px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
-                            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">Deadline</p>
+                        <div className="rounded-[22px] border border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-5 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+                            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">Deadline</p>
                             <p className={`mt-2.5 text-2xl font-semibold tracking-tight ${stats.deadlineTone}`}>{stats.deadlineLabel}</p>
                         </div>
                     </div>
@@ -797,16 +797,16 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
             </section>
 
             {showTaskModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-xl rounded-[32px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-7 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
+                    <div className="w-full max-w-xl rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-2xl font-semibold text-slate-950">
+                            <h3 className="text-2xl font-semibold text-muted">
                                 {editingTask ? "Edit Task" : newTaskParent ? "Add Subtask" : "Add New Task"}
                             </h3>
                             <button
                                 type="button"
                                 onClick={closeTaskModal}
-                                className="rounded-full p-2 text-slate-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                                className="rounded-full p-2 text-muted hover:bg-[var(--color-light-bg)] )] hover:text-muted"
                             >
                                 <X size={20} />
                             </button>
@@ -815,12 +815,12 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                         <form onSubmit={submitTask} className="mt-8">
                             <div className="space-y-6">
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Task Title</label>
+                                    <label className="mb-2 block text-sm font-medium text-muted">Task Title</label>
                                     <input
                                         type="text"
                                         required
                                         autoFocus
-                                        className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                                         placeholder="What needs to be done?"
                                         value={taskForm.title}
                                         onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
@@ -828,10 +828,10 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Description</label>
+                                    <label className="mb-2 block text-sm font-medium text-muted">Description</label>
                                     <textarea
                                         rows={3}
-                                        className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20 placeholder:text-slate-400"
+                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20 placeholder:text-muted"
                                         placeholder="Add more details about this task..."
                                         value={taskForm.description}
                                         onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
@@ -840,9 +840,9 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
 
                                 <div className="grid gap-6 sm:grid-cols-2">
                                     <div>
-                                        <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Assignee</label>
+                                        <label className="mb-2 block text-sm font-medium text-muted">Assignee</label>
                                         <select
-                                            className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                            className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                                             value={taskForm.assignedTo}
                                             onChange={(e) => setTaskForm({ ...taskForm, assignedTo: e.target.value })}
                                         >
@@ -855,10 +855,10 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Due Date</label>
+                                        <label className="mb-2 block text-sm font-medium text-muted">Due Date</label>
                                         <input
                                             type="date"
-                                            className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                            className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                                             value={taskForm.deadline}
                                             onChange={(e) => setTaskForm({ ...taskForm, deadline: e.target.value })}
                                         />
@@ -866,7 +866,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Status</label>
+                                    <label className="mb-2 block text-sm font-medium text-muted">Status</label>
                                     <div className="grid grid-cols-3 gap-3">
                                         {["Pending", "In Progress", "Done"].map((s) => (
                                             <button
@@ -891,7 +891,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={closeTaskModal}
-                                    className="rounded-2xl px-6 py-3 font-medium text-neutral-500 dark:text-neutral-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                                    className="rounded-2xl px-6 py-3 font-medium text-muted hover:bg-[var(--color-light-bg)] )]"
                                     disabled={submitting}
                                 >
                                     Cancel
@@ -910,14 +910,14 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
             )}
 
             {showOverviewModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-xl rounded-[32px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-7 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
+                    <div className="w-full max-w-xl rounded-[32px] border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-2xl font-semibold text-slate-950">Update Project Details</h3>
+                            <h3 className="text-2xl font-semibold text-muted">Update Project Details</h3>
                             <button
                                 type="button"
                                 onClick={closeOverviewModal}
-                                className="rounded-full p-2 text-slate-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                                className="rounded-full p-2 text-muted hover:bg-[var(--color-light-bg)] )] hover:text-muted"
                             >
                                 <X size={20} />
                             </button>
@@ -926,10 +926,10 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                         <form onSubmit={submitOverview} className="mt-8">
                             <div className="space-y-6">
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Project Description</label>
+                                    <label className="mb-2 block text-sm font-medium text-muted">Project Description</label>
                                     <textarea
                                         rows={4}
-                                        className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                                        className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                                         placeholder="What is this project about?"
                                         value={overviewForm.description}
                                         onChange={(e) => setOverviewForm({ ...overviewForm, description: e.target.value })}
@@ -937,7 +937,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Attachment (PDF, Image, Doc)</label>
+                                    <label className="mb-2 block text-sm font-medium text-muted">Attachment (PDF, Image, Doc)</label>
                                     <div className="flex flex-col gap-3">
                                         <input
                                             type="file"
@@ -948,10 +948,10 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                         <button
                                             type="button"
                                             onClick={() => fileInputRef.current?.click()}
-                                            className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/50 py-8 text-neutral-500 dark:text-neutral-400 transition hover:border-primary/50 hover:bg-brand/10 dark:bg-brand/5/50"
+                                            className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border-subtle bg-[var(--color-light-bg)] py-8 text-muted transition hover:border-primary/50 hover:bg-brand/10"
                                         >
                                             {selectedFile ? (
-                                                <div className="flex items-center gap-2 font-medium text-neutral-700 dark:text-neutral-300">
+                                                <div className="flex items-center gap-2 font-medium text-muted">
                                                     <FileText size={20} />
                                                     {selectedFile.name}
                                                 </div>
@@ -963,7 +963,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                             )}
                                         </button>
                                         {project.documentUrl && !selectedFile && (
-                                            <p className="text-xs text-slate-400">Current file: {project.documentName}</p>
+                                            <p className="text-xs text-muted">Current file: {project.documentName}</p>
                                         )}
                                     </div>
                                 </div>
@@ -975,7 +975,7 @@ export default function ProjectClient({ initialData }: { initialData: ProjectDet
                                 <button
                                     type="button"
                                     onClick={closeOverviewModal}
-                                    className="rounded-2xl px-6 py-3 font-medium text-neutral-500 dark:text-neutral-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                                    className="rounded-2xl px-6 py-3 font-medium text-muted hover:bg-[var(--color-light-bg)] )]"
                                     disabled={overviewSubmitting}
                                 >
                                     Cancel

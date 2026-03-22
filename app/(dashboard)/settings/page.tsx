@@ -79,13 +79,13 @@ function Input({
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-muted">{label}</label>
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-sm text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20 disabled:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] disabled:text-slate-400"
+        className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-sm text-muted focus:border-primary focus:ring-4 focus:ring-brand/20 disabled:bg-[var(--color-light-bg)] )] disabled:text-muted"
       />
     </div>
   );
@@ -103,12 +103,12 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-[26px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-6 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+    <section className="rounded-[26px] border border-border-subtle bg-[var(--color-light-surface)] )] p-6 shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
       <div className="flex items-start gap-4">
-        <div className="rounded-2xl bg-brand/10 dark:bg-brand/5 p-3 text-primary">{icon}</div>
+        <div className="rounded-2xl bg-brand/10 p-3 text-primary">{icon}</div>
         <div>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-950">{title}</h2>
-          <p className="mt-1 text-sm leading-6 text-neutral-500 dark:text-neutral-400">{description}</p>
+          <h2 className="text-xl font-semibold tracking-tight text-muted">{title}</h2>
+          <p className="mt-1 text-sm leading-6 text-muted">{description}</p>
         </div>
       </div>
       <div className="mt-6">{children}</div>
@@ -279,12 +279,12 @@ export default function SettingsPage() {
   return (
     <div className="min-h-full bg-[#f6f8fc] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <div className="mx-auto w-full max-w-[1160px] space-y-6">
-        <section className="flex flex-col gap-5 rounded-[26px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-6 shadow-[0_12px_40px_rgba(15,23,42,0.04)] lg:flex-row lg:items-start lg:justify-between">
+        <section className="flex flex-col gap-5 rounded-[26px] border border-border-subtle bg-[var(--color-light-surface)] )] p-6 shadow-[0_12px_40px_rgba(15,23,42,0.04)] lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-2xl">
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
+            <h1 className="text-2xl font-semibold tracking-tight text-muted sm:text-3xl">
               Workspace Settings
             </h1>
-            <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+            <p className="mt-2 text-sm leading-6 text-muted">
               Manage your account details, workspace identity, and the way Sprinto
               feels day to day.
             </p>
@@ -310,7 +310,7 @@ export default function SettingsPage() {
 
         <div className="mx-auto w-full max-w-[920px] space-y-6">
           {noMatches ? (
-            <div className="rounded-[26px] border border-dashed border-neutral-300 dark:border-neutral-700 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-6 py-14 text-center text-sm text-neutral-500 dark:text-neutral-400">
+            <div className="rounded-[26px] border border-dashed border-border-subtle bg-[var(--color-light-surface)] )] px-6 py-14 text-center text-sm text-muted">
               No settings sections match "{searchQuery}".
             </div>
           ) : (
@@ -323,10 +323,10 @@ export default function SettingsPage() {
                     icon={<UserRound size={18} />}
                   >
                     <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
-                      <div className="rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] p-5">
+                      <div className="rounded-[24px] border border-border-subtle bg-[var(--color-light-bg)] )] p-5">
                         <div className="relative group mb-4 inline-block">
                           {form.image ? (
-                            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] relative">
+                            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full overflow-hidden border border-border-subtle bg-[var(--color-light-surface)] )] relative">
                               <img src={form.image} alt="Profile Avatar" className="h-full w-full object-cover" />
                               <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                                 {isUploading ? <Loader2 className="animate-spin text-white" size={24} /> : <Camera className="text-white" size={24} />}
@@ -334,7 +334,7 @@ export default function SettingsPage() {
                               </label>
                             </div>
                           ) : (
-                            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full overflow-hidden bg-brand/20 dark:bg-brand/30 text-2xl font-semibold text-primary relative">
+                            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full overflow-hidden bg-brand/20 text-2xl font-semibold text-primary relative">
                               {form.fullName
                                 .split(" ")
                                 .map((part) => part[0])
@@ -348,11 +348,11 @@ export default function SettingsPage() {
                             </div>
                           )}
                         </div>
-                        <h3 className="mt-4 text-lg font-semibold text-slate-950">
+                        <h3 className="mt-4 text-lg font-semibold text-muted">
                           {form.fullName}
                         </h3>
-                        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{form.title}</p>
-                        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand/20 dark:bg-brand/30 px-3 py-1 text-xs font-semibold text-primary">
+                        <p className="mt-1 text-sm text-muted">{form.title}</p>
+                        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand/20 px-3 py-1 text-xs font-semibold text-primary">
                           <BadgeCheck size={14} />
                           Active Workspace Admin
                         </div>
@@ -387,23 +387,23 @@ export default function SettingsPage() {
                         </div>
 
                         <div>
-                          <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Bio</label>
+                          <label className="mb-2 block text-sm font-medium text-muted">Bio</label>
                           <textarea
                             value={form.bio}
                             onChange={(event) =>
                               setForm((prev) => ({ ...prev, bio: event.target.value }))
                             }
                             rows={4}
-                            className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-sm text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                            className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-sm text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                           />
                         </div>
 
                         <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3">
+                          <div className="rounded-2xl border border-border-subtle px-4 py-3">
                             <div className="flex items-center justify-between gap-3">
                               <div>
-                                <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Email Updates</p>
-                                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                                <p className="text-sm font-medium text-muted">Email Updates</p>
+                                <p className="mt-1 text-xs text-muted">
                                   Receive planning summaries and due date alerts.
                                 </p>
                               </div>
@@ -415,11 +415,11 @@ export default function SettingsPage() {
                               />
                             </div>
                           </div>
-                          <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3">
+                          <div className="rounded-2xl border border-border-subtle px-4 py-3">
                             <div className="flex items-center justify-between gap-3">
                               <div>
-                                <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Desktop Alerts</p>
-                                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                                <p className="text-sm font-medium text-muted">Desktop Alerts</p>
+                                <p className="mt-1 text-xs text-muted">
                                   Show immediate reminders for urgent work.
                                 </p>
                               </div>
@@ -468,7 +468,7 @@ export default function SettingsPage() {
                         </div>
 
                         <div>
-                          <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                          <label className="mb-2 block text-sm font-medium text-muted">
                             Workspace Description
                           </label>
                           <textarea
@@ -480,12 +480,12 @@ export default function SettingsPage() {
                               }))
                             }
                             rows={4}
-                            className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-sm text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                            className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-sm text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                           />
                         </div>
 
-                        <div className="rounded-[24px] border border-neutral-200 dark:border-neutral-800 p-4">
-                          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Logo Style</p>
+                        <div className="rounded-[24px] border border-border-subtle p-4">
+                          <p className="text-sm font-medium text-muted">Logo Style</p>
                           <div className="mt-3 flex gap-3">
                             {(["rounded", "circle"] as const).map((style) => (
                               <button
@@ -503,7 +503,7 @@ export default function SettingsPage() {
                               </button>
                             ))}
                           </div>
-                          <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+                          <p className="mt-3 text-xs text-muted">
                             Accent color stays on the Sprinto blue system already used across the app.
                           </p>
                         </div>

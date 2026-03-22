@@ -50,7 +50,7 @@ export default function BottomNav() {
     }, [router]);
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/80 pb-safe backdrop-blur-lg md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border-subtle bg-[var(--color-light-surface)] pb-safe backdrop-blur-lg md:hidden">
             <div className="flex h-16 items-center justify-around px-2">
                 {navItems.map(({ label, href, icon: Icon }) => {
                     const isActive = href

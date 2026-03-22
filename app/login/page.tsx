@@ -47,11 +47,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-gray-50 p-4 sm:p-6">
-      <div className="w-full max-w-md rounded-3xl border border-gray-200 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-6 shadow-sm sm:p-8">
+    <div className="flex min-h-svh items-center justify-center bg-surface p-4 sm:p-6">
+      <div className="w-full max-w-md rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-6 shadow-sm sm:p-8">
         <div className="flex flex-col items-center mb-8 text-center">
           <Logo className="mb-4" iconSize={28} />
-          <p className="text-gray-500 font-medium">Log in to manage your projects.</p>
+          <p className="text-muted font-medium">Log in to manage your projects.</p>
         </div>
 
         {error && (
@@ -62,30 +62,30 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-muted mb-1">Email</label>
             <input
               type="email"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+              className="w-full px-4 py-2 border border-border-subtle rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-muted mb-1">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition pr-10"
+                className="w-full px-4 py-2 border border-border-subtle rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted transition"
                 onClick={() => setShowPassword(!showPassword)}
                 tabIndex={-1}
               >
@@ -98,11 +98,11 @@ export default function LoginPage() {
             <label className="flex items-center gap-2 cursor-pointer group">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                className="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary cursor-pointer"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
-              <span className="text-sm text-gray-500 group-hover:text-gray-700 transition">Remember me for 30 days</span>
+              <span className="text-sm text-muted group-hover:text-muted transition">Remember me for 30 days</span>
             </label>
             <a href="#" className="text-sm text-primary hover:underline font-medium">Forgot?</a>
           </div>
@@ -115,7 +115,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-6 text-center text-sm text-muted">
           Don't have an account?{" "}
           <a href="/signup" className="text-primary font-medium hover:underline">
             Sign up

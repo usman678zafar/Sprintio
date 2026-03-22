@@ -56,7 +56,7 @@ export default function Navbar({ user }: { user: any }) {
   };
 
   return (
-    <header className="border-b border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]">
+    <header className="border-b border-border-subtle bg-[var(--color-light-surface)] )]">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-5">
         <div className="shrink-0 md:hidden">
           <Logo href="/dashboard" />
@@ -66,14 +66,14 @@ export default function Navbar({ user }: { user: any }) {
           <div className="relative hidden max-w-2xl flex-1 sm:block">
             <Search
               size={20}
-              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"
             />
             <input
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder={searchPlaceholder}
-              className="h-11 w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] pl-11 pr-4 text-sm text-neutral-700 dark:text-neutral-300 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-brand/20"
+              className="h-11 w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] pl-11 pr-4 text-sm text-muted transition placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
             />
           </div>
         )}
@@ -97,18 +97,18 @@ export default function Navbar({ user }: { user: any }) {
       </div>
 
       {pathname !== "/dashboard" && (
-        <div className="border-t border-slate-100 px-4 pb-4 sm:hidden">
+        <div className="border-t border-border-subtle px-4 pb-4 sm:hidden">
           <div className="relative">
             <Search
               size={18}
-              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"
             />
             <input
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder={searchPlaceholder}
-              className="h-11 w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] pl-11 pr-4 text-sm text-neutral-700 dark:text-neutral-300 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-brand/20"
+              className="h-11 w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] pl-11 pr-4 text-sm text-muted transition placeholder:text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
             />
           </div>
         </div>

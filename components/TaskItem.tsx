@@ -63,7 +63,7 @@ export default function TaskItem({
             {expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
           </button>
         ) : (
-          <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-dashed border-gray-100 dark:border-neutral-800/50 text-gray-200 dark:text-neutral-800 dark:text-neutral-200">
+          <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-dashed border-border-subtle text-muted">
             <div className="w-1 h-1 rounded-full bg-current" />
           </div>
         )}
@@ -94,17 +94,17 @@ export default function TaskItem({
             </span>
 
             {!isRootTask && (
-              <span className="rounded-md bg-primary/5 dark:bg-primary/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
+              <span className="rounded-md bg-primary/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">
                 Subtask
               </span>
             )}
 
             {task.assignedTo && (
-              <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm border border-neutral-200 dark:border-neutral-800/50 dark:border-slate-700/50 rounded-lg px-2 py-1 transition-transform hover:scale-105">
+              <div className="flex items-center gap-1.5 bg-surface/80 backdrop-blur-sm border border-border-subtle rounded-lg px-2 py-1 transition-transform hover:scale-105">
                 <div className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[9px] font-bold">
                   {task.assignedTo.name?.[0].toUpperCase()}
                 </div>
-                <span className="text-[11px] font-bold text-neutral-700 dark:text-neutral-300 dark:text-slate-300">
+                <span className="text-[11px] font-bold text-muted">
                   {task.assignedTo.name}
                 </span>
               </div>
@@ -113,7 +113,7 @@ export default function TaskItem({
 
           <div className="flex flex-wrap items-center gap-3">
              {formattedDeadline && (
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-md border border-amber-100 dark:border-amber-900/30">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-100">
                   <CalendarDays size={12} />
                   {formattedDeadline}
                 </span>
@@ -126,7 +126,7 @@ export default function TaskItem({
           </div>
 
           {task.description && (
-            <p className="mt-3 max-w-2xl break-words text-sm leading-relaxed text-gray-500 dark:text-slate-400 line-clamp-2 hover:line-clamp-none transition-all duration-300 cursor-default">
+            <p className="mt-3 max-w-2xl break-words text-sm leading-relaxed text-muted line-clamp-2 hover:line-clamp-none transition-all duration-300 cursor-default">
               {task.description}
             </p>
           )}
@@ -138,34 +138,34 @@ export default function TaskItem({
           value={task.status}
           onChange={(e) => onStatusChange(task._id, e.target.value)}
           disabled={!canChangeStatus}
-          className="appearance-none rounded-xl border border-gray-100 dark:border-neutral-800 bg-gray-50/50 dark:bg-surface-dark/50 px-4 py-2 text-xs font-black uppercase tracking-widest text-gray-600 dark:text-slate-400 hover:border-primary/30 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer disabled:opacity-50 text-center"
+          className="appearance-none rounded-xl border border-border-subtle bg-surface/50 px-4 py-2 text-xs font-black uppercase tracking-widest text-muted hover:border-primary/30 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer disabled:opacity-50 text-center"
         >
           {STATUS_OPTIONS.map((status) => (
-            <option key={status} value={status} className="dark:bg-surface-dark font-sans normal-case tracking-normal">
+            <option key={status} value={status} className="font-sans normal-case tracking-normal">
               {status}
             </option>
           ))}
         </select>
 
         {canManageTasks && (
-          <div className="flex items-center gap-1 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/50 dark:bg-surface-dark/50 backdrop-blur-sm rounded-xl border border-gray-100 dark:border-neutral-800 p-1 shadow-sm opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-0 md:group-hover:translate-x-0">
+          <div className="flex items-center gap-1 bg-[var(--color-light-surface)] backdrop-blur-sm rounded-xl border border-border-subtle p-1 shadow-sm opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-0 md:group-hover:translate-x-0">
             <button
               onClick={() => onAddSubtask(task._id)}
-              className="rounded-lg p-2 text-gray-400 hover:bg-primary/10 hover:text-primary transition-all active:scale-90"
+              className="rounded-lg p-2 text-muted hover:bg-primary/10 hover:text-primary transition-all active:scale-90"
               title="Add Subtask"
             >
               <Plus size={16} strokeWidth={3} />
             </button>
             <button
               onClick={() => onEdit(task)}
-              className="rounded-lg p-2 text-gray-400 hover:bg-primary/10 hover:text-primary transition-all active:scale-90"
+              className="rounded-lg p-2 text-muted hover:bg-primary/10 hover:text-primary transition-all active:scale-90"
               title="Edit Task"
             >
               <Edit2 size={16} strokeWidth={3} />
             </button>
             <button
               onClick={() => onDelete(task._id)}
-              className="rounded-lg p-2 text-gray-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-500 transition-all active:scale-90"
+              className="rounded-lg p-2 text-muted hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-500 transition-all active:scale-90"
               title="Delete Task"
             >
               <Trash2 size={16} strokeWidth={3} />

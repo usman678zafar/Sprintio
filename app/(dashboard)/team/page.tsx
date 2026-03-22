@@ -260,10 +260,10 @@ export default function TeamPage() {
       <div className="mx-auto w-full max-w-[1040px]">
       <section className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-muted sm:text-3xl">
             Team Management
           </h1>
-          <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="mt-2 text-sm text-muted">
             Manage your workspace members, their roles, and project assignments.
           </p>
         </div>
@@ -279,11 +279,11 @@ export default function TeamPage() {
         </button>
       </section>
 
-      <section className="mt-10 overflow-hidden rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
+      <section className="mt-10 overflow-hidden rounded-[24px] border border-border-subtle bg-[var(--color-light-surface)] )] shadow-[0_12px_40px_rgba(15,23,42,0.04)]">
         {loading ? (
-          <div className="px-6 py-10 text-sm text-neutral-500 dark:text-neutral-400">Loading team members...</div>
+          <div className="px-6 py-10 text-sm text-muted">Loading team members...</div>
         ) : filteredMembers.length === 0 ? (
-          <div className="px-6 py-10 text-sm text-neutral-500 dark:text-neutral-400">
+          <div className="px-6 py-10 text-sm text-muted">
             {members.length === 0 ? "No members found yet." : `No members match "${searchQuery}".`}
           </div>
         ) : (
@@ -298,7 +298,7 @@ export default function TeamPage() {
                 return (
                   <article key={member.userId} className="space-y-4 px-5 py-4">
                     <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface text-sm font-semibold text-muted">
                         {member.name
                           .split(" ")
                           .map((part) => part[0])
@@ -307,15 +307,15 @@ export default function TeamPage() {
                           .toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate text-lg font-medium tracking-tight text-slate-950">
+                        <p className="truncate text-lg font-medium tracking-tight text-muted">
                           {member.name}
                         </p>
-                        <p className="truncate text-sm text-neutral-500 dark:text-neutral-400">{member.email}</p>
+                        <p className="truncate text-sm text-muted">{member.email}</p>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                         Role
                       </span>
                       <span className={`rounded-full px-3 py-1 text-sm font-medium ${roleBadge(member.roleSummary)}`}>
@@ -324,14 +324,14 @@ export default function TeamPage() {
                     </div>
 
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                         Project Assignments
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {member.assignments.map((assignment) => (
                           <span
                             key={assignment.membershipId}
-                            className="rounded-xl bg-slate-100 px-3 py-1.5 text-sm text-neutral-700 dark:text-neutral-300"
+                            className="rounded-xl bg-surface px-3 py-1.5 text-sm text-muted"
                           >
                             {assignment.projectName}
                           </span>
@@ -344,7 +344,7 @@ export default function TeamPage() {
                         type="button"
                         onClick={() => openEditModal(member)}
                         disabled={!canEdit}
-                        className="rounded-xl p-2 text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <Pencil size={20} />
                       </button>
@@ -352,7 +352,7 @@ export default function TeamPage() {
                         type="button"
                         onClick={() => openRemoveModal(member)}
                         disabled={!canRemove}
-                        className="rounded-xl p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="rounded-xl p-2 text-muted transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <Trash2 size={20} />
                       </button>
@@ -365,7 +365,7 @@ export default function TeamPage() {
             <div className="hidden lg:block">
               <div className="overflow-x-auto">
                 <div className="min-w-[980px]">
-                  <div className="grid grid-cols-[minmax(0,1.8fr)_220px_minmax(0,2fr)_120px] bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+                  <div className="grid grid-cols-[minmax(0,1.8fr)_220px_minmax(0,2fr)_120px] bg-[var(--color-light-bg)] )] px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
                     <div>Name</div>
                     <div>Role</div>
                     <div>Project Assignments</div>
@@ -381,10 +381,10 @@ export default function TeamPage() {
                     return (
                       <div
                         key={member.userId}
-                        className="grid grid-cols-[minmax(0,1.8fr)_220px_minmax(0,2fr)_120px] items-center border-t border-neutral-200 dark:border-neutral-800 px-6 py-4"
+                        className="grid grid-cols-[minmax(0,1.8fr)_220px_minmax(0,2fr)_120px] items-center border-t border-border-subtle px-6 py-4"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface text-sm font-semibold text-muted">
                             {member.name
                               .split(" ")
                               .map((part) => part[0])
@@ -393,10 +393,10 @@ export default function TeamPage() {
                               .toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <p className="truncate text-lg font-medium tracking-tight text-slate-950">
+                            <p className="truncate text-lg font-medium tracking-tight text-muted">
                               {member.name}
                             </p>
-                            <p className="truncate text-sm text-neutral-500 dark:text-neutral-400">{member.email}</p>
+                            <p className="truncate text-sm text-muted">{member.email}</p>
                           </div>
                         </div>
 
@@ -410,7 +410,7 @@ export default function TeamPage() {
                           {member.assignments.map((assignment) => (
                             <span
                               key={assignment.membershipId}
-                              className="rounded-xl bg-slate-100 px-3 py-1.5 text-sm text-neutral-700 dark:text-neutral-300"
+                              className="rounded-xl bg-surface px-3 py-1.5 text-sm text-muted"
                             >
                               {assignment.projectName}
                             </span>
@@ -422,7 +422,7 @@ export default function TeamPage() {
                             type="button"
                             onClick={() => openEditModal(member)}
                             disabled={!canEdit}
-                            className="rounded-xl p-2 text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted disabled:cursor-not-allowed disabled:opacity-40"
                           >
                             <Pencil size={20} />
                           </button>
@@ -430,7 +430,7 @@ export default function TeamPage() {
                             type="button"
                             onClick={() => openRemoveModal(member)}
                             disabled={!canRemove}
-                            className="rounded-xl p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="rounded-xl p-2 text-muted transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
                           >
                             <Trash2 size={20} />
                           </button>
@@ -442,18 +442,18 @@ export default function TeamPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-5 border-t border-neutral-200 dark:border-neutral-800 px-6 py-4 text-neutral-500 dark:text-neutral-400 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-5 border-t border-border-subtle px-6 py-4 text-muted sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm">
                 Showing {(currentPage - 1) * PAGE_SIZE + 1} to{" "}
                 {Math.min(currentPage * PAGE_SIZE, filteredMembers.length)} of {filteredMembers.length} members
               </p>
 
-              <div className="flex flex-wrap items-center overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-800">
+              <div className="flex flex-wrap items-center overflow-hidden rounded-2xl border border-border-subtle">
                 <button
                   type="button"
                   onClick={() => setPage((value) => Math.max(1, value - 1))}
                   disabled={currentPage === 1}
-                  className="grid h-10 w-10 place-items-center text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] disabled:opacity-40"
+                  className="grid h-10 w-10 place-items-center text-muted transition hover:bg-[var(--color-light-bg)] )] disabled:opacity-40"
                 >
                   <ChevronLeft size={18} />
                 </button>
@@ -478,7 +478,7 @@ export default function TeamPage() {
                   type="button"
                   onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
                   disabled={currentPage === totalPages}
-                  className="grid h-10 w-10 place-items-center border-l border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] disabled:opacity-40"
+                  className="grid h-10 w-10 place-items-center border-l border-border-subtle text-muted transition hover:bg-[var(--color-light-bg)] )] disabled:opacity-40"
                 >
                   <ChevronRight size={18} />
                 </button>
@@ -491,17 +491,17 @@ export default function TeamPage() {
       </div>
 
       {showInviteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-7 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-xl font-semibold text-slate-950">Invite Team Member</h3>
-                <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Add a member to one of your managed projects.</p>
+                <h3 className="text-xl font-semibold text-muted">Invite Team Member</h3>
+                <p className="mt-1 text-sm text-muted">Add a member to one of your managed projects.</p>
               </div>
               <button
                 type="button"
                 onClick={resetInviteModal}
-                className="rounded-xl p-2 text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
               >
                 <X size={20} />
               </button>
@@ -515,26 +515,26 @@ export default function TeamPage() {
               )}
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Email Address</label>
+                <label className="mb-2 block text-sm font-medium text-muted">Email Address</label>
                 <div className="relative">
-                  <Mail size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Mail size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
                   <input
                     type="email"
                     required
                     value={inviteEmail}
                     onChange={(event) => setInviteEmail(event.target.value)}
-                    className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 px-12 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                    className="w-full rounded-2xl border border-border-subtle px-12 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                   />
                 </div>
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Project</label>
+                  <label className="mb-2 block text-sm font-medium text-muted">Project</label>
                   <select
                     value={inviteProjectId}
                     onChange={(event) => setInviteProjectId(event.target.value)}
-                    className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                   >
                     {manageableProjects.map((project) => (
                       <option key={project.projectId} value={project.projectId}>
@@ -544,11 +544,11 @@ export default function TeamPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Role</label>
+                  <label className="mb-2 block text-sm font-medium text-muted">Role</label>
                   <select
                     value={inviteRole}
                     onChange={(event) => setInviteRole(event.target.value)}
-                    className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                    className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                   >
                     <option value="MEMBER">Member</option>
                     <option value="MASTER">Admin</option>
@@ -560,7 +560,7 @@ export default function TeamPage() {
                 <button
                   type="button"
                   onClick={resetInviteModal}
-                  className="rounded-2xl px-4 py-3 font-medium text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                  className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
                   disabled={inviting}
                 >
                   Cancel
@@ -580,17 +580,17 @@ export default function TeamPage() {
       )}
 
       {editingMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-7 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-2xl font-semibold text-slate-950">Edit Member Role</h3>
-                <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{editingMember.name}</p>
+                <h3 className="text-2xl font-semibold text-muted">Edit Member Role</h3>
+                <p className="mt-1 text-sm text-muted">{editingMember.name}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingMember(null)}
-                className="rounded-xl p-2 text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
               >
                 <X size={20} />
               </button>
@@ -604,7 +604,7 @@ export default function TeamPage() {
               )}
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Project Assignment</label>
+                <label className="mb-2 block text-sm font-medium text-muted">Project Assignment</label>
                 <select
                   value={selectedAssignmentId}
                   onChange={(event) => {
@@ -615,7 +615,7 @@ export default function TeamPage() {
                       setSelectedRole(assignment.role);
                     }
                   }}
-                  className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                 >
                   {assignmentOptions.map((assignment) => (
                     <option key={assignment.membershipId} value={assignment.membershipId}>
@@ -626,11 +626,11 @@ export default function TeamPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Role</label>
+                <label className="mb-2 block text-sm font-medium text-muted">Role</label>
                 <select
                   value={selectedRole}
                   onChange={(event) => setSelectedRole(event.target.value)}
-                  className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                 >
                   <option value="MEMBER">Member</option>
                   <option value="MASTER">Admin</option>
@@ -641,7 +641,7 @@ export default function TeamPage() {
                 <button
                   type="button"
                   onClick={() => setEditingMember(null)}
-                  className="rounded-2xl px-4 py-3 font-medium text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                  className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
                   disabled={editing}
                 >
                   Cancel
@@ -660,17 +660,17 @@ export default function TeamPage() {
       )}
 
       {removingMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-7 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/30 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-3xl border border-border-subtle bg-[var(--color-light-surface)] )] p-7 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-2xl font-semibold text-slate-950">Remove Member Assignment</h3>
-                <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{removingMember.name}</p>
+                <h3 className="text-2xl font-semibold text-muted">Remove Member Assignment</h3>
+                <p className="mt-1 text-sm text-muted">{removingMember.name}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setRemovingMember(null)}
-                className="rounded-xl p-2 text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
+                className="rounded-xl p-2 text-muted transition hover:bg-[var(--color-light-bg)] )] hover:text-muted"
               >
                 <X size={20} />
               </button>
@@ -684,11 +684,11 @@ export default function TeamPage() {
               )}
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-neutral-600 dark:text-neutral-400">Project Assignment</label>
+                <label className="mb-2 block text-sm font-medium text-muted">Project Assignment</label>
                 <select
                   value={removeAssignmentId}
                   onChange={(event) => setRemoveAssignmentId(event.target.value)}
-                  className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 text-neutral-800 dark:text-neutral-200 focus:border-primary focus:ring-4 focus:ring-brand/20"
+                  className="w-full rounded-2xl border border-border-subtle bg-[var(--color-light-surface)] )] px-4 py-3 text-muted focus:border-primary focus:ring-4 focus:ring-brand/20"
                 >
                   {removableOptions.map((assignment) => (
                     <option key={assignment.membershipId} value={assignment.membershipId}>
@@ -698,7 +698,7 @@ export default function TeamPage() {
                 </select>
               </div>
 
-              <div className="rounded-2xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-4 py-4 text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+              <div className="rounded-2xl bg-[var(--color-light-bg)] )] px-4 py-4 text-sm leading-6 text-muted">
                 This removes the selected project membership only. The member will remain in other project assignments.
               </div>
 
@@ -706,7 +706,7 @@ export default function TeamPage() {
                 <button
                   type="button"
                   onClick={() => setRemovingMember(null)}
-                  className="rounded-2xl px-4 py-3 font-medium text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
+                  className="rounded-2xl px-4 py-3 font-medium text-muted transition hover:bg-[var(--color-light-bg)] )]"
                   disabled={removing}
                 >
                   Cancel
