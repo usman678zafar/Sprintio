@@ -28,7 +28,7 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
   return (
     <div className="relative group">
       <Link href={`/project/${id}`} className="block">
-        <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition cursor-pointer h-full">
+        <div className="bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] dark:bg-[var(--color-dark-surface)] rounded-xl shadow-sm border border-gray-200 dark:border-neutral-800 p-6 hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition cursor-pointer h-full">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xl font-semibold text-gray-800 dark:text-slate-100 transition group-hover:text-primary dark:group-hover:text-primary pr-8 truncate">
               {name}
@@ -55,13 +55,13 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
             e.stopPropagation();
             setShowMenu(!showMenu);
           }}
-          className="p-1.5 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition opacity-0 group-hover:opacity-100"
+          className="p-1.5 text-gray-400 dark:text-neutral-500 dark:text-neutral-400 hover:text-gray-600 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition opacity-0 group-hover:opacity-100"
         >
           <MoreVertical size={20} />
         </button>
 
         {showMenu && (
-          <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-[#1E293B] rounded-lg shadow-lg border border-gray-100 dark:border-slate-800 py-1 z-10">
+          <div className="absolute right-0 mt-1 w-48 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] dark:bg-[var(--color-dark-surface)] rounded-lg shadow-lg border border-gray-100 dark:border-neutral-800 py-1 z-10">
             <button
               onClick={(e) => {
                 e.preventDefault();

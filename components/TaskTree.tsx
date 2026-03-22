@@ -45,7 +45,7 @@ export default function TaskTree({
       return (
         <div
           key={node._id}
-          className={level === 0 ? "rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-[#1E293B] shadow-sm overflow-hidden" : ""}
+          className={level === 0 ? "rounded-2xl border border-gray-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] dark:bg-[var(--color-dark-surface)] shadow-sm overflow-hidden" : ""}
         >
           <TaskItem
             task={node}
@@ -80,7 +80,7 @@ export default function TaskTree({
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500 dark:text-slate-500 border border-dashed border-gray-200 dark:border-slate-800 rounded-lg">
+      <div className="text-center py-12 text-gray-500 dark:text-neutral-500 dark:text-neutral-400 border border-dashed border-gray-200 dark:border-neutral-800 rounded-lg">
         No tasks found. Click "Add Task" to create one.
       </div>
     );

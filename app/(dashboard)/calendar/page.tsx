@@ -69,7 +69,7 @@ interface CalendarResponse {
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const TASK_COLORS = [
-  { surface: "bg-blue-50", text: "text-blue-600", dot: "bg-blue-500", badge: "bg-blue-100 text-blue-700" },
+  { surface: "bg-brand/10 dark:bg-brand/5", text: "text-brand", dot: "bg-brand", badge: "bg-brand/20 dark:bg-brand/30 text-brand dark:text-brand" },
   { surface: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500", badge: "bg-emerald-100 text-emerald-700" },
   { surface: "bg-amber-50", text: "text-amber-600", dot: "bg-amber-500", badge: "bg-amber-100 text-amber-700" },
   { surface: "bg-violet-50", text: "text-violet-600", dot: "bg-violet-500", badge: "bg-violet-100 text-violet-700" },
@@ -128,7 +128,7 @@ function getPriority(task: CalendarTask) {
 
   if (diff <= 3) return { label: "High Priority", tone: "text-red-500" };
   if (diff <= 7) return { label: "Medium", tone: "text-amber-600" };
-  return { label: "Planned", tone: "text-blue-600" };
+  return { label: "Planned", tone: "text-brand" };
 }
 
 export default function CalendarPage() {
@@ -219,15 +219,15 @@ export default function CalendarPage() {
   return (
     <div className="min-h-full bg-[#f8fafc] pb-24 md:pb-8">
       {/* Mobile Sticky Header */}
-      <section className="sticky top-0 z-40 border-b border-slate-100 bg-white/90 px-4 py-4 backdrop-blur-xl md:hidden">
+      <section className="sticky top-0 z-40 border-b border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/90 px-4 py-4 backdrop-blur-xl md:hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black text-slate-900">{formatMonthYear(currentDate)}</h1>
+            <h1 className="text-xl font-black text-neutral-800 dark:text-neutral-200">{formatMonthYear(currentDate)}</h1>
             <button onClick={() => setViewMode(viewMode === "month" ? "day" : "month")} className="text-slate-400">
               <ChevronDown size={18} className={`transition-transform ${viewMode === "month" ? "rotate-180" : ""}`} />
             </button>
           </div>
-          <button onClick={() => setShowFilters(true)} className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-600">
+          <button onClick={() => setShowFilters(true)} className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-neutral-600 dark:text-neutral-400">
             <Filter size={18} />
           </button>
         </div>
@@ -242,7 +242,7 @@ export default function CalendarPage() {
                 <button
                   key={toDateKey(day)}
                   onClick={() => handleSelectDay(day)}
-                  className={`flex min-w-[54px] flex-col items-center gap-1.5 rounded-2xl py-3 transition-all ${isSelected ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                  className={`flex min-w-[54px] flex-col items-center gap-1.5 rounded-2xl py-3 transition-all ${isSelected ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-slate-400 hover:bg-slate-100"
                     }`}
                 >
                   <span className="text-[10px] font-black uppercase tracking-widest">{DAY_LABELS[day.getDay()]}</span>
@@ -256,17 +256,17 @@ export default function CalendarPage() {
       </section>
 
       {/* Desktop Header */}
-      <header className="hidden bg-white border-b border-slate-100 px-8 py-6 md:block">
+      <header className="hidden bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] border-b border-slate-100 px-8 py-6 md:block">
         <div className="mx-auto max-w-[1240px] flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-black text-slate-900">{formatMonthYear(currentDate)}</h1>
-            <p className="mt-1 text-sm font-medium text-slate-500">Coordinate releases and team sprints.</p>
+            <h1 className="text-3xl font-black text-neutral-800 dark:text-neutral-200">{formatMonthYear(currentDate)}</h1>
+            <p className="mt-1 text-sm font-medium text-neutral-500 dark:text-neutral-400">Coordinate releases and team sprints.</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex rounded-xl bg-slate-50 p-1">
-              <button onClick={() => handleNavigate(-1)} className="p-2 text-slate-400 hover:text-slate-900 transition"><ChevronLeft size={20} /></button>
-              <button onClick={() => handleSelectDay(today)} className="px-4 text-sm font-black uppercase text-slate-600">Today</button>
-              <button onClick={() => handleNavigate(1)} className="p-2 text-slate-400 hover:text-slate-900 transition"><ChevronRight size={20} /></button>
+            <div className="flex rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] p-1">
+              <button onClick={() => handleNavigate(-1)} className="p-2 text-slate-400 hover:text-neutral-800 dark:text-neutral-200 transition"><ChevronLeft size={20} /></button>
+              <button onClick={() => handleSelectDay(today)} className="px-4 text-sm font-black uppercase text-neutral-600 dark:text-neutral-400">Today</button>
+              <button onClick={() => handleNavigate(1)} className="p-2 text-slate-400 hover:text-neutral-800 dark:text-neutral-200 transition"><ChevronRight size={20} /></button>
             </div>
             <button
               onClick={() => setShowTaskModal(true)}
@@ -280,7 +280,7 @@ export default function CalendarPage() {
       </header>
 
       {/* Desktop Filter Bar - Sticky */}
-      <div className="sticky top-0 z-30 hidden border-b border-slate-100 bg-white/80 py-3 backdrop-blur-xl md:block">
+      <div className="sticky top-0 z-30 hidden border-b border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/80 py-3 backdrop-blur-xl md:block">
         <div className="mx-auto flex max-w-[1240px] items-center justify-between px-8">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
@@ -288,7 +288,7 @@ export default function CalendarPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSelectedProjectId("all")}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${selectedProjectId === "all" ? "bg-slate-900 text-white shadow-lg shadow-slate-200" : "text-slate-500 hover:bg-slate-100"
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${selectedProjectId === "all" ? "bg-slate-900 text-white shadow-lg shadow-slate-200" : "text-neutral-500 dark:text-neutral-400 hover:bg-slate-100"
                     }`}
                 >
                   All Active
@@ -299,7 +299,7 @@ export default function CalendarPage() {
                     onClick={() => setSelectedProjectId(project._id)}
                     className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${selectedProjectId === project._id
                       ? "bg-primary text-white shadow-lg shadow-primary/20"
-                      : "border border-slate-100 text-slate-500 hover:bg-slate-50"
+                      : "border border-slate-100 text-neutral-500 dark:text-neutral-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
                       }`}
                   >
                     {project.name}
@@ -312,7 +312,7 @@ export default function CalendarPage() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setOnlyMine(!onlyMine)}
-              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold transition-all ${onlyMine ? "bg-primary text-white shadow-lg shadow-primary/20" : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold transition-all ${onlyMine ? "bg-primary text-white shadow-lg shadow-primary/20" : "border border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
                 }`}
             >
               <UserRound size={14} className={onlyMine ? "text-white" : "text-slate-400"} />
@@ -326,8 +326,8 @@ export default function CalendarPage() {
         {/* Mobile View: Tasks for selected day */}
         <div className="md:hidden">
           {viewMode === "month" && (
-            <div className="mb-8 overflow-hidden rounded-[28px] border border-slate-100 bg-white shadow-sm">
-              <div className="grid grid-cols-7 border-b border-slate-50 bg-slate-50/50">
+            <div className="mb-8 overflow-hidden rounded-[28px] border border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-sm">
+              <div className="grid grid-cols-7 border-b border-slate-50 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/50">
                 {DAY_LABELS.map((dayLabel) => (
                   <div key={dayLabel} className="py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">
                     {dayLabel.substring(0, 3)}
@@ -343,7 +343,7 @@ export default function CalendarPage() {
                     <button
                       key={key}
                       onClick={() => handleSelectDay(day)}
-                      className={`flex h-12 items-center justify-center text-sm font-bold transition-all ${isSelected ? "bg-primary text-white" : inMonth ? "text-slate-900" : "text-slate-200"}`}
+                      className={`flex h-12 items-center justify-center text-sm font-bold transition-all ${isSelected ? "bg-primary text-white" : inMonth ? "text-neutral-800 dark:text-neutral-200" : "text-slate-200"}`}
                     >
                       {day.getDate()}
                       {tasksByDate.has(key) && !isSelected && <div className="absolute mt-6 h-1 w-1 rounded-full bg-primary" />}
@@ -357,7 +357,7 @@ export default function CalendarPage() {
           <div className="space-y-4">
             <h2 className="text-sm font-black uppercase tracking-widest text-slate-400">Schedule</h2>
             {selectedDayTasks.length === 0 ? (
-              <div className="rounded-[32px] border border-dashed border-slate-200 bg-white py-14 text-center">
+              <div className="rounded-[32px] border border-dashed border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] py-14 text-center">
                 <CalendarIcon size={40} className="mx-auto text-slate-100 mb-4" />
                 <p className="text-sm font-bold text-slate-400">No events found.</p>
               </div>
@@ -365,14 +365,14 @@ export default function CalendarPage() {
               selectedDayTasks.map(task => {
                 const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
                 return (
-                  <div key={task._id} className="group flex items-start gap-4 rounded-[32px] border border-slate-100 bg-white p-5 shadow-sm transition hover:shadow-md">
+                  <div key={task._id} className="group flex items-start gap-4 rounded-[32px] border border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-5 shadow-sm transition hover:shadow-md">
                     <div className={`mt-1.5 h-3 w-3 shrink-0 rounded-full ${color.dot} shadow-lg shadow-${color.dot.split('-')[1]}-200`} />
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{task.projectTag}</span>
                         <span className="text-[10px] font-bold text-slate-400">{new Date(task.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
-                      <h3 className="mt-1 text-lg font-black text-slate-900">{task.title}</h3>
+                      <h3 className="mt-1 text-lg font-black text-neutral-800 dark:text-neutral-200">{task.title}</h3>
                       <div className="mt-4 flex items-center justify-between">
                         <div className="flex -space-x-2">
                           <div className="h-7 w-7 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[10px] font-bold">
@@ -391,8 +391,8 @@ export default function CalendarPage() {
 
         {/* Desktop View: Full Month Grid */}
         <div className="hidden md:grid gap-8 xl:grid-cols-[1fr_320px]">
-          <div className="rounded-[40px] border border-slate-100 bg-white shadow-sm overflow-hidden">
-            <div className="grid grid-cols-7 border-b border-slate-50 bg-slate-50/50">
+          <div className="rounded-[40px] border border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-sm overflow-hidden">
+            <div className="grid grid-cols-7 border-b border-slate-50 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/50">
               {DAY_LABELS.map(l => (
                 <div key={l} className="py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{l}</div>
               ))}
@@ -409,10 +409,10 @@ export default function CalendarPage() {
                   <div
                     key={key}
                     onClick={() => handleSelectDay(day)}
-                    className={`group min-h-[140px] border-b border-r border-slate-50 p-4 transition-all hover:bg-slate-50/50 cursor-pointer ${inMonth ? "bg-white" : "bg-slate-50/20"} ${isSelected ? "bg-blue-50/30" : ""}`}
+                    className={`group min-h-[140px] border-b border-r border-slate-50 p-4 transition-all hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/50 cursor-pointer ${inMonth ? "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]" : "bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/20"} ${isSelected ? "bg-brand/10 dark:bg-brand/5/30" : ""}`}
                   >
                     <div className="mb-4 flex items-center justify-between">
-                      <span className={`flex h-8 w-8 items-center justify-center rounded-xl text-sm font-black ${isToday ? "bg-primary text-white shadow-lg shadow-primary/20" : inMonth ? "text-slate-900" : "text-slate-300"}`}>{day.getDate()}</span>
+                      <span className={`flex h-8 w-8 items-center justify-center rounded-xl text-sm font-black ${isToday ? "bg-primary text-white shadow-lg shadow-primary/20" : inMonth ? "text-neutral-800 dark:text-neutral-200" : "text-slate-300"}`}>{day.getDate()}</span>
                       {dayTasks.length > 0 && <span className="text-[10px] font-black text-slate-400">{dayTasks.length} E</span>}
                     </div>
                     <div className="space-y-2">
@@ -434,8 +434,8 @@ export default function CalendarPage() {
 
           <aside className="space-y-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Upcoming Deadlines</h3>
-              <button className="text-slate-300 hover:text-slate-600 transition"><MoreVertical size={20} /></button>
+              <h3 className="text-2xl font-black text-neutral-800 dark:text-neutral-200 tracking-tight">Upcoming Deadlines</h3>
+              <button className="text-slate-300 hover:text-neutral-600 dark:text-neutral-400 transition"><MoreVertical size={20} /></button>
             </div>
 
             <div className="space-y-4">
@@ -446,7 +446,7 @@ export default function CalendarPage() {
                   const color = TASK_COLORS[projectColorIndex.get(task.projectId) || 0];
                   const priority = getPriority(task);
                   return (
-                    <div key={task._id} className="group relative rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm transition hover:shadow-xl hover:shadow-slate-200/50">
+                    <div key={task._id} className="group relative rounded-[32px] border border-slate-100 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-6 shadow-sm transition hover:shadow-xl hover:shadow-slate-200/50">
                       <div className="flex items-center justify-between mb-4">
                         <span className={`rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest ${color.badge}`}>
                           {priority.label}
@@ -455,7 +455,7 @@ export default function CalendarPage() {
                           {new Date(task.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                         </span>
                       </div>
-                      <h4 className="text-lg font-black text-slate-900 group-hover:text-primary transition-colors leading-tight">{task.title}</h4>
+                      <h4 className="text-lg font-black text-neutral-800 dark:text-neutral-200 group-hover:text-primary transition-colors leading-tight">{task.title}</h4>
                       <p className="mt-2 text-sm font-medium text-slate-400 line-clamp-2">
                         {task.description || "Review alignment and confirm deliverables before the final demo."}
                       </p>
@@ -464,7 +464,7 @@ export default function CalendarPage() {
                           <div className="h-8 w-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold">
                             {task.assignedTo?.name.charAt(0) || "U"}
                           </div>
-                          <div className="h-8 w-8 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center" />
+                          <div className="h-8 w-8 rounded-full border-2 border-white bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] flex items-center justify-center" />
                         </div>
                         <ArrowRight size={18} className="text-slate-100 transition-colors group-hover:text-primary" />
                       </div>
@@ -474,11 +474,11 @@ export default function CalendarPage() {
               )}
 
               {/* Schedule a Meeting Placeholder */}
-              <button className="w-full flex flex-col items-center justify-center rounded-[32px] border-2 border-dashed border-slate-100 bg-slate-50/30 py-8 transition hover:bg-white hover:border-primary group">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-blue-100/50 text-blue-600 transition group-hover:bg-primary group-hover:text-white">
+              <button className="w-full flex flex-col items-center justify-center rounded-[32px] border-2 border-dashed border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/30 py-8 transition hover:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] hover:border-primary group">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-brand/20 dark:bg-brand/30/50 text-brand transition group-hover:bg-primary group-hover:text-white">
                   <Plus size={20} />
                 </div>
-                <h5 className="text-sm font-black text-slate-900">Schedule a Meeting</h5>
+                <h5 className="text-sm font-black text-neutral-800 dark:text-neutral-200">Schedule a Meeting</h5>
                 <p className="mt-1 text-xs font-bold text-slate-400">Find time for the whole team.</p>
               </button>
             </div>
@@ -497,24 +497,24 @@ export default function CalendarPage() {
       {/* Task Modal (Common for both) */}
       {showTaskModal && (
         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/40 p-0 backdrop-blur-md sm:items-center sm:p-4 animate-in fade-in duration-300">
-          <div className="w-full max-w-lg rounded-t-[48px] bg-white p-10 shadow-2xl sm:rounded-[48px] animate-in slide-in-from-bottom-full sm:zoom-in-95">
+          <div className="w-full max-w-lg rounded-t-[48px] bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-10 shadow-2xl sm:rounded-[48px] animate-in slide-in-from-bottom-full sm:zoom-in-95">
             <div className="mb-10 flex items-center justify-between">
-              <h3 className="text-2xl font-black text-slate-900">New Mission</h3>
-              <button onClick={() => setShowTaskModal(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400"><X size={20} /></button>
+              <h3 className="text-2xl font-black text-neutral-800 dark:text-neutral-200">New Mission</h3>
+              <button onClick={() => setShowTaskModal(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-slate-400"><X size={20} /></button>
             </div>
             <form className="space-y-8">
               <div>
                 <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-slate-400">Objective</label>
-                <input type="text" required placeholder="What needs to be done?" className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-white transition-all" />
+                <input type="text" required placeholder="What needs to be done?" className="w-full rounded-2xl border border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] transition-all" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-slate-400">Deadline</label>
-                  <input type="date" required className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-white" />
+                  <input type="date" required className="w-full rounded-2xl border border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]" />
                 </div>
                 <div>
                   <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-slate-400">Workspace</label>
-                  <select className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-white">
+                  <select className="w-full rounded-2xl border border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-6 py-4 text-sm font-bold outline-none focus:border-primary focus:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]">
                     {projects.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
                   </select>
                 </div>
@@ -528,10 +528,10 @@ export default function CalendarPage() {
       {/* Filters Overlay */}
       {showFilters && (
         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="w-full rounded-t-[48px] bg-white p-10 shadow-2xl animate-in slide-in-from-bottom-full">
+          <div className="w-full rounded-t-[48px] bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-10 shadow-2xl animate-in slide-in-from-bottom-full">
             <div className="mb-10 flex items-center justify-between">
-              <h3 className="text-xl font-black text-slate-900">Workspace Hub</h3>
-              <button onClick={() => setShowFilters(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400"><X size={20} /></button>
+              <h3 className="text-xl font-black text-neutral-800 dark:text-neutral-200">Workspace Hub</h3>
+              <button onClick={() => setShowFilters(false)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-slate-400"><X size={20} /></button>
             </div>
             <div className="space-y-8">
               <div>
@@ -539,7 +539,7 @@ export default function CalendarPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => { setSelectedProjectId("all"); setShowFilters(false); }}
-                    className={`rounded-2xl border px-4 py-4 text-xs font-black uppercase transition ${selectedProjectId === "all" ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-500 border-slate-100"}`}
+                    className={`rounded-2xl border px-4 py-4 text-xs font-black uppercase transition ${selectedProjectId === "all" ? "bg-slate-900 text-white border-slate-900" : "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] text-neutral-500 dark:text-neutral-400 border-slate-100"}`}
                   >
                     All Streams
                   </button>
@@ -547,7 +547,7 @@ export default function CalendarPage() {
                     <button
                       key={p._id}
                       onClick={() => { setSelectedProjectId(p._id); setShowFilters(false); }}
-                      className={`truncate rounded-2xl border px-4 py-4 text-xs font-black uppercase transition ${selectedProjectId === p._id ? "bg-primary text-white border-primary" : "bg-white text-slate-500 border-slate-100"}`}
+                      className={`truncate rounded-2xl border px-4 py-4 text-xs font-black uppercase transition ${selectedProjectId === p._id ? "bg-primary text-white border-primary" : "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] text-neutral-500 dark:text-neutral-400 border-slate-100"}`}
                     >
                       {p.name}
                     </button>

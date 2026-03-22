@@ -69,8 +69,8 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
   if (loading) return <div className="text-gray-500 dark:text-slate-400">Loading members...</div>;
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden mt-6 transition-all duration-300">
-      <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/50">
+    <div className="bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] dark:bg-[var(--color-dark-surface)] rounded-xl shadow-sm border border-gray-200 dark:border-neutral-800 overflow-hidden mt-6 transition-all duration-300">
+      <div className="px-6 py-4 border-b border-gray-100 dark:border-neutral-800 bg-gray-50 dark:bg-surface-dark/50">
         <h3 className="font-semibold text-gray-800 dark:text-slate-100">Project Members</h3>
       </div>
       <div className="divide-y divide-gray-100 dark:divide-slate-800">
@@ -94,12 +94,12 @@ export default function MemberList({ projectId, canManageMembers, refreshKey = 0
                     onChange={(e) => handleRoleChange(m._id, e.target.value)}
                     className="min-w-[130px] bg-transparent border border-gray-200 dark:border-slate-700 text-sm rounded-md px-2 py-1 text-gray-700 dark:text-slate-300 focus:outline-none focus:border-primary transition-colors"
                   >
-                    <option value="MASTER" className="dark:bg-slate-900">MASTER</option>
-                    <option value="MEMBER" className="dark:bg-slate-900">MEMBER</option>
+                    <option value="MASTER" className="dark:bg-surface-dark">MASTER</option>
+                    <option value="MEMBER" className="dark:bg-surface-dark">MEMBER</option>
                   </select>
                   <button
                     onClick={() => handleRemoveMember(m._id)}
-                    className="p-1.5 text-gray-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                    className="p-1.5 text-gray-400 dark:text-neutral-500 dark:text-neutral-400 hover:text-red-500 dark:hover:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
                   >
                     <UserMinus size={18} />
                   </button>

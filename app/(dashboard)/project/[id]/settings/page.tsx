@@ -75,7 +75,7 @@ export default function ProjectSettingsPage() {
         <h2 className="text-2xl font-semibold text-gray-800 sm:text-3xl">Project Settings</h2>
       </div>
 
-      <div className="rounded-[24px] border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+      <div className="rounded-[24px] border border-gray-200 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-5 shadow-sm sm:p-6">
         <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
           <UserPlus size={20} className="text-primary" />
           Invite Team Member
@@ -103,7 +103,7 @@ export default function ProjectSettingsPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
               <select
-                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-white"
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]"
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value)}
                 disabled={inviting}

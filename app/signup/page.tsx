@@ -41,7 +41,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-svh items-center justify-center bg-gray-50 p-4 sm:p-6">
-      <div className="w-full max-w-md rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="w-full max-w-md rounded-3xl border border-gray-200 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-6 shadow-sm sm:p-8">
         <div className="flex flex-col items-center mb-8 text-center">
           <Logo className="mb-4" iconSize={28} />
           <p className="text-gray-500 font-medium">Create an account to get started.</p>

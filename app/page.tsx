@@ -16,7 +16,7 @@ export default function Home() {
         <a href="/login" className="rounded-xl bg-primary px-8 py-3 text-center font-semibold text-white shadow-lg shadow-purple-200 transition-all duration-200 hover:-translate-y-0.5 hover:bg-purple-700">
           Get Started Free
         </a>
-        <a href="/signup" className="rounded-xl border border-gray-200 bg-white px-8 py-3 text-center font-semibold text-gray-700 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50">
+        <a href="/signup" className="rounded-xl border border-gray-200 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-8 py-3 text-center font-semibold text-gray-700 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50">
           Create Account
         </a>
       </div>

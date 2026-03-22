@@ -46,7 +46,7 @@ const sorts: Array<{ key: SortMode; label: string }> = [
 ];
 
 const themePalette = [
-    { bg: "bg-blue-50", text: "text-blue-600", accent: "bg-blue-600", border: "border-blue-100" },
+    { bg: "bg-brand/10 dark:bg-brand/5", text: "text-brand", accent: "bg-brand", border: "border-blue-100" },
     { bg: "bg-emerald-50", text: "text-emerald-600", accent: "bg-emerald-600", border: "border-emerald-100" },
     { bg: "bg-violet-50", text: "text-violet-600", accent: "bg-violet-600", border: "border-violet-100" },
     { bg: "bg-amber-50", text: "text-amber-600", accent: "bg-amber-600", border: "border-amber-100" },
@@ -84,7 +84,7 @@ function ProjectCard({
     return (
         <div
             onClick={() => router.push(`/project/${project._id}`)}
-            className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 focus-within:ring-4 focus-within:ring-blue-100"
+            className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-6 shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 focus-within:ring-4 focus-within:ring-brand/20"
         >
             {/* Accent Bar */}
             <div className={`absolute left-0 top-0 h-1.5 w-full ${theme.accent}`} />
@@ -100,7 +100,7 @@ function ProjectCard({
                             e.stopPropagation();
                             setShowMenu(!showMenu);
                         }}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
+                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] hover:text-neutral-600 dark:text-neutral-400"
                     >
                         <MoreVertical size={20} />
                     </button>
@@ -114,13 +114,13 @@ function ProjectCard({
                                     setShowMenu(false);
                                 }}
                             />
-                            <div className="absolute right-0 top-11 z-20 w-48 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl animate-in zoom-in-95" onClick={(e) => e.stopPropagation()}>
+                            <div className="absolute right-0 top-11 z-20 w-48 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-2 shadow-2xl animate-in zoom-in-95" onClick={(e) => e.stopPropagation()}>
                                 <button
                                     onClick={() => {
                                         onEdit(project);
                                         setShowMenu(false);
                                     }}
-                                    className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+                                    className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-neutral-600 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
                                 >
                                     <Pencil size={18} className="text-slate-400" />
                                     Rename Project
@@ -143,17 +143,17 @@ function ProjectCard({
             </div>
 
             <div className="mt-5">
-                <h3 className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 group-hover:text-primary transition-colors">
                     {project.name}
                 </h3>
             </div>
 
             <div className="mt-6 flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg border border-slate-100 bg-slate-50/50">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg border border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/50">
                     <CheckCircle2 size={12} className="text-slate-300" />
                     <span>{project.taskCount} Tasks</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg border border-slate-100 bg-slate-50/50">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg border border-slate-100 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]/50">
                     <Users size={12} className="text-slate-300" />
                     <span>{project.memberCount} Members</span>
                 </div>
@@ -162,7 +162,7 @@ function ProjectCard({
             <div className="mt-6 space-y-3">
                 <div className="flex items-center justify-between text-sm font-bold">
                     <span className="text-slate-400">Progress</span>
-                    <span className={isCompleted ? "text-emerald-600" : "text-slate-900"}>
+                    <span className={isCompleted ? "text-emerald-600" : "text-neutral-800 dark:text-neutral-200"}>
                         {progress}%
                     </span>
                 </div>
@@ -180,7 +180,7 @@ function ProjectCard({
                     {formatDate(project.createdAt)}
                 </div>
 
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-all group-hover:bg-primary group-hover:text-white">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-slate-400 transition-all group-hover:bg-primary group-hover:text-white">
                     <ArrowRight size={18} />
                 </div>
             </div>
@@ -206,26 +206,26 @@ function ProjectListItem({
     return (
         <div
             onClick={() => router.push(`/project/${project._id}`)}
-            className="group flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:border-primary/30 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+            className="group flex flex-col gap-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-4 transition-all hover:border-primary/30 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
         >
             <div className="flex items-center gap-4 min-w-0">
                 <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${theme.bg} ${theme.text}`}>
                     <FolderDot size={20} />
                 </div>
                 <div className="min-w-0">
-                    <h3 className="truncate font-bold text-slate-900 group-hover:text-primary transition-colors">
+                    <h3 className="truncate font-bold text-neutral-800 dark:text-neutral-200 group-hover:text-primary transition-colors">
                         {project.name}
                     </h3>
-                    <p className="text-xs text-slate-500">{formatDate(project.createdAt)}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{formatDate(project.createdAt)}</p>
                 </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-6 sm:justify-end">
-                <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
+                <div className="flex items-center gap-2 text-sm font-medium text-neutral-500 dark:text-neutral-400">
                     <CheckCircle2 size={16} className="text-slate-300" />
                     <span>{project.taskCount} Tasks</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
+                <div className="flex items-center gap-2 text-sm font-medium text-neutral-500 dark:text-neutral-400">
                     <Users size={16} className="text-slate-300" />
                     <span>{project.memberCount} Members</span>
                 </div>
@@ -236,15 +236,15 @@ function ProjectListItem({
                             e.stopPropagation();
                             setShowMenu(!showMenu);
                         }}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50"
+                        className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
                     >
                         <MoreVertical size={18} />
                     </button>
                     {showMenu && (
-                        <div className="absolute right-0 top-11 z-20 w-48 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                        <div className="absolute right-0 top-11 z-20 w-48 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-2 shadow-2xl" onClick={(e) => e.stopPropagation()}>
                             <button
                                 onClick={() => { onEdit(project); setShowMenu(false); }}
-                                className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                                className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
                             >
                                 <Pencil size={16} />
                                 Rename
@@ -380,25 +380,25 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                 {/* Header Section */}
                 <section className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                        <h1 className="text-3xl font-black tracking-tight text-neutral-800 dark:text-neutral-200 sm:text-4xl">
                             Project Portfolio
                         </h1>
-                        <p className="mt-3 text-lg font-medium text-slate-500">
+                        <p className="mt-3 text-lg font-medium text-neutral-500 dark:text-neutral-400">
                             Overview of all your active workspaces and team missions.
                         </p>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <div className="flex h-11 items-center rounded-full border border-slate-200 bg-white p-1 shadow-sm">
+                        <div className="flex h-11 items-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-1 shadow-sm">
                             <button
                                 onClick={() => setViewMode("grid")}
-                                className={`flex h-9 w-12 items-center justify-center rounded-full transition-all duration-300 ${viewMode === "grid" ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" : "text-slate-400 hover:text-slate-600"}`}
+                                className={`flex h-9 w-12 items-center justify-center rounded-full transition-all duration-300 ${viewMode === "grid" ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" : "text-slate-400 hover:text-neutral-600 dark:text-neutral-400"}`}
                             >
                                 <LayoutGrid size={18} />
                             </button>
                             <button
                                 onClick={() => setViewMode("list")}
-                                className={`flex h-9 w-12 items-center justify-center rounded-full transition-all duration-300 ${viewMode === "list" ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" : "text-slate-400 hover:text-slate-600"}`}
+                                className={`flex h-9 w-12 items-center justify-center rounded-full transition-all duration-300 ${viewMode === "list" ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" : "text-slate-400 hover:text-neutral-600 dark:text-neutral-400"}`}
                             >
                                 <List size={18} />
                             </button>
@@ -416,7 +416,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                                     onClick={() => setFilter(f.key)}
                                     className={`rounded-full px-5 py-2.5 text-sm font-bold transition-all shadow-sm ${filter === f.key
                                         ? "bg-primary text-white shadow-primary/20"
-                                        : "bg-white/60 text-slate-500 border border-slate-200/50 hover:border-slate-300 hover:bg-white backdrop-blur-sm"
+                                        : "bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]/60 text-neutral-500 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-800/50 hover:border-neutral-300 dark:border-neutral-700 hover:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] backdrop-blur-sm"
                                         }`}
                                 >
                                     {f.label}
@@ -429,7 +429,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                             <select
                                 value={sortMode}
                                 onChange={(e) => setSortMode(e.target.value as SortMode)}
-                                className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-primary"
+                                className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-2.5 text-sm font-bold text-neutral-700 dark:text-neutral-300 outline-none focus:border-primary"
                             >
                                 {sorts.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
                             </select>
@@ -445,12 +445,12 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                         ))}
                     </div>
                 ) : visibleProjects.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-slate-200 bg-white py-24 text-center">
-                        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-slate-50 text-slate-300">
+                    <div className="flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] py-24 text-center">
+                        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-slate-300">
                             <FolderDot size={40} />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-900">No projects found</h2>
-                        <p className="mt-2 text-slate-500">Try adjusting your search or filters.</p>
+                        <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-200">No projects found</h2>
+                        <p className="mt-2 text-neutral-500 dark:text-neutral-400">Try adjusting your search or filters.</p>
                         <button
                             onClick={() => setShowModal(true)}
                             className="mt-8 rounded-2xl bg-primary px-8 py-3 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:bg-blue-700"
@@ -475,13 +475,13 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
 
                         <button
                             onClick={() => setShowModal(true)}
-                            className="group flex flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-slate-200 bg-white p-8 text-center transition-all hover:border-primary hover:bg-blue-50/20"
+                            className="group flex flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-8 text-center transition-all hover:border-primary hover:bg-brand/10 dark:bg-brand/5/20"
                         >
-                            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 group-hover:bg-primary group-hover:text-white transition-all">
+                            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] text-slate-400 group-hover:bg-primary group-hover:text-white transition-all">
                                 <Plus size={32} />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900">New Project</h3>
-                            <p className="mt-2 text-sm text-slate-500 max-w-[180px]">Establish a new workspace and invite collaborators.</p>
+                            <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">New Project</h3>
+                            <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-w-[180px]">Establish a new workspace and invite collaborators.</p>
                         </button>
                     </div>
                 ) : (
@@ -501,10 +501,10 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
 
                         <button
                             onClick={() => setShowModal(true)}
-                            className="flex items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-white p-6 transition-all hover:border-primary hover:bg-blue-50/20"
+                            className="flex items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-6 transition-all hover:border-primary hover:bg-brand/10 dark:bg-brand/5/20"
                         >
                             <Plus size={20} className="text-slate-400" />
-                            <span className="font-bold text-slate-900">Add New Project</span>
+                            <span className="font-bold text-neutral-800 dark:text-neutral-200">Add New Project</span>
                         </button>
                     </div>
                 )}
@@ -513,17 +513,17 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
             {/* Modals */}
             {showModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm animate-in fade-in">
-                    <div className="w-full max-w-md rounded-[32px] border border-slate-200 bg-white p-8 shadow-2xl animate-in zoom-in-95 duration-300">
-                        <h3 className="text-2xl font-bold text-slate-900">Create Workspace</h3>
-                        <p className="mt-2 text-slate-500">A new environment for your team to thrive.</p>
+                    <div className="w-full max-w-md rounded-[32px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+                        <h3 className="text-2xl font-bold text-neutral-800 dark:text-neutral-200">Create Workspace</h3>
+                        <p className="mt-2 text-neutral-500 dark:text-neutral-400">A new environment for your team to thrive.</p>
                         <form onSubmit={handleCreateProject} className="mt-8">
                             <div className="mb-8">
-                                <label className="mb-2 block text-sm font-bold text-slate-700 uppercase tracking-wider">Project Name</label>
+                                <label className="mb-2 block text-sm font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider">Project Name</label>
                                 <input
                                     type="text"
                                     required
                                     autoFocus
-                                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-900 outline-none transition focus:border-primary focus:bg-white focus:ring-4 focus:ring-blue-100"
+                                    className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-5 py-4 text-neutral-800 dark:text-neutral-200 outline-none transition focus:border-primary focus:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] focus:ring-4 focus:ring-brand/20"
                                     placeholder="e.g. Apollo Mission 🚀"
                                     value={newProjectName}
                                     onChange={(e) => setNewProjectName(e.target.value)}
@@ -531,7 +531,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                                 />
                             </div>
                             <div className="flex gap-3">
-                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 rounded-2xl border border-slate-200 px-6 py-4 font-bold text-slate-500 transition hover:bg-slate-50" disabled={creating}>Discard</button>
+                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 rounded-2xl border border-neutral-200 dark:border-neutral-800 px-6 py-4 font-bold text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]" disabled={creating}>Discard</button>
                                 <button type="submit" disabled={creating} className="flex-1 rounded-2xl bg-primary px-6 py-4 font-bold text-white shadow-xl shadow-primary/20 transition hover:bg-blue-700 disabled:opacity-70">
                                     {creating ? "Launching..." : "Launch Project"}
                                 </button>
@@ -543,23 +543,23 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
 
             {editingProject && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm animate-in fade-in">
-                    <div className="w-full max-w-md rounded-[32px] border border-slate-200 bg-white p-8 shadow-2xl animate-in zoom-in-95 duration-300">
-                        <h3 className="text-2xl font-bold text-slate-900">Rename Workspace</h3>
+                    <div className="w-full max-w-md rounded-[32px] border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+                        <h3 className="text-2xl font-bold text-neutral-800 dark:text-neutral-200">Rename Workspace</h3>
                         <form onSubmit={handleUpdateProject} className="mt-8">
                             <div className="mb-8">
-                                <label className="mb-2 block text-sm font-bold text-slate-700 uppercase tracking-wider">Project Name</label>
+                                <label className="mb-2 block text-sm font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider">Project Name</label>
                                 <input
                                     type="text"
                                     required
                                     autoFocus
-                                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-900 outline-none transition focus:border-primary focus:bg-white focus:ring-4 focus:ring-blue-100"
+                                    className="w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] px-5 py-4 text-neutral-800 dark:text-neutral-200 outline-none transition focus:border-primary focus:bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] focus:ring-4 focus:ring-brand/20"
                                     value={updatedName}
                                     onChange={(e) => setUpdatedName(e.target.value)}
                                     disabled={updating}
                                 />
                             </div>
                             <div className="flex gap-3">
-                                <button type="button" onClick={() => setEditingProject(null)} className="flex-1 rounded-2xl border border-slate-200 px-6 py-4 font-bold text-slate-500 transition hover:bg-slate-50" disabled={updating}>Cancel</button>
+                                <button type="button" onClick={() => setEditingProject(null)} className="flex-1 rounded-2xl border border-neutral-200 dark:border-neutral-800 px-6 py-4 font-bold text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]" disabled={updating}>Cancel</button>
                                 <button type="submit" disabled={updating} className="flex-1 rounded-2xl bg-primary px-6 py-4 font-bold text-white shadow-xl shadow-primary/20 transition hover:bg-blue-700 disabled:opacity-70">
                                     {updating ? "Saving..." : "Save Changes"}
                                 </button>

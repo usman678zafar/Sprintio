@@ -56,7 +56,7 @@ export default function Navbar({ user }: { user: any }) {
   };
 
   return (
-    <header className="border-b border-slate-200 bg-white">
+    <header className="border-b border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-5">
         <div className="shrink-0 md:hidden">
           <Logo href="/dashboard" />
@@ -73,7 +73,7 @@ export default function Navbar({ user }: { user: any }) {
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder={searchPlaceholder}
-              className="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-700 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100"
+              className="h-11 w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] pl-11 pr-4 text-sm text-neutral-700 dark:text-neutral-300 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-brand/20"
             />
           </div>
         )}
@@ -108,7 +108,7 @@ export default function Navbar({ user }: { user: any }) {
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder={searchPlaceholder}
-              className="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-700 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100"
+              className="h-11 w-full rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] pl-11 pr-4 text-sm text-neutral-700 dark:text-neutral-300 transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-brand/20"
             />
           </div>
         </div>

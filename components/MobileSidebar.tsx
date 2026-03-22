@@ -72,7 +72,7 @@ export default function MobileSidebar({ user }: { user: any }) {
     <div className="md:hidden">
       <button
         onClick={() => setIsOpen(true)}
-        className="rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-50"
+        className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-2 text-neutral-600 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
         aria-label="Open Menu"
       >
         <Menu size={20} />
@@ -86,14 +86,14 @@ export default function MobileSidebar({ user }: { user: any }) {
       )}
 
       <div
-        className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] bg-white shadow-xl transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-2 left-2 z-50 flex w-[min(18rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[28px] bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)] shadow-xl transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5">
+        <div className="flex h-16 items-center justify-between border-b border-neutral-200 dark:border-neutral-800 px-5">
           <Logo href="/dashboard" />
           <button
             onClick={() => setIsOpen(false)}
-            className="rounded-xl border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-50"
+            className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-2 text-neutral-500 dark:text-neutral-400 transition hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
             aria-label="Close Menu"
           >
             <X size={20} />
@@ -113,9 +113,9 @@ export default function MobileSidebar({ user }: { user: any }) {
                 return (
                   <div
                     key={label}
-                    className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-600"
+                    className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-400"
                   >
-                    <Icon size={20} className="text-slate-500" />
+                    <Icon size={20} className="text-neutral-500 dark:text-neutral-400" />
                     <span>{label}</span>
                   </div>
                 );
@@ -126,13 +126,13 @@ export default function MobileSidebar({ user }: { user: any }) {
                   key={label}
                   href={href}
                   className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${isActive
-                    ? "bg-blue-50 text-primary"
-                    : "text-slate-600 hover:bg-slate-50"
+                    ? "bg-brand/10 dark:bg-brand/5 text-primary"
+                    : "text-neutral-600 dark:text-neutral-400 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)]"
                     }`}
                 >
                   <Icon
                     size={20}
-                    className={isActive ? "text-primary" : "text-slate-500"}
+                    className={isActive ? "text-primary" : "text-neutral-500 dark:text-neutral-400"}
                   />
                   <span>{label}</span>
                 </Link>
@@ -141,22 +141,22 @@ export default function MobileSidebar({ user }: { user: any }) {
           </nav>
         </div>
 
-        <div className="border-t border-slate-200 px-5 py-4">
+        <div className="border-t border-neutral-200 dark:border-neutral-800 px-5 py-4">
           <div className="mb-4 flex items-center gap-3">
             {user?.image ? (
-              <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-white">
+              <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-neutral-200 dark:border-neutral-800 bg-[var(--color-light-surface)] dark:bg-[var(--color-dark-surface)]">
                 <img src={user.image} alt={user?.name || "User"} className="h-full w-full object-cover" />
               </div>
             ) : (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-800">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 {user?.name?.[0]?.toUpperCase() || "U"}
               </div>
             )}
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-900">
+              <p className="truncate text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 {user?.name || "Sprinto User"}
               </p>
-              <p className="truncate text-xs text-slate-500">
+              <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
                 {user?.email || "Admin Account"}
               </p>
             </div>
@@ -165,7 +165,7 @@ export default function MobileSidebar({ user }: { user: any }) {
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-400 transition hover:border-neutral-300 dark:border-neutral-700 hover:bg-[var(--color-light-bg)] dark:bg-[var(--color-dark-bg)] disabled:opacity-50"
           >
             <LogOut size={18} />
             {isLoggingOut ? "Leaving..." : "Logout"}
