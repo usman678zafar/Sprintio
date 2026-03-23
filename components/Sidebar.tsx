@@ -65,10 +65,28 @@ export default function Sidebar({ user }: { user: any }) {
   }, [router]);
 
   useEffect(() => {
-    const savedState = window.localStorage.getItem("sprinto-sidebar-expanded");
-    if (savedState === "1") {
-      setIsExpanded(true);
-    }
+    const syncSidebarMode = () => {
+      const savedState = window.localStorage.getItem("sprinto-sidebar-expanded");
+
+      if (savedState === "1") {
+        setIsExpanded(true);
+        return;
+      }
+
+      if (savedState === "0") {
+        setIsExpanded(false);
+        return;
+      }
+
+      setIsExpanded(window.innerWidth >= 1440);
+    };
+
+    syncSidebarMode();
+    window.addEventListener("resize", syncSidebarMode);
+
+    return () => {
+      window.removeEventListener("resize", syncSidebarMode);
+    };
   }, []);
 
   const toggleExpanded = () => {
@@ -91,8 +109,8 @@ export default function Sidebar({ user }: { user: any }) {
 
   return (
     <aside
-      className={`hidden shrink-0 border-r border-border-subtle bg-surface p-3 transition-[width] duration-300 md:flex md:flex-col ${
-        isExpanded ? "w-72" : "w-[104px]"
+      className={`hidden shrink-0 border-r border-border-subtle bg-surface p-3 transition-[width] duration-300 lg:flex lg:flex-col ${
+        isExpanded ? "w-72 xl:w-[18.5rem]" : "w-[96px] xl:w-[104px]"
       }`}
     >
       <div className="flex h-[calc(100svh-1.5rem)] flex-col overflow-hidden bg-surface">
@@ -101,7 +119,9 @@ export default function Sidebar({ user }: { user: any }) {
           <button
             type="button"
             onClick={toggleExpanded}
-            className={`text-muted transition hover:text-primary ${isExpanded ? "inline-flex h-10 w-10 items-center justify-center" : "hidden"}`}
+            className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-transparent text-muted transition hover:border-border-subtle hover:bg-base hover:text-primary ${
+              isExpanded ? "" : "absolute opacity-0 pointer-events-none"
+            }`}
             title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
             aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
           >
@@ -195,7 +215,7 @@ export default function Sidebar({ user }: { user: any }) {
                   <button
                     type="button"
                     onClick={toggleExpanded}
-                    className="inline-flex h-10 w-10 items-center justify-center text-muted transition hover:text-primary"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface text-muted transition hover:border-primary hover:text-primary"
                     title="Expand sidebar"
                     aria-label="Expand sidebar"
                   >

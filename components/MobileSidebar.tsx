@@ -81,7 +81,7 @@ export default function MobileSidebar({ user }: { user: any }) {
   }, [isOpen]);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         onClick={() => setIsOpen(true)}
         className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-border-subtle bg-surface text-muted transition hover:border-primary hover:text-primary"

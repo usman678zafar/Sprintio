@@ -57,7 +57,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle shadow-[0_-12px_28px_rgba(25,20,16,0.08)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle shadow-[0_-12px_28px_rgba(25,20,16,0.08)] lg:hidden"
       style={{ backgroundColor: "rgb(var(--bg-surface-rgb))" }}
     >
       <div

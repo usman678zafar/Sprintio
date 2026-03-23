@@ -19,10 +19,10 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-svh overflow-x-hidden bg-base text-text-base md:h-svh">
+    <div className="flex min-h-svh overflow-x-hidden bg-base text-text-base lg:h-svh">
       <Sidebar user={session.user} />
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
-        <div className="sticky top-0 z-40 border-b border-border-subtle bg-surface/95 px-4 py-3 backdrop-blur md:hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden pb-[calc(5.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+        <div className="sticky top-0 z-40 border-b border-border-subtle bg-surface/95 px-4 py-3 backdrop-blur lg:hidden">
           <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
             <MobileSidebar user={session.user} />
             <div className="flex justify-center">
