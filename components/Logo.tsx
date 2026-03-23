@@ -17,7 +17,6 @@ export default function Logo({
   // Using the exact manual logo icon you uploaded locally to the public folder
   const markWidth = iconSize * 1.2; 
   const markHeight = iconSize * 1.2;
-  const blueLogoFilter = "brightness(0) saturate(100%) invert(39%) sepia(86%) saturate(1650%) hue-rotate(194deg) brightness(94%) contrast(99%)";
 
   return (
     <Link href={href} className={`flex items-center gap-3 transition-opacity hover:opacity-90 ${className}`}>
@@ -28,7 +27,6 @@ export default function Logo({
           width={markWidth}
           height={markHeight}
           className="object-contain"
-          style={{ filter: blueLogoFilter }}
           priority
           unoptimized
         />

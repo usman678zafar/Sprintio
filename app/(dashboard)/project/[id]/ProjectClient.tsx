@@ -53,7 +53,7 @@ interface Task {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const BRAND = "#2563EB";
+const BRAND = "#D97757";
 
 const COLUMNS: {
     id: TaskStatus;
@@ -360,7 +360,7 @@ export default function ProjectClient({ initialData, renderedAt }: { initialData
             if (zone?.el && zone.el !== currentHighlight) {
                 currentHighlight = zone.el;
                 currentHighlight.style.borderStyle = "dashed";
-                currentHighlight.style.borderColor = "var(--color-brand, #2563EB)";
+                currentHighlight.style.borderColor = "var(--color-brand, #D97757)";
                 currentHighlight.style.backgroundColor = "rgba(217,119,87,0.06)";
             }
         }

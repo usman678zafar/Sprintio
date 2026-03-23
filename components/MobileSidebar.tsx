@@ -136,14 +136,14 @@ export default function MobileSidebar({ user }: { user: any }) {
                   href={href}
                   className={`flex items-center gap-3 rounded-[22px] border px-3 py-3 text-sm font-medium transition-all ${
                     isActive
-                      ? "border-[#2563EB] bg-[#2563EB] text-white"
+                      ? "border-[#D97757] bg-[#D97757] text-white"
                       : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
                   }`}
                 >
                   <span
                     className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${
                       isActive
-                        ? "border-[#2563EB] bg-[#1D4ED8] text-white"
+                        ? "border-[#D97757] bg-[#B96447] text-white"
                         : "border-border-subtle bg-base text-muted"
                     }`}
                   >
@@ -159,7 +159,7 @@ export default function MobileSidebar({ user }: { user: any }) {
         <div className="border-t border-border-subtle p-4">
           <div className="rounded-[24px] bg-surface p-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-sm font-semibold text-white">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
                 {userInitial}
               </div>
 

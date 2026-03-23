@@ -484,7 +484,7 @@ export default function WikiClient() {
                           type="button"
                           onClick={() => setViewMode(key)}
                           className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-medium transition ${
-                            viewMode === key ? "bg-[#2563EB] text-white" : "text-text-base hover:bg-white"
+                            viewMode === key ? "bg-[#D97757] text-white" : "text-text-base hover:bg-white"
                           }`}
                         >
                           <Icon size={15} />
@@ -509,7 +509,7 @@ export default function WikiClient() {
                         void savePage();
                       }}
                       disabled={!activePage || !isDirty || saving}
-                      className="inline-flex h-11 items-center justify-center gap-2 bg-[#2563EB] px-5 text-sm font-medium text-white transition hover:bg-[#1D4ED8] disabled:opacity-50"
+                      className="inline-flex h-11 items-center justify-center gap-2 bg-[#D97757] px-5 text-sm font-medium text-white transition hover:bg-[#c96b49] disabled:opacity-50"
                     >
                       {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                       Save

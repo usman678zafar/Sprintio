@@ -58,7 +58,7 @@ const sorts: Array<{ key: SortMode; label: string }> = [
   { key: "tasks", label: "Most Tasks" },
 ];
 
-const defaultProjectColor = "#2563EB";
+const defaultProjectColor = "#D97757";
 const PROJECT_NAME_MAX = 80;
 const PROJECT_DESCRIPTION_MAX = 1000;
 
