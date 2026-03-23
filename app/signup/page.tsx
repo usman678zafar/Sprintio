@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 import PublicLogo from "@/components/PublicLogo";
 
 export default function SignupPage() {
@@ -13,6 +14,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const callbackUrl = "/dashboard";
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,6 +113,14 @@ export default function SignupPage() {
               {loading ? "Creating Account..." : "Sign Up"}
             </button>
           </form>
+
+          <div className="my-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-muted/70">
+            <div className="h-px flex-1 bg-border-subtle" />
+            <span>or</span>
+            <div className="h-px flex-1 bg-border-subtle" />
+          </div>
+
+          <GoogleAuthButton callbackUrl={callbackUrl} disabled={loading} label="Sign up with Google" />
 
           <div className="mt-6 text-center text-sm text-muted">
             Already have an account?{" "}

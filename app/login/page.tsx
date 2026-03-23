@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import { Eye, EyeOff } from "lucide-react";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 import PublicLogo from "@/components/PublicLogo";
 
 export default function LoginPage() {
@@ -15,15 +16,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const router = useRouter();
+  const callbackUrl =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("callbackUrl") || "/dashboard"
+      : "/dashboard";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    // Get the callbackUrl from search parameters if it exists
-    const searchParams = new URLSearchParams(window.location.search);
-    const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
     const res = await signIn("credentials", {
       email,
@@ -120,6 +121,14 @@ export default function LoginPage() {
               {loading ? "Logging in..." : "Log In"}
             </button>
           </form>
+
+          <div className="my-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-muted/70">
+            <div className="h-px flex-1 bg-border-subtle" />
+            <span>or</span>
+            <div className="h-px flex-1 bg-border-subtle" />
+          </div>
+
+          <GoogleAuthButton callbackUrl={callbackUrl} disabled={loading} label="Log in with Google" />
 
           <div className="mt-6 text-center text-sm text-muted">
             Don't have an account?{" "}
