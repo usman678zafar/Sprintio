@@ -11,7 +11,6 @@ import {
   LayoutGrid,
   Clock,
   ChevronRight,
-  Zap
 } from "lucide-react";
 import Link from "next/link";
 import ProjectCard from "@/components/ProjectCard";
@@ -120,12 +119,6 @@ export default function DashboardClient({
         {/* Header Section */}
         <header className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex h-6 items-center justify-center rounded-full bg-brand/10 px-3 py-1">
-                <Zap size={12} className="text-brand mr-1.5 fill-brand" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-brand">Dashboard Active</span>
-              </div>
-            </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-text-base sm:text-5xl">
               {greeting}, <span className="text-brand">{user?.name?.split(' ')[0] || 'User'}</span>
             </h1>

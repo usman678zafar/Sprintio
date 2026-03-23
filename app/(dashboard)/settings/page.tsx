@@ -298,16 +298,13 @@ export default function SettingsPage() {
   return (
     <div className="min-h-full bg-base px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <div className="mx-auto max-w-[1120px] space-y-6">
-        <section className="panel-surface flex flex-col gap-5 p-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-2xl">
-            <div className="inline-flex rounded-full border border-primary/15 bg-primary/8 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-              Workspace Settings
-            </div>
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-text-base sm:text-4xl">
-              Polish the workspace across light, dark, and system themes.
+        <section className="flex flex-col gap-4 border-b border-border-subtle pb-5 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-text-base sm:text-3xl">
+              Settings
             </h1>
-            <p className="mt-3 text-sm leading-7 text-muted sm:text-base">
-              Adjust profile details, workspace identity, and the full appearance system from one place.
+            <p className="mt-1 text-sm text-muted">
+              Manage your profile, workspace, and appearance.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
