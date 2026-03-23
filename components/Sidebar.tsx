@@ -5,6 +5,7 @@ import {
   CalendarDays,
   FolderKanban,
   LayoutDashboard,
+  LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 import Logo from "./Logo";
@@ -54,6 +56,7 @@ export default function Sidebar({ user }: { user: any }) {
   const router = useRouter();
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     navItems.forEach((item) => {
@@ -79,6 +82,12 @@ export default function Sidebar({ user }: { user: any }) {
   const userName = user?.name || "Sprinto User";
   const userEmail = user?.email || "Admin Account";
   const userInitial = (userName.trim() || userEmail.trim() || "U").charAt(0).toUpperCase();
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    await signOut({ callbackUrl: "/login", redirect: true });
+  };
 
   return (
     <aside
@@ -139,14 +148,25 @@ export default function Sidebar({ user }: { user: any }) {
         <div className="p-3">
           <div className={`rounded-[24px] border border-border-subtle bg-base/60 p-3 ${isExpanded ? "" : "flex justify-center"}`}>
             {isExpanded ? (
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
-                  {userInitial}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
+                    {userInitial}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-text-base">{userName}</p>
+                    <p className="truncate text-xs text-muted">{userEmail}</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-text-base">{userName}</p>
-                  <p className="truncate text-xs text-muted">{userEmail}</p>
-                </div>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border-subtle bg-surface px-4 py-3 text-sm font-medium text-muted transition hover:border-primary hover:text-primary disabled:opacity-50"
+                >
+                  <LogOut size={16} />
+                  {isLoggingOut ? "Leaving..." : "Logout"}
+                </button>
               </div>
             ) : (
               <button
