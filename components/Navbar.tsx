@@ -5,7 +5,6 @@ import { Plus, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import Logo from "./Logo";
-import MobileSidebar from "./MobileSidebar";
 
 export default function Navbar({ user }: { user: any }) {
   const pathname = usePathname() ?? "";
@@ -63,8 +62,7 @@ export default function Navbar({ user }: { user: any }) {
   return (
     <header className="bg-surface/78 backdrop-blur-xl">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-5">
-        <div className="flex items-center gap-3 md:hidden">
-          <MobileSidebar user={user} />
+        <div className="md:hidden">
           <Logo href="/dashboard" />
         </div>
 

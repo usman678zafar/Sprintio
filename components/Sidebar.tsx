@@ -76,6 +76,10 @@ export default function Sidebar({ user }: { user: any }) {
     });
   };
 
+  const userName = user?.name || "Sprinto User";
+  const userEmail = user?.email || "Admin Account";
+  const userInitial = (userName.trim() || userEmail.trim() || "U").charAt(0).toUpperCase();
+
   return (
     <aside
       className={`hidden shrink-0 border-r border-border-subtle bg-surface p-3 transition-[width] duration-300 md:flex md:flex-col ${
@@ -83,8 +87,17 @@ export default function Sidebar({ user }: { user: any }) {
       }`}
     >
       <div className="flex h-[calc(100svh-1.5rem)] flex-col overflow-hidden bg-surface">
-        <div className={`flex h-16 items-center px-4 ${isExpanded ? "justify-start" : "justify-center"}`}>
+        <div className={`flex h-16 items-center px-4 ${isExpanded ? "justify-between" : "justify-center"}`}>
           <Logo href="/dashboard" showText={isExpanded} iconSize={28} />
+          <button
+            type="button"
+            onClick={toggleExpanded}
+            className={`text-muted transition hover:text-primary ${isExpanded ? "inline-flex h-10 w-10 items-center justify-center" : "hidden"}`}
+            title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+            aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+          >
+            {isExpanded ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+          </button>
         </div>
 
         <div className="flex flex-1 flex-col px-3 py-6">
@@ -124,21 +137,28 @@ export default function Sidebar({ user }: { user: any }) {
         </div>
 
         <div className="p-3">
-          <div className="bg-surface p-3">
-            <button
-              type="button"
-              onClick={toggleExpanded}
-              className={`flex w-full items-center px-3 py-3 text-sm font-medium text-muted transition hover:text-primary ${
-                isExpanded ? "justify-start gap-3" : "justify-center"
-              }`}
-              title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
-              aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center">
-                {isExpanded ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
-              </span>
-              {isExpanded ? <span>Collapse</span> : null}
-            </button>
+          <div className={`rounded-[24px] border border-border-subtle bg-base/60 p-3 ${isExpanded ? "" : "flex justify-center"}`}>
+            {isExpanded ? (
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
+                  {userInitial}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-text-base">{userName}</p>
+                  <p className="truncate text-xs text-muted">{userEmail}</p>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={toggleExpanded}
+                className="inline-flex h-10 w-10 items-center justify-center text-muted transition hover:text-primary"
+                title="Expand sidebar"
+                aria-label="Expand sidebar"
+              >
+                <PanelLeftOpen size={16} />
+              </button>
+            )}
           </div>
         </div>
       </div>

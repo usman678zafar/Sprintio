@@ -5,13 +5,11 @@ import {
   CalendarDays,
   FolderKanban,
   LayoutDashboard,
-  LogOut,
   Settings,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 const navItems = [
@@ -50,7 +48,6 @@ const navItems = [
 export default function BottomNav() {
   const pathname = usePathname() ?? "";
   const router = useRouter();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     navItems.forEach((item) => {
@@ -58,22 +55,16 @@ export default function BottomNav() {
     });
   }, [router]);
 
-  const handleLogout = async () => {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
-    await signOut({ callbackUrl: "/login", redirect: true });
-  };
-
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle md:hidden"
       style={{ backgroundColor: "rgb(var(--bg-surface-rgb))" }}
     >
       <div
-        className="scrollbar-none overflow-x-auto px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-3"
+        className="px-2 pb-[calc(env(safe-area-inset-bottom)+0.4rem)] pt-2"
         style={{ backgroundColor: "rgb(var(--bg-surface-rgb))" }}
       >
-        <div className="flex min-w-max gap-2">
+        <div className="grid grid-cols-6 gap-1">
           {navItems.map(({ label, href, icon: Icon }) => {
             const isActive =
               pathname === href ||
@@ -86,37 +77,21 @@ export default function BottomNav() {
                 href={href}
                 prefetch
                 onTouchStart={() => router.prefetch(href)}
-                className={`flex min-w-[122px] items-center gap-3 rounded-[22px] border px-3 py-3 text-sm font-medium transition-all ${
+                className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-[11px] font-medium transition-all ${
                   isActive
-                    ? "border-[#D97757] bg-[#D97757] text-white"
-                    : "border-border-subtle bg-base text-muted"
+                    ? "bg-[#D97757] text-white"
+                    : "text-muted hover:bg-base"
                 }`}
+                aria-label={label}
+                title={label}
               >
-                <span
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${
-                    isActive
-                      ? "border-[#D97757] bg-[#B96447] text-white"
-                      : "border-border-subtle bg-surface text-muted"
-                  }`}
-                >
+                <span className="flex h-8 w-8 items-center justify-center">
                   <Icon size={18} />
                 </span>
-                <span className="whitespace-nowrap">{label}</span>
+                <span className="truncate">{label}</span>
               </Link>
             );
           })}
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="flex min-w-[122px] items-center gap-3 rounded-[22px] border border-border-subtle bg-base px-3 py-3 text-sm font-medium text-muted transition-all disabled:opacity-60"
-          >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border-subtle bg-surface text-muted">
-              <LogOut size={18} />
-            </span>
-            <span className="whitespace-nowrap">{isLoggingOut ? "Leaving..." : "Logout"}</span>
-          </button>
         </div>
       </div>
     </nav>
