@@ -160,7 +160,7 @@ export async function POST(req: Request) {
     const {
       name,
       description = "",
-      cardColor = "#D97757",
+      cardColor = "#2563EB",
       languages = [],
       memberIdentifiers = [],
     } = await req.json();

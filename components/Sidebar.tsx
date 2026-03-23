@@ -105,7 +105,7 @@ export default function Sidebar({ user }: { user: any }) {
                     isExpanded ? "justify-start gap-3" : "justify-center"
                   } ${
                     isActive
-                      ? "border-[#D97757] bg-[#D97757] text-white"
+                      ? "border-[#2563EB] bg-[#2563EB] text-white"
                       : "sidebar-hover-surface border-transparent text-muted hover:border-border-subtle hover:text-text-base"
                   }`}
                   title={label}

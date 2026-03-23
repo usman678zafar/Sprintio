@@ -18,6 +18,7 @@ export default function PublicLogo({
   href = "/",
 }: PublicLogoProps) {
   const width = Math.round((LOGO_WIDTH / LOGO_HEIGHT) * iconSize);
+  const blueLogoFilter = "brightness(0) saturate(100%) invert(39%) sepia(86%) saturate(1650%) hue-rotate(194deg) brightness(94%) contrast(99%)";
 
   return (
     <Link href={href} className={`flex items-center gap-3 transition-opacity hover:opacity-90 ${className}`}>
@@ -27,6 +28,7 @@ export default function PublicLogo({
         width={width}
         height={iconSize}
         className="shrink-0 object-contain"
+        style={{ filter: blueLogoFilter }}
         priority
       />
       {showText && (

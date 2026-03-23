@@ -88,14 +88,14 @@ export default function BottomNav() {
                 onTouchStart={() => router.prefetch(href)}
                 className={`flex min-w-[122px] items-center gap-3 rounded-[22px] border px-3 py-3 text-sm font-medium transition-all ${
                   isActive
-                    ? "border-[#D97757] bg-[#D97757] text-white"
+                    ? "border-[#2563EB] bg-[#2563EB] text-white"
                     : "border-border-subtle bg-base text-muted"
                 }`}
               >
                 <span
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${
                     isActive
-                      ? "border-[#D97757] bg-[#B96447] text-white"
+                      ? "border-[#2563EB] bg-[#1D4ED8] text-white"
                       : "border-border-subtle bg-surface text-muted"
                   }`}
                 >

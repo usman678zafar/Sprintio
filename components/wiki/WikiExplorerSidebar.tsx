@@ -189,12 +189,12 @@ export default function WikiExplorerSidebar() {
           const expanded = expandedIds[page._id] !== false;
           const active = page._id === requestedPageId;
           const iconTone = active
-            ? "border-[#D97757] bg-[#D97757] text-white"
+            ? "border-[#2563EB] bg-[#2563EB] text-white"
             : level % 3 === 0
-              ? "border-[#D97757]/20 bg-[#D97757]/10 text-[#D97757]"
+              ? "border-[#2563EB]/20 bg-[#2563EB]/10 text-[#2563EB]"
               : level % 3 === 1
-                ? "border-[#3B82F6]/20 bg-[#3B82F6]/10 text-[#3B82F6]"
-                : "border-[#10B981]/20 bg-[#10B981]/10 text-[#10B981]";
+                ? "border-[#0EA5E9]/20 bg-[#0EA5E9]/10 text-[#0EA5E9]"
+                : "border-[#14B8A6]/20 bg-[#14B8A6]/10 text-[#14B8A6]";
 
           return (
             <div key={page._id} className="group">
@@ -225,7 +225,7 @@ export default function WikiExplorerSidebar() {
                   aria-label={page.title}
                   className={`flex min-w-0 flex-1 items-center gap-3 border px-2 py-2 text-left transition ${
                     active
-                      ? "border-[#D97757]/15 bg-[#D97757]/10 text-text-base"
+                      ? "border-[#2563EB]/15 bg-[#2563EB]/10 text-text-base"
                       : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
                   }`}
                 >
