@@ -39,11 +39,6 @@ export default function WikiExplorerSidebar() {
     pages.forEach((page) => grouped.set(page.parentId, [...(grouped.get(page.parentId) || []), page]));
     return grouped;
   }, [pages]);
-  const selectedProject =
-    projects.find((project) => project._id === requestedProjectId) ||
-    projects.find((project) => project._id === pages[0]?.projectId) ||
-    null;
-
   const normalizedQuery = treeQuery.trim().toLowerCase();
   const visibleIds = useMemo(() => {
     if (!normalizedQuery) return new Set(pages.map((page) => page._id));
@@ -193,6 +188,13 @@ export default function WikiExplorerSidebar() {
           const children = (childrenByParent.get(page._id) || []).filter((child) => visibleIds.has(child._id));
           const expanded = expandedIds[page._id] !== false;
           const active = page._id === requestedPageId;
+          const iconTone = active
+            ? "border-[#D97757] bg-[#D97757] text-white"
+            : level % 3 === 0
+              ? "border-[#D97757]/20 bg-[#D97757]/10 text-[#D97757]"
+              : level % 3 === 1
+                ? "border-[#3B82F6]/20 bg-[#3B82F6]/10 text-[#3B82F6]"
+                : "border-[#10B981]/20 bg-[#10B981]/10 text-[#10B981]";
 
           return (
             <div key={page._id} className="group">
@@ -219,22 +221,16 @@ export default function WikiExplorerSidebar() {
                 <button
                   type="button"
                   onClick={() => syncUrl(requestedProjectId || page.projectId, page._id)}
-                  className={`flex min-w-0 flex-1 items-center gap-3 border px-3 py-3 text-left transition ${
+                  title={page.title}
+                  aria-label={page.title}
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center border transition ${
                     active
                       ? "border-[#D97757]/15 bg-[#D97757]/10 text-text-base"
                       : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
                   }`}
                 >
-                  <span
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center border ${
-                      active ? "border-[#D97757]/15 bg-[#D97757] text-white" : "border-border-subtle bg-surface text-muted"
-                    }`}
-                  >
+                  <span className={`flex h-9 w-9 items-center justify-center border ${iconTone}`}>
                     <BookOpen size={16} />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-semibold">{page.title}</span>
-                    <span className="block truncate text-xs text-muted">/{page.slug}</span>
                   </span>
                 </button>
 
@@ -256,17 +252,8 @@ export default function WikiExplorerSidebar() {
   };
 
   return (
-    <aside className="hidden w-[300px] shrink-0 border-r border-border-subtle bg-[#f7f3ec] lg:flex lg:flex-col">
-      <div className="flex items-center justify-between border-b border-border-subtle px-5 py-5">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted">Project Wiki</p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-text-base">
-            {selectedProject?.name || "Wiki Explorer"}
-          </h1>
-        </div>
-      </div>
-
-      <div className="space-y-4 border-b border-border-subtle px-5 py-4">
+    <aside className="hidden w-[320px] shrink-0 border-r border-border-subtle bg-[#f7f3ec] lg:flex lg:flex-col">
+      <div className="space-y-4 border-b border-border-subtle px-5 py-5">
         <div className="relative">
           <FolderKanban size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
           <select
@@ -329,7 +316,7 @@ export default function WikiExplorerSidebar() {
         ) : null}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-5">
+      <div className="flex-1 overflow-y-auto px-5 py-5">
         {loading ? (
           <div className="border border-border-subtle bg-white px-5 py-10 text-center text-sm text-muted">
             Loading wiki pages...
