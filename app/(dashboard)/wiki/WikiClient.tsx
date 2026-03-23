@@ -149,6 +149,7 @@ export default function WikiClient() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const lastPasteHandledAtRef = useRef(0);
+  const lastPasteSignatureRef = useRef("");
   const autosaveTimeoutRef = useRef<number | null>(null);
   const latestDraftRef = useRef({ title: "", content: "" });
   const lastSavedRef = useRef<{ pageId: string | null; title: string; content: string }>({
@@ -272,6 +273,38 @@ export default function WikiClient() {
     setPostImageTextContent((prev) => stripEmbeddedImageText(prev, embeddedImages));
   }, [embeddedImages]);
 
+  const wasRecentlyHandledPaste = (signature: string) => {
+    const now = Date.now();
+    if (
+      signature &&
+      lastPasteSignatureRef.current === signature &&
+      now - lastPasteHandledAtRef.current < 2000
+    ) {
+      return true;
+    }
+
+    lastPasteSignatureRef.current = signature;
+    lastPasteHandledAtRef.current = now;
+    return false;
+  };
+
+  const addEmbeddedImage = (src: string, alt = "Image") => {
+    setEmbeddedImages((prev) => {
+      if (prev.some((image) => image.src === src)) {
+        return prev;
+      }
+
+      return [
+        ...prev,
+        {
+          id: `${src}-${prev.length}`,
+          alt,
+          src,
+        },
+      ];
+    });
+  };
+
   useEffect(() => {
     if (!activePage || viewMode === "preview") return;
 
@@ -283,31 +316,27 @@ export default function WikiClient() {
         return;
       }
 
-      const now = Date.now();
-      if (now - lastPasteHandledAtRef.current < 150) {
-        return;
-      }
-
       const file = getClipboardImageFile(event.clipboardData?.items);
       const imageUrl = getClipboardImageUrl(event.clipboardData);
       if (!file && !imageUrl) return;
 
+      const pasteSignature = file
+        ? `${file.name}-${file.size}-${file.type}-${file.lastModified}`
+        : `url-${imageUrl}`;
+
+      if (wasRecentlyHandledPaste(pasteSignature)) {
+        return;
+      }
+
       event.preventDefault();
       event.stopPropagation();
-      lastPasteHandledAtRef.current = now;
+
       if (file) {
         void uploadImage(file);
         return;
       }
 
-      setEmbeddedImages((prev) => [
-        ...prev,
-        {
-          id: `${imageUrl}-${prev.length}`,
-          alt: "Image",
-          src: imageUrl!,
-        },
-      ]);
+      addEmbeddedImage(imageUrl!, "Image");
     };
 
     window.addEventListener("paste", handleWindowPaste as unknown as EventListener, true);
@@ -315,7 +344,7 @@ export default function WikiClient() {
     return () => {
       window.removeEventListener("paste", handleWindowPaste as unknown as EventListener, true);
     };
-  }, [activePage, viewMode, requestedProjectId, editorTextContent]);
+  }, [activePage, viewMode, requestedProjectId]);
 
   useEffect(() => {
     if (!activePage || !isDirty || deleting) return;
@@ -428,14 +457,7 @@ export default function WikiClient() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to upload image");
 
-      setEmbeddedImages((prev) => [
-        ...prev,
-        {
-          id: `${data.publicUrl}-${prev.length}`,
-          alt: "Image",
-          src: data.publicUrl,
-        },
-      ]);
+      addEmbeddedImage(data.publicUrl, "Image");
       setNotice("Image uploaded and inserted.");
     } catch (error: any) {
       console.error(error);
@@ -456,8 +478,8 @@ export default function WikiClient() {
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
 
       <div className="w-full">
-        <section className="overflow-hidden bg-white p-0">
-          <div className="min-w-0 bg-white">
+        <section className="overflow-hidden bg-surface p-0">
+          <div className="min-w-0 bg-surface">
             <div className="border-b border-border-subtle px-4 py-3 sm:px-5 lg:px-6">
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
@@ -473,7 +495,7 @@ export default function WikiClient() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 self-start xl:justify-end">
-                    <div className="inline-flex flex-wrap items-center gap-1 bg-base/40 p-1">
+                    <div className="inline-flex flex-wrap items-center gap-1 rounded-2xl border border-border-subtle bg-base/60 p-1">
                       {([
                         { key: "edit", label: "Edit", icon: Pencil },
                         { key: "split", label: "Split", icon: Columns2 },
@@ -483,8 +505,8 @@ export default function WikiClient() {
                           key={key}
                           type="button"
                           onClick={() => setViewMode(key)}
-                          className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-medium transition ${
-                            viewMode === key ? "bg-[#D97757] text-white" : "text-text-base hover:bg-white"
+                          className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
+                            viewMode === key ? "bg-[#D97757] text-white" : "text-text-base hover:bg-base"
                           }`}
                         >
                           <Icon size={15} />
@@ -497,7 +519,7 @@ export default function WikiClient() {
                       type="button"
                       onClick={deletePage}
                       disabled={!activePage || deleting}
-                      className="inline-flex h-11 items-center justify-center gap-2 bg-base/70 px-4 text-sm font-medium text-text-base transition hover:bg-base disabled:opacity-50"
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-border-subtle bg-base/70 px-4 text-sm font-medium text-text-base transition hover:bg-base disabled:opacity-50"
                     >
                       {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                       Delete
@@ -509,7 +531,7 @@ export default function WikiClient() {
                         void savePage();
                       }}
                       disabled={!activePage || !isDirty || saving}
-                      className="inline-flex h-11 items-center justify-center gap-2 bg-[#D97757] px-5 text-sm font-medium text-white transition hover:bg-[#c96b49] disabled:opacity-50"
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#D97757] px-5 text-sm font-medium text-white transition hover:bg-[#c96b49] disabled:opacity-50"
                     >
                       {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                       Save
@@ -518,7 +540,7 @@ export default function WikiClient() {
                 </div>
 
                 {notice ? (
-                  <div className="border border-primary/15 bg-primary/8 px-4 py-3 text-sm font-medium text-primary">
+                  <div className="rounded-2xl border border-primary/15 bg-primary/8 px-4 py-3 text-sm font-medium text-primary">
                     {notice}
                   </div>
                 ) : null}
@@ -527,7 +549,7 @@ export default function WikiClient() {
 
             {!activePage ? (
               <div className="grid min-h-[calc(100svh-7rem)] place-items-center px-6 py-12 text-center">
-                <div className="max-w-xl border border-dashed border-border-subtle bg-base/40 px-8 py-12">
+                <div className="max-w-xl rounded-[28px] border border-dashed border-border-subtle bg-base/60 px-8 py-12">
                   <p className="text-2xl font-semibold tracking-tight text-text-base">Select a wiki page</p>
                   <p className="mt-3 text-sm leading-7 text-muted">
                     Pick a page from the wiki sidebar or create a new root page to start writing Markdown.
@@ -536,7 +558,7 @@ export default function WikiClient() {
               </div>
             ) : (
               <>
-                <div className="border-b border-border-subtle bg-[#fcfaf6] px-4 py-2 sm:px-5 lg:px-6">
+                <div className="border-b border-border-subtle bg-base/60 px-4 py-2 sm:px-5 lg:px-6">
                   <div className="flex flex-wrap items-center gap-2">
                     {[
                       { label: "Heading", icon: Heading2, action: () => applySelection((selected) => `## ${selected || "Section title"}`) },
@@ -551,7 +573,7 @@ export default function WikiClient() {
                         key={label}
                         type="button"
                         onClick={action}
-                        className="inline-flex items-center gap-2 bg-white px-3 py-2 text-sm font-medium text-muted transition hover:bg-base hover:text-primary"
+                        className="inline-flex items-center gap-2 rounded-xl border border-border-subtle bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:bg-base hover:text-primary"
                       >
                         <Icon size={15} />
                         {label}
@@ -560,7 +582,7 @@ export default function WikiClient() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="inline-flex items-center gap-2 bg-white px-3 py-2 text-sm font-medium text-muted transition hover:bg-base hover:text-primary"
+                      className="inline-flex items-center gap-2 rounded-xl border border-border-subtle bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:bg-base hover:text-primary"
                     >
                       {uploading ? <Loader2 size={15} className="animate-spin" /> : <ImagePlus size={15} />}
                       Image
@@ -571,7 +593,7 @@ export default function WikiClient() {
                 <div className={`grid min-h-[calc(100svh-10rem)] ${viewMode === "split" ? "lg:grid-cols-2" : "grid-cols-1"}`}>
                   {viewMode !== "preview" ? (
                     <div className="border-b border-border-subtle lg:border-b-0 lg:border-r">
-                      <div className="flex h-full min-h-[calc(100svh-10rem)] flex-col bg-[#fffdf9]">
+                      <div className="flex h-full min-h-[calc(100svh-10rem)] flex-col bg-surface">
                         <textarea
                           ref={textareaRef}
                           value={editorTextContent}
@@ -620,7 +642,7 @@ export default function WikiClient() {
                                       event.preventDefault();
                                       event.stopPropagation();
                                     }}
-                                    className="absolute right-2 top-2 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/95 text-muted shadow-sm transition hover:text-red-600"
+                                    className="absolute right-2 top-2 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full bg-surface/95 text-muted shadow-sm transition hover:text-red-600"
                                     title="Remove image"
                                     aria-label="Remove image"
                                   >
@@ -629,7 +651,7 @@ export default function WikiClient() {
                                   <img
                                     src={image.src}
                                     alt={image.alt}
-                                    className="h-32 w-auto max-w-full border border-border-subtle bg-white object-contain"
+                                    className="h-32 w-auto max-w-full rounded-2xl border border-border-subtle bg-base p-2 object-contain"
                                   />
                                 </div>
                               ))}

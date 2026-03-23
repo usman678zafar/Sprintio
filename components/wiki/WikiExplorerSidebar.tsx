@@ -225,7 +225,7 @@ export default function WikiExplorerSidebar() {
                   aria-label={page.title}
                   className={`flex min-w-0 flex-1 items-center gap-3 border px-2 py-2 text-left transition ${
                     active
-                      ? "border-[#D97757]/15 bg-[#D97757]/10 text-text-base"
+                      ? "border-[#D97757]/20 bg-[#D97757]/12 text-text-base"
                       : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
                   }`}
                 >
@@ -253,7 +253,7 @@ export default function WikiExplorerSidebar() {
   };
 
   return (
-    <aside className="hidden w-[320px] shrink-0 border-r border-border-subtle bg-[#f7f3ec] lg:flex lg:flex-col">
+    <aside className="hidden w-[320px] shrink-0 border-r border-border-subtle bg-surface lg:flex lg:flex-col">
       <div className="space-y-4 border-b border-border-subtle px-5 py-5">
         <div className="relative">
           <FolderKanban size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
@@ -287,7 +287,7 @@ export default function WikiExplorerSidebar() {
         </button>
 
         {composerOpen ? (
-          <div className="border border-dashed border-border-subtle bg-white p-4">
+          <div className="rounded-[24px] border border-dashed border-border-subtle bg-base/70 p-4">
             <p className="text-sm font-semibold text-text-base">
               {composerParentId ? `New nested page under ${pageMap.get(composerParentId)?.title || "page"}` : "New root page"}
             </p>
@@ -319,16 +319,16 @@ export default function WikiExplorerSidebar() {
 
       <div className="flex-1 overflow-y-auto px-5 py-5">
         {loading ? (
-          <div className="border border-border-subtle bg-white px-5 py-10 text-center text-sm text-muted">
+          <div className="rounded-[24px] border border-border-subtle bg-base/70 px-5 py-10 text-center text-sm text-muted">
             Loading wiki pages...
           </div>
         ) : pages.length === 0 ? (
-          <div className="border border-dashed border-border-subtle bg-white px-5 py-10 text-center">
+          <div className="rounded-[24px] border border-dashed border-border-subtle bg-base/70 px-5 py-10 text-center">
             <p className="text-lg font-semibold text-text-base">No wiki pages yet</p>
             <p className="mt-2 text-sm text-muted">Create a root page to start documenting this project.</p>
           </div>
         ) : visibleIds.size === 0 ? (
-          <div className="border border-dashed border-border-subtle bg-white px-5 py-10 text-center text-sm text-muted">
+          <div className="rounded-[24px] border border-dashed border-border-subtle bg-base/70 px-5 py-10 text-center text-sm text-muted">
             No pages match "{treeQuery}".
           </div>
         ) : (
