@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import mongoose from "mongoose";
 
 import { authOptions } from "@/lib/auth";
@@ -29,7 +28,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { projectId, filename, contentType } = await req.json();
+    const requestContentType = req.headers.get("content-type") || "";
+    let projectId = "";
+    let filename = "";
+    let contentType = "";
+    let fileBuffer: Buffer | null = null;
+
+    if (requestContentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      projectId = String(formData.get("projectId") || "");
+      const file = formData.get("file");
+
+      if (!(file instanceof File)) {
+        return NextResponse.json({ message: "Image file is required" }, { status: 400 });
+      }
+
+      filename = file.name || `wiki-image-${Date.now()}.png`;
+      contentType = file.type || "image/png";
+      fileBuffer = Buffer.from(await file.arrayBuffer());
+    } else {
+      const json = await req.json();
+      projectId = String(json.projectId || "");
+      filename = String(json.filename || "");
+      contentType = String(json.contentType || "");
+    }
+
     if (!projectId || !filename || !contentType) {
       return NextResponse.json(
         { message: "projectId, filename, and contentType are required" },
@@ -60,13 +83,23 @@ export async function POST(req: Request) {
       Bucket: R2_BUCKET_NAME,
       Key: key,
       ContentType: contentType,
+      Body: fileBuffer || undefined,
     });
 
-    const presignedUrl = await getSignedUrl(s3Client, putCommand, { expiresIn: 3600 });
+    if (fileBuffer) {
+      await s3Client.send(putCommand);
+      return NextResponse.json(
+        {
+          publicUrl: `${R2_PUBLIC_URL}/${key}`,
+          key,
+        },
+        { status: 200 }
+      );
+    }
 
     return NextResponse.json(
       {
-        presignedUrl,
+        message: "Direct upload flow is no longer used by the client",
         publicUrl: `${R2_PUBLIC_URL}/${key}`,
         key,
       },

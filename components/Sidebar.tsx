@@ -111,13 +111,9 @@ export default function Sidebar({ user }: { user: any }) {
                   title={label}
                   aria-label={label}
                 >
-                  <span
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border transition-all ${
-                      isActive
-                        ? "border-[#D97757] bg-[#B96447] text-white"
-                        : "border-border-subtle bg-surface text-muted"
-                    }`}
-                  >
+                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center transition-all ${
+                    isActive ? "text-white" : "text-muted"
+                  }`}>
                     <Icon size={16} />
                   </span>
                   {isExpanded ? <span className="truncate">{label}</span> : null}
@@ -132,13 +128,15 @@ export default function Sidebar({ user }: { user: any }) {
             <button
               type="button"
               onClick={toggleExpanded}
-              className={`mt-3 flex w-full items-center rounded-2xl border border-border-subtle bg-surface px-4 py-3 text-sm font-medium text-muted transition hover:border-primary hover:text-primary ${
-                isExpanded ? "justify-center gap-2" : "justify-center"
+              className={`flex w-full items-center px-3 py-3 text-sm font-medium text-muted transition hover:text-primary ${
+                isExpanded ? "justify-start gap-3" : "justify-center"
               }`}
               title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
               aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
             >
-              {isExpanded ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center">
+                {isExpanded ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+              </span>
               {isExpanded ? <span>Collapse</span> : null}
             </button>
           </div>

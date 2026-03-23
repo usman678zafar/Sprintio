@@ -223,15 +223,16 @@ export default function WikiExplorerSidebar() {
                   onClick={() => syncUrl(requestedProjectId || page.projectId, page._id)}
                   title={page.title}
                   aria-label={page.title}
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center border transition ${
+                  className={`flex min-w-0 flex-1 items-center gap-3 border px-2 py-2 text-left transition ${
                     active
                       ? "border-[#D97757]/15 bg-[#D97757]/10 text-text-base"
                       : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
                   }`}
                 >
-                  <span className={`flex h-9 w-9 items-center justify-center border ${iconTone}`}>
+                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center border ${iconTone}`}>
                     <BookOpen size={16} />
                   </span>
+                  <span className="truncate text-sm font-medium">{page.title}</span>
                 </button>
 
                 <button

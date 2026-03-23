@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 
 export default function MarkdownPreview({ content }: { content: string }) {
   return (
-    <div className="h-full overflow-y-auto bg-white p-4">
+    <div className="h-full overflow-y-auto bg-white px-5 py-5">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -24,7 +24,7 @@ export default function MarkdownPreview({ content }: { content: string }) {
             return <pre className="mt-4 overflow-x-auto rounded-[24px] border border-border-subtle bg-[#151515] p-4 text-sm text-white"><code {...props}>{children}</code></pre>;
           },
           a: ({ children, href }) => <a href={href} target="_blank" rel="noreferrer" className="font-medium text-primary underline underline-offset-4">{children}</a>,
-          img: ({ src, alt }) => <img src={src || ""} alt={alt || ""} className="mt-4 w-full rounded-[24px] border border-border-subtle object-cover shadow-sm" />,
+          img: ({ src, alt }) => <img src={src || ""} alt={alt || ""} className="mt-4 h-32 w-auto max-w-full border border-border-subtle object-contain" />,
           hr: () => <hr className="my-6 border-border-subtle" />,
         }}
       >
