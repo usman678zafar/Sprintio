@@ -87,6 +87,43 @@ function getClipboardImageUrl(clipboardData: DataTransfer | null | undefined) {
   return null;
 }
 
+function parseEditorContent(content: string) {
+  const imageMatches = Array.from(content.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g));
+
+  if (imageMatches.length === 0) {
+    return {
+      beforeText: content.replace(/\n{3,}/g, "\n\n").trim(),
+      afterText: "",
+      images: [] as EmbeddedImage[],
+    };
+  }
+
+  const firstMatch = imageMatches[0];
+  const lastMatch = imageMatches[imageMatches.length - 1];
+  const firstIndex = firstMatch.index ?? 0;
+  const lastIndex = lastMatch.index ?? 0;
+  const lastMatchEnd = lastIndex + lastMatch[0].length;
+
+  const images = imageMatches.map((match, index) => ({
+    id: `${match[2]}-${index}`,
+    alt: match[1] || "Image",
+    src: match[2],
+  }));
+
+  const beforeText = content.slice(0, firstIndex).replace(/\n{3,}/g, "\n\n").trim();
+  const afterText = content
+    .slice(firstIndex, content.length)
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return {
+    beforeText,
+    afterText,
+    images,
+  };
+}
+
 export default function WikiClient() {
   const router = useRouter();
   const pathname = usePathname() || "/wiki";
@@ -99,6 +136,7 @@ export default function WikiClient() {
   const [pages, setPages] = useState<WikiPage[]>([]);
   const [draftTitle, setDraftTitle] = useState("");
   const [editorTextContent, setEditorTextContent] = useState("");
+  const [postImageTextContent, setPostImageTextContent] = useState("");
   const [embeddedImages, setEmbeddedImages] = useState<EmbeddedImage[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [loading, setLoading] = useState(true);
@@ -129,13 +167,12 @@ export default function WikiClient() {
     [projects, requestedProjectId]
   );
   const composedContent = useMemo(() => {
-    const text = stripEmbeddedImageText(editorTextContent, embeddedImages);
+    const topText = stripEmbeddedImageText(editorTextContent, embeddedImages);
+    const bottomText = stripEmbeddedImageText(postImageTextContent, embeddedImages);
     const imageMarkdown = embeddedImages.map((image) => `![${image.alt}](${image.src})`).join("\n\n");
 
-    if (text && imageMarkdown) return `${text}\n\n${imageMarkdown}`;
-    if (imageMarkdown) return imageMarkdown;
-    return text;
-  }, [editorTextContent, embeddedImages]);
+    return [topText, imageMarkdown, bottomText].filter(Boolean).join("\n\n");
+  }, [editorTextContent, postImageTextContent, embeddedImages]);
   const isDirty = !!activePage && (draftTitle.trim() !== activePage.title || composedContent !== activePage.content);
 
   useEffect(() => {
@@ -209,25 +246,18 @@ export default function WikiClient() {
     if (!activePage) {
       setDraftTitle("");
       setEditorTextContent("");
+      setPostImageTextContent("");
       setEmbeddedImages([]);
       lastSavedRef.current = { pageId: null, title: "", content: "" };
       return;
     }
 
-    const imageMatches = Array.from(activePage.content.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g));
-    const nextImages = imageMatches.map((match, index) => ({
-      id: `${match[2]}-${index}`,
-      alt: match[1] || "Image",
-      src: match[2],
-    }));
-    const nextText = activePage.content
-      .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, "")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim();
+    const parsedContent = parseEditorContent(activePage.content);
 
     setDraftTitle(activePage.title);
-    setEditorTextContent(nextText);
-    setEmbeddedImages(nextImages);
+    setEditorTextContent(parsedContent.beforeText);
+    setPostImageTextContent(parsedContent.afterText);
+    setEmbeddedImages(parsedContent.images);
     lastSavedRef.current = {
       pageId: activePage._id,
       title: activePage.title,
@@ -239,6 +269,7 @@ export default function WikiClient() {
     if (embeddedImages.length === 0) return;
 
     setEditorTextContent((prev) => stripEmbeddedImageText(prev, embeddedImages));
+    setPostImageTextContent((prev) => stripEmbeddedImageText(prev, embeddedImages));
   }, [embeddedImages]);
 
   useEffect(() => {
@@ -553,7 +584,7 @@ export default function WikiClient() {
                           placeholder={`# Welcome to the wiki\n\nStart documenting the project here.`}
                         />
                         {embeddedImages.length > 0 ? (
-                          <div className="px-5 pb-5">
+                          <div className="flex flex-1 flex-col px-5 pb-5">
                             <div className="flex flex-wrap gap-3">
                               {embeddedImages.map((image) => (
                                 <div
@@ -588,6 +619,12 @@ export default function WikiClient() {
                                 </div>
                               ))}
                             </div>
+                            <textarea
+                              value={postImageTextContent}
+                              onChange={(event) => setPostImageTextContent(event.target.value)}
+                              className="mt-4 min-h-[12rem] flex-1 resize-none bg-transparent pb-2 font-mono text-[15px] leading-7 text-text-base outline-none"
+                              placeholder="Continue writing below the images."
+                            />
                           </div>
                         ) : null}
                       </div>

@@ -384,11 +384,4 @@
     text-wrap: balance;
   }
 
-  [class*="rounded-[24px]"][class*="border-border-subtle"],
-  [class*="rounded-[26px]"][class*="border-border-subtle"],
-  [class*="rounded-[28px]"][class*="border-border-subtle"],
-  [class*="rounded-[32px]"][class*="border-border-subtle"],
-  [class*="rounded-[40px]"][class*="border-border-subtle"] {
-    border-color: transparent !important;
-  }
 }
