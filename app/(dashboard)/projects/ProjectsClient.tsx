@@ -573,8 +573,8 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                   onClick={() => setFilter(item.key)}
                   className={`relative h-full rounded-xl px-6 text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
                     filter === item.key
-                      ? "bg-primary text-white shadow-lg shadow-primary/20"
-                      : "text-muted hover:text-text-base hover:bg-base"
+                      ? "border border-[#D97757] bg-[#D97757] text-white shadow-lg shadow-[rgba(217,119,87,0.28)]"
+                      : "border border-transparent text-muted hover:text-text-base hover:bg-base"
                   }`}
                 >
                   {item.label}

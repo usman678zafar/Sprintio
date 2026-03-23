@@ -608,9 +608,24 @@ export default function WikiClient() {
                                       return next;
                                     });
                                   }}
-                                  className="cursor-move"
+                                  className="relative cursor-move"
                                   title="Drag to reorder"
                                 >
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEmbeddedImages((prev) => prev.filter((item) => item.id !== image.id));
+                                    }}
+                                    onMouseDown={(event) => {
+                                      event.preventDefault();
+                                      event.stopPropagation();
+                                    }}
+                                    className="absolute right-2 top-2 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/95 text-muted shadow-sm transition hover:text-red-600"
+                                    title="Remove image"
+                                    aria-label="Remove image"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
                                   <img
                                     src={image.src}
                                     alt={image.alt}
