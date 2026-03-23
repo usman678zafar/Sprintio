@@ -57,14 +57,15 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle shadow-[0_-12px_28px_rgba(25,20,16,0.08)] md:hidden"
       style={{ backgroundColor: "rgb(var(--bg-surface-rgb))" }}
     >
       <div
         className="px-2 pb-[calc(env(safe-area-inset-bottom)+0.4rem)] pt-2"
         style={{ backgroundColor: "rgb(var(--bg-surface-rgb))" }}
       >
-        <div className="grid grid-cols-6 gap-1">
+        <div className="scrollbar-none overflow-x-auto">
+          <div className="flex min-w-max gap-1">
           {navItems.map(({ label, href, icon: Icon }) => {
             const isActive =
               pathname === href ||
@@ -77,7 +78,7 @@ export default function BottomNav() {
                 href={href}
                 prefetch
                 onTouchStart={() => router.prefetch(href)}
-                className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-[11px] font-medium transition-all ${
+                className={`flex min-w-[4.5rem] flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-[11px] font-medium transition-all ${
                   isActive
                     ? "bg-[#D97757] text-white"
                     : "text-muted hover:bg-base"
@@ -92,6 +93,7 @@ export default function BottomNav() {
               </Link>
             );
           })}
+          </div>
         </div>
       </div>
     </nav>

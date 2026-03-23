@@ -98,11 +98,11 @@ export default function MobileSidebar({ user }: { user: any }) {
       )}
 
       <div
-        className={`fixed inset-y-2 left-2 z-50 flex w-[min(21rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[32px] border border-border-subtle bg-surface transition-transform duration-300 ease-out ${
+        className={`fixed inset-y-2 left-2 z-50 flex w-[min(21rem,calc(100vw-1rem))] transform flex-col overflow-hidden rounded-[32px] border border-border-subtle bg-surface shadow-2xl transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-border-subtle px-5">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border-subtle px-5">
           <Logo href="/dashboard" />
           <button
             onClick={() => setIsOpen(false)}
@@ -113,7 +113,7 @@ export default function MobileSidebar({ user }: { user: any }) {
           </button>
         </div>
 
-        <div className="border-b border-border-subtle px-5 py-4">
+        <div className="shrink-0 border-b border-border-subtle px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted">
             Workspace
           </p>
@@ -122,7 +122,7 @@ export default function MobileSidebar({ user }: { user: any }) {
           </p>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-5">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5">
           <nav className="space-y-2">
             {navItems.map(({ label, href, icon: Icon }) => {
               const isActive =
@@ -156,7 +156,7 @@ export default function MobileSidebar({ user }: { user: any }) {
           </nav>
         </div>
 
-        <div className="border-t border-border-subtle p-4">
+        <div className="shrink-0 border-t border-border-subtle bg-surface p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
           <div className="rounded-[24px] bg-surface p-3">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">

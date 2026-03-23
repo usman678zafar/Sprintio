@@ -535,12 +535,12 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-end gap-3">
-            <button type="button" onClick={() => setShowModal(true)} className="btn-primary px-4 py-2.5">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+            <button type="button" onClick={() => setShowModal(true)} className="btn-primary w-full px-4 py-2.5 sm:w-auto">
               <Plus size={18} />
               Add New Project
             </button>
-            <div className="flex h-11 items-center rounded-full border border-border-subtle bg-surface p-1">
+            <div className="flex h-11 items-center self-end rounded-full border border-border-subtle bg-surface p-1">
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
@@ -565,36 +565,38 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
 
         <section className="mb-10 py-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex h-14 items-center rounded-2xl border border-border-subtle bg-surface p-1.5">
-              {filters.map((item) => (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => setFilter(item.key)}
-                  className={`relative h-full rounded-xl px-6 text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
-                    filter === item.key
-                      ? "border border-[#D97757] bg-[#D97757] text-white shadow-lg shadow-[rgba(217,119,87,0.28)]"
-                      : "border border-transparent text-muted hover:text-text-base hover:bg-base"
-                  }`}
-                >
-                  {item.label}
-                  {filter === item.key && (
-                    <span 
-                      className="absolute -bottom-1 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full bg-white opacity-50"
-                      style={{ animation: 'float 2s infinite ease-in-out' }}
-                    />
-                  )}
-                </button>
-              ))}
+            <div className="scrollbar-none -mx-1 overflow-x-auto px-1">
+              <div className="flex h-14 min-w-max items-center rounded-2xl border border-border-subtle bg-surface p-1.5">
+                {filters.map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => setFilter(item.key)}
+                    className={`relative h-full whitespace-nowrap rounded-xl px-4 text-sm font-bold uppercase tracking-widest transition-all duration-300 sm:px-6 ${
+                      filter === item.key
+                        ? "border border-[#D97757] bg-[#D97757] text-white shadow-lg shadow-[rgba(217,119,87,0.28)]"
+                        : "border border-transparent text-muted hover:text-text-base hover:bg-base"
+                    }`}
+                  >
+                    {item.label}
+                    {filter === item.key && (
+                      <span 
+                        className="absolute -bottom-1 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full bg-white opacity-50"
+                        style={{ animation: 'float 2s infinite ease-in-out' }}
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
               <span className="text-xs font-bold uppercase tracking-widest text-muted/60">Sort by:</span>
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <select
                   value={sortMode}
                   onChange={(event) => setSortMode(event.target.value as SortMode)}
-                  className="h-14 appearance-none rounded-2xl border border-border-subtle bg-surface pl-6 pr-12 text-sm font-bold uppercase tracking-widest text-text-base outline-none hover:border-brand/40 transition-colors"
+                  className="h-14 w-full appearance-none rounded-2xl border border-border-subtle bg-surface pl-6 pr-12 text-sm font-bold uppercase tracking-widest text-text-base outline-none transition-colors hover:border-brand/40 sm:min-w-[220px]"
                 >
                   {sorts.map((sort) => (
                     <option key={sort.key} value={sort.key}>
