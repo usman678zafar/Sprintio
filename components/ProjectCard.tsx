@@ -9,9 +9,18 @@ interface ProjectCardProps {
   taskCount: number;
   onEdit: (id: string, name: string) => void;
   onDelete: (id: string) => void;
+  showActions?: boolean;
 }
 
-export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, onDelete }: ProjectCardProps) {
+export default function ProjectCard({
+  id,
+  name,
+  memberCount,
+  taskCount,
+  onEdit,
+  onDelete,
+  showActions = true,
+}: ProjectCardProps) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -48,47 +57,49 @@ export default function ProjectCard({ id, name, memberCount, taskCount, onEdit, 
         </div>
       </Link>
       
-      <div className="absolute top-4 right-4" ref={menuRef}>
-        <button 
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowMenu(!showMenu);
-          }}
-          className="p-1.5 text-muted hover:text-muted dark:hover:text-muted hover:bg-surface dark:hover:bg-surface rounded-lg transition opacity-0 group-hover:opacity-100"
-        >
-          <MoreVertical size={20} />
-        </button>
+      {showActions ? (
+        <div className="absolute top-4 right-4" ref={menuRef}>
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowMenu(!showMenu);
+            }}
+            className="p-1.5 text-muted hover:text-muted dark:hover:text-muted hover:bg-surface dark:hover:bg-surface rounded-lg transition opacity-0 group-hover:opacity-100"
+          >
+            <MoreVertical size={20} />
+          </button>
 
-        {showMenu && (
-          <div className="absolute right-0 mt-1 w-48 bg-[var(--color-light-surface)] rounded-lg shadow-lg border border-border-subtle py-1 z-10">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowMenu(false);
-                onEdit(id, name);
-              }}
-              className="w-full text-left px-4 py-2 text-sm text-muted hover:bg-surface dark:hover:bg-surface flex items-center gap-2"
-            >
-              <Edit2 size={14} />
-              Edit Name
-            </button>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowMenu(false);
-                onDelete(id);
-              }}
-              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
-            >
-              <Trash2 size={14} />
-              Delete Project
-            </button>
-          </div>
-        )}
-      </div>
+          {showMenu && (
+            <div className="absolute right-0 mt-1 w-48 bg-[var(--color-light-surface)] rounded-lg shadow-lg border border-border-subtle py-1 z-10">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowMenu(false);
+                  onEdit(id, name);
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-muted hover:bg-surface dark:hover:bg-surface flex items-center gap-2"
+              >
+                <Edit2 size={14} />
+                Edit Name
+              </button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowMenu(false);
+                  onDelete(id);
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+              >
+                <Trash2 size={14} />
+                Delete Project
+              </button>
+            </div>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }

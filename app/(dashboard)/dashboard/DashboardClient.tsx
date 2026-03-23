@@ -191,6 +191,7 @@ export default function DashboardClient({
                       name={project.name}
                       memberCount={project.memberCount}
                       taskCount={project.taskCount}
+                      showActions={false}
                       onEdit={() => {}}
                       onDelete={() => {}}
                     />
