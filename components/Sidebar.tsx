@@ -146,7 +146,7 @@ export default function Sidebar({ user }: { user: any }) {
         </div>
 
         <div className="p-3">
-          <div className={`rounded-[24px] border border-border-subtle bg-base/60 p-3 ${isExpanded ? "" : "flex justify-center"}`}>
+          <div className={`rounded-[24px] border border-border-subtle bg-base/60 p-3 ${isExpanded ? "" : "space-y-2"}`}>
             {isExpanded ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -169,15 +169,40 @@ export default function Sidebar({ user }: { user: any }) {
                 </button>
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={toggleExpanded}
-                className="inline-flex h-10 w-10 items-center justify-center text-muted transition hover:text-primary"
-                title="Expand sidebar"
-                aria-label="Expand sidebar"
-              >
-                <PanelLeftOpen size={16} />
-              </button>
+              <>
+                <div className="flex justify-center">
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white"
+                    title={userName}
+                    aria-label={userName}
+                  >
+                    {userInitial}
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="inline-flex h-10 w-10 items-center justify-center text-muted transition hover:text-primary disabled:opacity-50"
+                    title={isLoggingOut ? "Leaving..." : "Logout"}
+                    aria-label={isLoggingOut ? "Leaving..." : "Logout"}
+                  >
+                    <LogOut size={16} />
+                  </button>
+                </div>
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={toggleExpanded}
+                    className="inline-flex h-10 w-10 items-center justify-center text-muted transition hover:text-primary"
+                    title="Expand sidebar"
+                    aria-label="Expand sidebar"
+                  >
+                    <PanelLeftOpen size={16} />
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>
