@@ -56,6 +56,11 @@ type SavedRef = {
   document: WikiDocument;
 };
 
+type LinkSelection = {
+  from: number;
+  to: number;
+};
+
 function isWikiDocument(value: unknown): value is JSONContent {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }
@@ -124,6 +129,21 @@ function escapeAttributeSelector(value: string) {
   return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
 
+function normalizeLinkValue(value: string) {
+  const trimmedValue = value.trim();
+  if (!trimmedValue) return "";
+
+  if (
+    trimmedValue.startsWith("/") ||
+    trimmedValue.startsWith("#") ||
+    /^[a-z][a-z0-9+.-]*:/i.test(trimmedValue)
+  ) {
+    return trimmedValue;
+  }
+
+  return `https://${trimmedValue}`;
+}
+
 export default function WikiClient() {
   const router = useRouter();
   const pathname = usePathname() || "/wiki";
@@ -148,6 +168,8 @@ export default function WikiClient() {
   const [composerParentId, setComposerParentId] = useState<string | null>(null);
   const [composerTitle, setComposerTitle] = useState("");
   const [creating, setCreating] = useState(false);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("https://");
 
   const activePage = pages.find((page) => page._id === requestedPageId) || null;
   const selectedProject = projects.find((project) => project._id === requestedProjectId) || null;
@@ -166,6 +188,7 @@ export default function WikiClient() {
   const draftTitleRef = useRef("");
   const requestedProjectIdRef = useRef("");
   const viewModeRef = useRef<ViewMode>("split");
+  const linkSelectionRef = useRef<LinkSelection | null>(null);
   const latestDraftRef = useRef<DraftRef>({ title: "", content: "", document: null });
   const lastSavedRef = useRef<SavedRef>({ pageId: null, title: "", content: "", document: null });
   const saveRequestIdRef = useRef(0);
@@ -380,6 +403,53 @@ export default function WikiClient() {
     }).run();
 
     schedulePreviewRefresh();
+  }
+
+  function openLinkDialog() {
+    if (!editor) return;
+
+    const currentHref =
+      typeof editor.getAttributes("link").href === "string"
+        ? editor.getAttributes("link").href
+        : "";
+    const selection = editor.state.selection;
+
+    if (selection.empty && !currentHref) {
+      setNoticeMessage("Select some text first, or place the cursor inside an existing link.");
+      return;
+    }
+
+    linkSelectionRef.current = {
+      from: selection.from,
+      to: selection.to,
+    };
+    setLinkUrl(currentHref || "https://");
+    setLinkDialogOpen(true);
+  }
+
+  function closeLinkDialog() {
+    setLinkDialogOpen(false);
+  }
+
+  function applyLink() {
+    if (!editor || !linkSelectionRef.current) return;
+
+    const normalizedHref = normalizeLinkValue(linkUrl);
+    const { from, to } = linkSelectionRef.current;
+    const chain = editor.chain().focus().setTextSelection({ from, to }).extendMarkRange("link");
+
+    if (!normalizedHref) {
+      chain.unsetLink().run();
+      schedulePreviewRefresh();
+      setNoticeMessage("Link removed.");
+      closeLinkDialog();
+      return;
+    }
+
+    chain.setLink({ href: normalizedHref }).run();
+    schedulePreviewRefresh();
+    setNoticeMessage("Link updated.");
+    closeLinkDialog();
   }
 
   async function loadWiki() {
@@ -1015,23 +1085,7 @@ export default function WikiClient() {
                     label: "Link",
                     icon: Link2,
                     active: editor?.isActive("link"),
-                    action: () => {
-                      if (!editor) return;
-
-                      const currentHref =
-                        typeof editor.getAttributes("link").href === "string"
-                          ? editor.getAttributes("link").href
-                          : "";
-                      const nextHref = window.prompt("Enter a URL", currentHref || "https://");
-
-                      if (nextHref === null) return;
-                      if (!nextHref.trim()) {
-                        editor.chain().focus().extendMarkRange("link").unsetLink().run();
-                        return;
-                      }
-
-                      editor.chain().focus().extendMarkRange("link").setLink({ href: nextHref.trim() }).run();
-                    },
+                    action: openLinkDialog,
                   },
                 ].map(({ label, icon: Icon, action, active }) => (
                   <button
@@ -1152,6 +1206,59 @@ export default function WikiClient() {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {linkDialogOpen ? (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/45 p-0 sm:items-center sm:p-4">
+          <div className="modal-surface w-full rounded-t-[28px] p-6 sm:max-w-lg sm:rounded-[28px]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-subtle">Insert Link</p>
+                <h3 className="mt-2 text-xl font-semibold text-text-base">Attach a URL to the selected text</h3>
+                <p className="mt-2 text-sm text-muted">Leave the field empty if you want to remove the current link.</p>
+              </div>
+              <button
+                type="button"
+                onClick={closeLinkDialog}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-base text-muted transition hover:border-primary hover:text-primary"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form
+              className="mt-5 space-y-4"
+              onSubmit={(event) => {
+                event.preventDefault();
+                applyLink();
+              }}
+            >
+              <div>
+                <label htmlFor="wiki-link-input" className="mb-2 block text-sm font-medium text-text-base">
+                  URL
+                </label>
+                <input
+                  id="wiki-link-input"
+                  type="text"
+                  value={linkUrl}
+                  onChange={(event) => setLinkUrl(event.target.value)}
+                  placeholder="https://example.com"
+                  className="field-surface"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <button type="submit" className="btn-primary flex-1">
+                  Save link
+                </button>
+                <button type="button" onClick={closeLinkDialog} className="btn-secondary flex-1">
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       ) : null}
