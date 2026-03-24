@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, Ellipsis, FilePlus2, FolderKanban, Plus, Search, Trash2 } from "lucide-react";
+import { BookOpen, Ellipsis, FilePlus2, FolderKanban, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type ProjectOption = { _id: string; name: string; role: "MASTER" | "MEMBER" };
@@ -12,6 +12,7 @@ type WikiPage = {
   title: string;
   slug: string;
   content: string;
+  document?: Record<string, unknown> | null;
   order: number;
 };
 
@@ -31,6 +32,7 @@ export default function WikiExplorerSidebar() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [composerParentId, setComposerParentId] = useState<string | null>(null);
   const [composerTitle, setComposerTitle] = useState("");
+  const [editingPageId, setEditingPageId] = useState<string | null>(null);
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
   const [openMenuPageId, setOpenMenuPageId] = useState<string | null>(null);
 
@@ -170,6 +172,15 @@ export default function WikiExplorerSidebar() {
     setComposerOpen(true);
     setComposerParentId(parentId);
     setComposerTitle("");
+    setEditingPageId(null);
+    setOpenMenuPageId(null);
+  };
+
+  const openRename = (page: WikiPage) => {
+    setComposerOpen(true);
+    setComposerParentId(page.parentId);
+    setComposerTitle(page.title);
+    setEditingPageId(page._id);
     setOpenMenuPageId(null);
   };
 
@@ -214,6 +225,34 @@ export default function WikiExplorerSidebar() {
 
     setCreating(true);
     try {
+      if (editingPageId) {
+        const pageToEdit = pages.find((page) => page._id === editingPageId);
+        if (!pageToEdit) {
+          throw new Error("Page not found");
+        }
+
+        const response = await fetch(`/api/wiki/${editingPageId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: composerTitle,
+            content: pageToEdit.content || "",
+            document: pageToEdit.document || null,
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Failed to rename page");
+
+        const updatedPage = data.page as WikiPage;
+        setPages((prev) => prev.map((page) => (page._id === updatedPage._id ? { ...page, ...updatedPage } : page)));
+        setComposerOpen(false);
+        setComposerParentId(null);
+        setComposerTitle("");
+        setEditingPageId(null);
+        window.dispatchEvent(new Event("wiki-data-refresh"));
+        return;
+      }
+
       const response = await fetch("/api/wiki", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -234,6 +273,7 @@ export default function WikiExplorerSidebar() {
       setComposerOpen(false);
       setComposerParentId(null);
       setComposerTitle("");
+      setEditingPageId(null);
       syncUrl(requestedProjectId, page._id);
       window.dispatchEvent(new Event("wiki-data-refresh"));
     } catch (error) {
@@ -330,6 +370,14 @@ export default function WikiExplorerSidebar() {
                       </button>
                       <button
                         type="button"
+                        onClick={() => openRename(page)}
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-text-base transition hover:bg-base"
+                      >
+                        <Pencil size={15} />
+                        Edit
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => {
                           void deletePage(page);
                         }}
@@ -388,13 +436,17 @@ export default function WikiExplorerSidebar() {
         {composerOpen ? (
           <div className="rounded-[24px] border border-dashed border-border-subtle bg-base/70 p-4">
             <p className="text-sm font-semibold text-text-base">
-              {composerParentId ? `New nested page under ${pageMap.get(composerParentId)?.title || "page"}` : "New root page"}
+              {editingPageId
+                ? `Rename ${pageMap.get(editingPageId)?.title || "page"}`
+                : composerParentId
+                  ? `New nested page under ${pageMap.get(composerParentId)?.title || "page"}`
+                  : "New root page"}
             </p>
             <input
               type="text"
               value={composerTitle}
               onChange={(event) => setComposerTitle(event.target.value)}
-              placeholder="Enter page title"
+              placeholder={editingPageId ? "Enter new page name" : "Enter page title"}
               className="field-surface mt-3"
               autoFocus
             />
@@ -406,9 +458,18 @@ export default function WikiExplorerSidebar() {
                 className="btn-primary flex-1"
               >
                 <Plus size={16} />
-                {creating ? "Creating..." : "Create"}
+                {creating ? (editingPageId ? "Saving..." : "Creating...") : editingPageId ? "Save name" : "Create"}
               </button>
-              <button type="button" onClick={() => setComposerOpen(false)} className="btn-secondary flex-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setComposerOpen(false);
+                  setComposerParentId(null);
+                  setComposerTitle("");
+                  setEditingPageId(null);
+                }}
+                className="btn-secondary flex-1"
+              >
                 Cancel
               </button>
             </div>
