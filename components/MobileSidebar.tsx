@@ -136,14 +136,14 @@ export default function MobileSidebar({ user }: { user: any }) {
                   href={href}
                   className={`flex items-center gap-3 rounded-[22px] border px-3 py-3 text-sm font-medium transition-all ${
                     isActive
-                      ? "border-[#D97757] bg-[#D97757] text-white"
+                      ? "border-transparent text-[#D97757]"
                       : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
                   }`}
                 >
                   <span
                     className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${
                       isActive
-                        ? "border-[#D97757] bg-[#B96447] text-white"
+                        ? "border-transparent bg-transparent text-[#D97757]"
                         : "border-border-subtle bg-base text-muted"
                     }`}
                   >

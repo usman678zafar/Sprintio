@@ -110,18 +110,16 @@ export default function Sidebar({ user }: { user: any }) {
   return (
     <aside
       className={`hidden shrink-0 border-r border-border-subtle bg-surface p-3 transition-[width] duration-300 lg:flex lg:flex-col ${
-        isExpanded ? "w-72 xl:w-[18.5rem]" : "w-[96px] xl:w-[104px]"
+        isExpanded ? "w-72 xl:w-[18.5rem]" : "w-[72px] xl:w-[76px]"
       }`}
     >
       <div className="flex h-[calc(100svh-1.5rem)] flex-col overflow-hidden bg-surface">
         <div className={`flex h-16 items-center px-4 ${isExpanded ? "justify-between" : "justify-center"}`}>
-          <Logo href="/dashboard" showText={isExpanded} iconSize={28} />
+          {isExpanded ? <Logo href="/dashboard" showText iconSize={28} /> : null}
           <button
             type="button"
             onClick={toggleExpanded}
-            className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-transparent text-muted transition hover:border-border-subtle hover:bg-base hover:text-primary ${
-              isExpanded ? "" : "absolute opacity-0 pointer-events-none"
-            }`}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-transparent text-muted transition hover:border-border-subtle hover:bg-base hover:text-primary"
             title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
             aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
           >
@@ -129,7 +127,7 @@ export default function Sidebar({ user }: { user: any }) {
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col px-3 py-6">
+        <div className={`flex flex-1 flex-col px-3 ${isExpanded ? "py-6" : "pt-3 pb-6"}`}>
           <nav className="space-y-2">
             {navItems.map(({ label, href, icon: Icon }) => {
               const isActive =
@@ -143,22 +141,18 @@ export default function Sidebar({ user }: { user: any }) {
                   href={href}
                   prefetch
                   onMouseEnter={() => router.prefetch(href)}
-                  className={`group relative flex items-center rounded-[22px] border px-3 py-3 text-sm font-medium transition-all duration-200 ${
+                  className={`group relative flex items-center rounded-[22px] border px-3 py-2 text-sm font-medium transition-all duration-200 ${
                     isExpanded ? "justify-start gap-3" : "justify-center"
-                  } ${
-                    isActive
-                      ? "border-[#D97757] bg-[#D97757] text-white"
-                      : "sidebar-hover-surface border-transparent text-muted hover:border-border-subtle hover:text-text-base"
-                  }`}
+                  } ${isActive ? "border-transparent text-[#D97757]" : "sidebar-hover-surface border-transparent text-muted hover:border-border-subtle hover:text-text-base"}`}
                   title={label}
                   aria-label={label}
                 >
                   <span className={`flex h-9 w-9 shrink-0 items-center justify-center transition-all ${
-                    isActive ? "text-white" : "text-muted"
+                    isActive ? "text-[#D97757]" : "text-muted"
                   }`}>
                     <Icon size={16} />
                   </span>
-                  {isExpanded ? <span className="truncate">{label}</span> : null}
+                  {isExpanded ? <span className={`truncate ${isActive ? "font-semibold text-[#D97757]" : ""}`}>{label}</span> : null}
                 </Link>
               );
             })}
@@ -166,7 +160,7 @@ export default function Sidebar({ user }: { user: any }) {
         </div>
 
         <div className="p-3">
-          <div className={`rounded-[24px] border border-border-subtle bg-base/60 p-3 ${isExpanded ? "" : "space-y-2"}`}>
+          <div className={isExpanded ? "rounded-[24px] border border-border-subtle bg-base/60 p-3" : "space-y-2"}>
             {isExpanded ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -189,40 +183,18 @@ export default function Sidebar({ user }: { user: any }) {
                 </button>
               </div>
             ) : (
-              <>
-                <div className="flex justify-center">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white"
-                    title={userName}
-                    aria-label={userName}
-                  >
-                    {userInitial}
-                  </div>
-                </div>
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    disabled={isLoggingOut}
-                    className="inline-flex h-10 w-10 items-center justify-center text-muted transition hover:text-primary disabled:opacity-50"
-                    title={isLoggingOut ? "Leaving..." : "Logout"}
-                    aria-label={isLoggingOut ? "Leaving..." : "Logout"}
-                  >
-                    <LogOut size={16} />
-                  </button>
-                </div>
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    onClick={toggleExpanded}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border-subtle bg-surface text-muted transition hover:border-primary hover:text-primary"
-                    title="Expand sidebar"
-                    aria-label="Expand sidebar"
-                  >
-                    <PanelLeftOpen size={16} />
-                  </button>
-                </div>
-              </>
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="inline-flex h-10 w-10 items-center justify-center text-muted transition hover:text-primary disabled:opacity-50"
+                  title={isLoggingOut ? "Leaving..." : "Logout"}
+                  aria-label={isLoggingOut ? "Leaving..." : "Logout"}
+                >
+                  <LogOut size={16} />
+                </button>
+              </div>
             )}
           </div>
         </div>
