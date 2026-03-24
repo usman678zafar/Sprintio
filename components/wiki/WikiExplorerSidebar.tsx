@@ -288,7 +288,7 @@ export default function WikiExplorerSidebar() {
     if (!nodes.length) return null;
 
     return (
-      <div className={level === 0 ? "space-y-1.5" : "mt-1.5 space-y-1.5 border-l border-border-subtle pl-4"}>
+      <div className={level === 0 ? "space-y-1" : "mt-1 space-y-1 border-l border-border-subtle pl-3"}>
         {nodes.map((page) => {
           const children = (childrenByParent.get(page._id) || []).filter((child) => visibleIds.has(child._id));
           const expanded = expandedIds[page._id] !== false;
@@ -303,7 +303,7 @@ export default function WikiExplorerSidebar() {
 
           return (
             <div key={page._id} className="group">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {children.length > 0 ? (
                   <button
                     type="button"
@@ -313,12 +313,12 @@ export default function WikiExplorerSidebar() {
                         [page._id]: prev[page._id] === false ? true : !prev[page._id],
                       }))
                     }
-                    className="inline-flex h-8 w-8 items-center justify-center border border-border-subtle bg-base text-muted transition hover:border-primary hover:text-primary"
+                    className="inline-flex h-7 w-7 items-center justify-center border border-border-subtle bg-base text-muted transition hover:border-primary hover:text-primary"
                   >
                     <BookOpen size={15} />
                   </button>
                 ) : (
-                  <span className="inline-flex h-8 w-8 items-center justify-center text-muted">
+                  <span className="inline-flex h-7 w-7 items-center justify-center text-muted">
                     <BookOpen size={15} />
                   </span>
                 )}
@@ -328,13 +328,13 @@ export default function WikiExplorerSidebar() {
                   onClick={() => syncUrl(requestedProjectId || page.projectId, page._id)}
                   title={page.title}
                   aria-label={page.title}
-                  className={`flex min-w-0 flex-1 items-center gap-3 border px-2 py-2 text-left transition ${
+                  className={`flex min-w-0 flex-1 items-center gap-2 border px-2 py-1.5 text-left transition ${
                     active
                       ? "border-[#D97757]/20 bg-[#D97757]/12 text-text-base"
                       : "border-transparent text-muted hover:border-border-subtle hover:bg-base hover:text-text-base"
                   }`}
                 >
-                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center border ${iconTone}`}>
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center border ${iconTone}`}>
                     <BookOpen size={16} />
                   </span>
                   <span className="truncate text-sm font-medium">{page.title}</span>
@@ -344,14 +344,14 @@ export default function WikiExplorerSidebar() {
                   <button
                     type="button"
                     onClick={() => setOpenMenuPageId((current) => (current === page._id ? null : page._id))}
-                    className="inline-flex h-9 w-9 items-center justify-center border border-border-subtle bg-surface text-muted opacity-100 transition hover:border-primary hover:text-primary lg:opacity-0 lg:group-hover:opacity-100"
+                    className="inline-flex h-8 w-8 items-center justify-center border border-border-subtle bg-surface text-muted opacity-100 transition hover:border-primary hover:text-primary lg:opacity-0 lg:group-hover:opacity-100"
                     aria-label={`Open actions for ${page.title}`}
                   >
                     <Ellipsis size={16} />
                   </button>
 
                   {openMenuPageId === page._id ? (
-                    <div className="absolute right-0 top-11 z-20 min-w-[180px] rounded-2xl border border-[#d9c9b7] bg-[#fffdfa] p-2 shadow-[0_20px_48px_rgba(25,20,16,0.18)]">
+                    <div className="absolute right-0 top-10 z-20 min-w-[170px] rounded-2xl border border-[#d9c9b7] bg-[#fffdfa] p-2 shadow-[0_20px_48px_rgba(25,20,16,0.18)]">
                       <button
                         type="button"
                         onClick={() => openComposer(null)}
@@ -400,14 +400,14 @@ export default function WikiExplorerSidebar() {
   };
 
   return (
-    <aside className="hidden w-[320px] shrink-0 border-r border-border-subtle bg-surface lg:flex lg:flex-col">
-      <div className="space-y-4 border-b border-border-subtle px-5 py-5">
+    <aside className="hidden w-[236px] shrink-0 border-r border-border-subtle bg-surface lg:flex lg:flex-col">
+      <div className="space-y-2.5 border-b border-border-subtle px-3 py-2.5">
         <div className="relative">
           <FolderKanban size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
           <select
             value={requestedProjectId}
             onChange={(event) => syncUrl(event.target.value, null)}
-            className="field-surface h-11 pl-11"
+            className="field-surface h-10 pl-10"
           >
             {projects.map((project) => (
               <option key={project._id} value={project._id}>
@@ -424,11 +424,11 @@ export default function WikiExplorerSidebar() {
             value={treeQuery}
             onChange={(event) => setTreeQuery(event.target.value)}
             placeholder="Search wiki pages"
-            className="field-surface h-11 pl-11 pr-4"
+            className="field-surface h-10 pl-10 pr-3"
           />
         </div>
 
-        <button type="button" onClick={() => openComposer(null)} className="btn-primary w-full">
+        <button type="button" onClick={() => openComposer(null)} className="btn-primary h-10 w-full">
           <FilePlus2 size={16} />
           New Page
         </button>
@@ -477,7 +477,7 @@ export default function WikiExplorerSidebar() {
         ) : null}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-5">
+      <div className="flex-1 overflow-y-auto px-2.5 py-2.5">
         {loading ? (
           <div className="rounded-[24px] border border-border-subtle bg-base/70 px-5 py-10 text-center text-sm text-muted">
             Loading wiki pages...
