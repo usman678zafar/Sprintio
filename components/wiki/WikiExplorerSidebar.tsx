@@ -108,7 +108,7 @@ export default function WikiExplorerSidebar() {
 
   useEffect(() => {
     void loadWiki();
-  }, [requestedProjectId, requestedPageId]);
+  }, [requestedProjectId]);
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
@@ -122,6 +122,20 @@ export default function WikiExplorerSidebar() {
       document.removeEventListener("mousedown", handlePointerDown);
     };
   }, []);
+
+  useEffect(() => {
+    if (loading) return;
+
+    const pageExists = requestedPageId ? pages.some((page) => page._id === requestedPageId) : false;
+    if (requestedPageId && pageExists) return;
+
+    const fallbackPageId = pages[0]?._id || null;
+    const fallbackProjectId = requestedProjectId || pages[0]?.projectId || null;
+
+    if (requestedPageId !== (fallbackPageId || "")) {
+      syncUrl(fallbackProjectId, fallbackPageId, true);
+    }
+  }, [loading, pages, requestedPageId, requestedProjectId]);
 
   const loadWiki = async () => {
     setLoading(true);

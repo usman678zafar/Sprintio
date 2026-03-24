@@ -27,6 +27,7 @@ import {
   Save,
   X,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import MarkdownPreview from "@/components/wiki/MarkdownPreview";
@@ -125,6 +126,7 @@ function normalizeLinkValue(value: string) {
 }
 
 export default function WikiClient() {
+  const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname() || "/wiki";
   const searchParams = useSearchParams();
@@ -152,6 +154,11 @@ export default function WikiClient() {
 
   const activePage = pages.find((page) => page._id === requestedPageId) || null;
   const pageOptions = buildFlatPageOptions(pages);
+  const creatorName =
+    activePage?.createdBy?.name?.trim() ||
+    session?.user?.name?.trim() ||
+    "Unknown creator";
+  const creatorInitial = creatorName.charAt(0).toUpperCase() || "U";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editorScrollRef = useRef<HTMLDivElement>(null);
@@ -687,7 +694,7 @@ export default function WikiClient() {
 
   useEffect(() => {
     void loadWiki();
-  }, [requestedProjectId, requestedPageId]);
+  }, [requestedProjectId]);
 
   useEffect(() => {
     const handleRefresh = () => {
@@ -699,7 +706,21 @@ export default function WikiClient() {
     return () => {
       window.removeEventListener("wiki-data-refresh", handleRefresh);
     };
-  }, [requestedProjectId, requestedPageId]);
+  }, [requestedProjectId]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    const pageExists = requestedPageId ? pages.some((page) => page._id === requestedPageId) : false;
+    if (requestedPageId && pageExists) return;
+
+    const fallbackPageId = pages[0]?._id || null;
+    const fallbackProjectId = requestedProjectId || pages[0]?.projectId || null;
+
+    if (requestedPageId !== (fallbackPageId || "")) {
+      syncUrl(fallbackProjectId, fallbackPageId, true);
+    }
+  }, [loading, pages, requestedPageId, requestedProjectId]);
 
   useEffect(() => {
     if (!editor) return;
@@ -825,30 +846,37 @@ export default function WikiClient() {
 
       <section className="flex min-h-full flex-col bg-surface">
         <div className="border-b border-border-subtle px-4 py-4 sm:px-5 lg:px-6">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
-              <div className="min-w-0 flex-1">
-                <input
-                  type="text"
-                  value={draftTitle}
-                  onChange={(event) => setDraftTitle(event.target.value)}
-                  disabled={!activePage}
-                  placeholder={activePage ? "Page title" : "Select or create a page"}
-                  className="h-12 w-full bg-transparent text-3xl font-semibold tracking-tight text-text-base outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:text-[2.2rem]"
-                />
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <input
+                type="text"
+                value={draftTitle}
+                onChange={(event) => setDraftTitle(event.target.value)}
+                disabled={!activePage}
+                placeholder={activePage ? "Page title" : "Select or create a page"}
+                className="h-12 w-full bg-transparent text-3xl font-semibold tracking-tight text-text-base outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:text-[2.2rem]"
+              />
 
-                <p className="mt-2 text-sm text-muted">
-                  {saving
-                    ? "Saving changes..."
-                    : isDirty
-                      ? "Unsaved changes"
-                      : activePage
-                        ? "All changes saved"
-                        : "Choose a wiki page to begin"}
-                </p>
-              </div>
+              {activePage ? (
+                <div className="mt-2 flex items-center gap-3 text-sm text-muted">
+                  {activePage.createdBy?.image ? (
+                    <img
+                      src={activePage.createdBy.image}
+                      alt={creatorName}
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#D97757] text-xs font-semibold text-white">
+                      {creatorInitial}
+                    </div>
+                  )}
+                  <span className="font-medium text-text-base">{creatorName}</span>
+                </div>
+              ) : null}
 
-              <div className="flex flex-wrap items-center gap-2 self-start 2xl:justify-end">
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 self-start lg:justify-end">
                 <div className="inline-flex flex-wrap items-center gap-1 rounded-2xl border border-border-subtle bg-base/60 p-1">
                   {([
                     { key: "edit", label: "Edit", icon: Pencil },
@@ -880,7 +908,6 @@ export default function WikiClient() {
                   {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   Save
                 </button>
-              </div>
             </div>
 
             <div className="grid gap-3 lg:hidden">

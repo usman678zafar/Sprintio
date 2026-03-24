@@ -35,6 +35,14 @@ function serializePage(page: any) {
     createdAt: page.createdAt,
     updatedAt: page.updatedAt,
     versionCount: Array.isArray(page.versions) ? page.versions.length : 0,
+    createdBy:
+      page.createdBy && typeof page.createdBy === "object"
+        ? {
+            id: page.createdBy._id ? String(page.createdBy._id) : String(page.createdBy),
+            name: page.createdBy.name || "",
+            image: page.createdBy.image || "",
+          }
+        : null,
   };
 }
 
@@ -105,6 +113,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     page.updatedBy = toObjectIdIfPossible(currentUserId) as mongoose.Types.ObjectId;
 
     await page.save();
+    await page.populate("createdBy", "name image");
 
     return NextResponse.json({ page: serializePage(page.toObject()) }, { status: 200 });
   } catch (error: any) {

@@ -43,6 +43,14 @@ function serializePage(page: any) {
     createdAt: page.createdAt,
     updatedAt: page.updatedAt,
     versionCount: Array.isArray(page.versions) ? page.versions.length : 0,
+    createdBy:
+      page.createdBy && typeof page.createdBy === "object"
+        ? {
+            id: page.createdBy._id ? String(page.createdBy._id) : String(page.createdBy),
+            name: page.createdBy.name || "",
+            image: page.createdBy.image || "",
+          }
+        : null,
   };
 }
 
@@ -98,6 +106,7 @@ export async function GET(req: Request) {
     }
 
     const pages = await WikiPage.find({ projectId: selectedProjectId })
+      .populate("createdBy", "name image")
       .sort({ order: 1, createdAt: 1, _id: 1 })
       .lean();
 
@@ -176,7 +185,19 @@ export async function POST(req: Request) {
       updatedBy: normalizedUserId,
     });
 
-    return NextResponse.json({ page: serializePage(page.toObject()) }, { status: 201 });
+    return NextResponse.json(
+      {
+        page: serializePage({
+          ...page.toObject(),
+          createdBy: {
+            _id: normalizedUserId,
+            name: session.user?.name || "",
+            image: (session.user as any)?.image || "",
+          },
+        }),
+      },
+      { status: 201 }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { message: "Internal server error", error: error.message },

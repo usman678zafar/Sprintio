@@ -15,6 +15,11 @@ export type WikiPageDto = {
   createdAt?: string | Date;
   updatedAt?: string | Date;
   versionCount?: number;
+  createdBy?: {
+    id?: string;
+    name?: string;
+    image?: string;
+  } | null;
 };
 
 export function normalizeWikiTitle(value: unknown) {
