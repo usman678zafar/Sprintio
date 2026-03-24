@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, FilePlus2, FolderKanban, Plus, Search } from "lucide-react";
+import { BookOpen, Ellipsis, FilePlus2, FolderKanban, Plus, Search, Trash2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type ProjectOption = { _id: string; name: string; role: "MASTER" | "MEMBER" };
@@ -32,6 +32,7 @@ export default function WikiExplorerSidebar() {
   const [composerParentId, setComposerParentId] = useState<string | null>(null);
   const [composerTitle, setComposerTitle] = useState("");
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+  const [openMenuPageId, setOpenMenuPageId] = useState<string | null>(null);
 
   const pageMap = useMemo(() => new Map(pages.map((page) => [page._id, page])), [pages]);
   const childrenByParent = useMemo(() => {
@@ -109,6 +110,19 @@ export default function WikiExplorerSidebar() {
     void loadWiki();
   }, [requestedProjectId, requestedPageId]);
 
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("[data-wiki-page-menu]")) return;
+      setOpenMenuPageId(null);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, []);
+
   const loadWiki = async () => {
     setLoading(true);
     try {
@@ -142,6 +156,43 @@ export default function WikiExplorerSidebar() {
     setComposerOpen(true);
     setComposerParentId(parentId);
     setComposerTitle("");
+    setOpenMenuPageId(null);
+  };
+
+  const deletePage = async (page: WikiPage) => {
+    const shouldDelete = window.confirm(`Delete "${page.title}" and all nested pages?`);
+    if (!shouldDelete) return;
+
+    try {
+      const response = await fetch(`/api/wiki/${page._id}`, { method: "DELETE" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to delete page");
+
+      const deletedIds = new Set<string>([page._id]);
+      let changed = true;
+
+      while (changed) {
+        changed = false;
+        pages.forEach((candidate) => {
+          if (deletedIds.has(candidate._id) || !candidate.parentId || !deletedIds.has(candidate.parentId)) return;
+          deletedIds.add(candidate._id);
+          changed = true;
+        });
+      }
+
+      const remainingPages = pages.filter((candidate) => !deletedIds.has(candidate._id));
+      setPages(remainingPages);
+      setOpenMenuPageId(null);
+
+      if (requestedPageId && deletedIds.has(requestedPageId)) {
+        const fallbackPageId = remainingPages[0]?._id || null;
+        syncUrl(requestedProjectId || page.projectId, fallbackPageId, true);
+      }
+
+      window.dispatchEvent(new Event("wiki-data-refresh"));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const createPage = async () => {
@@ -235,13 +286,47 @@ export default function WikiExplorerSidebar() {
                   <span className="truncate text-sm font-medium">{page.title}</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => openComposer(page._id)}
-                  className="inline-flex h-9 w-9 items-center justify-center border border-border-subtle bg-surface text-muted opacity-100 transition hover:border-primary hover:text-primary lg:opacity-0 lg:group-hover:opacity-100"
-                >
-                  <Plus size={16} />
-                </button>
+                <div className="relative" data-wiki-page-menu>
+                  <button
+                    type="button"
+                    onClick={() => setOpenMenuPageId((current) => (current === page._id ? null : page._id))}
+                    className="inline-flex h-9 w-9 items-center justify-center border border-border-subtle bg-surface text-muted opacity-100 transition hover:border-primary hover:text-primary lg:opacity-0 lg:group-hover:opacity-100"
+                    aria-label={`Open actions for ${page.title}`}
+                  >
+                    <Ellipsis size={16} />
+                  </button>
+
+                  {openMenuPageId === page._id ? (
+                    <div className="absolute right-0 top-11 z-20 min-w-[180px] rounded-2xl border border-border-subtle bg-surface p-2 shadow-[0_18px_40px_rgba(25,20,16,0.12)]">
+                      <button
+                        type="button"
+                        onClick={() => openComposer(null)}
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-text-base transition hover:bg-base"
+                      >
+                        <FilePlus2 size={15} />
+                        New page
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openComposer(page._id)}
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-text-base transition hover:bg-base"
+                      >
+                        <Plus size={15} />
+                        Add sub-page
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void deletePage(page);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-[#D97757] transition hover:bg-[#D97757]/8"
+                      >
+                        <Trash2 size={15} />
+                        Delete
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
               </div>
 
               {children.length > 0 && expanded ? renderTree(page._id, level + 1) : null}

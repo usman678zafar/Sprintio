@@ -12,7 +12,6 @@ import {
   Code2,
   Columns2,
   Eye,
-  FilePlus2,
   Heading1,
   Heading2,
   Heading3,
@@ -26,7 +25,6 @@ import {
   Plus,
   Quote,
   Save,
-  Trash2,
   X,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -88,24 +86,6 @@ function buildFlatPageOptions(pages: WikiPageDto[]) {
   return options;
 }
 
-function collectDescendantIds(pages: WikiPageDto[], rootPageId: string) {
-  const ids = new Set<string>([rootPageId]);
-  const queue = [rootPageId];
-
-  while (queue.length > 0) {
-    const currentId = queue.shift();
-    if (!currentId) continue;
-
-    pages.forEach((page) => {
-      if (page.parentId !== currentId || ids.has(page._id)) return;
-      ids.add(page._id);
-      queue.push(page._id);
-    });
-  }
-
-  return ids;
-}
-
 function readImageDimensions(src: string) {
   return new Promise<{ width: number; height: number }>((resolve) => {
     const image = new window.Image();
@@ -160,7 +140,6 @@ export default function WikiClient() {
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const [uploadingCount, setUploadingCount] = useState(0);
   const [notice, setNotice] = useState("");
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -172,7 +151,6 @@ export default function WikiClient() {
   const [linkUrl, setLinkUrl] = useState("https://");
 
   const activePage = pages.find((page) => page._id === requestedPageId) || null;
-  const selectedProject = projects.find((project) => project._id === requestedProjectId) || null;
   const pageOptions = buildFlatPageOptions(pages);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -487,7 +465,7 @@ export default function WikiClient() {
   }
 
   async function savePage({ silent = false }: { silent?: boolean } = {}) {
-    if (!activePage || deleting) return;
+    if (!activePage) return;
 
     const snapshot = flushPreviewSnapshot();
     if (!snapshot) return;
@@ -590,38 +568,6 @@ export default function WikiClient() {
       setNoticeMessage(error.message || "Failed to create page");
     } finally {
       setCreating(false);
-    }
-  }
-
-  async function deletePage() {
-    if (!activePage) return;
-
-    const shouldDelete = window.confirm(`Delete "${activePage.title}" and all nested pages?`);
-    if (!shouldDelete) return;
-
-    setDeleting(true);
-
-    try {
-      const response = await fetch(`/api/wiki/${activePage._id}`, { method: "DELETE" });
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to delete page");
-      }
-
-      const idsToDelete = collectDescendantIds(pages, activePage._id);
-      const remainingPages = pages.filter((page) => !idsToDelete.has(page._id));
-      const fallbackPageId = remainingPages[0]?._id || null;
-
-      setPages(remainingPages);
-      syncUrl(requestedProjectId || activePage.projectId, fallbackPageId, true);
-      setNoticeMessage("Wiki page deleted.");
-      window.dispatchEvent(new Event("wiki-data-refresh"));
-    } catch (error: any) {
-      console.error(error);
-      setNoticeMessage(error.message || "Failed to delete page");
-    } finally {
-      setDeleting(false);
     }
   }
 
@@ -814,7 +760,7 @@ export default function WikiClient() {
   }, [editor, activePage?._id]);
 
   useEffect(() => {
-    if (!activePage || !isDirty || deleting) return;
+    if (!activePage || !isDirty) return;
 
     if (autosaveTimeoutRef.current) {
       window.clearTimeout(autosaveTimeoutRef.current);
@@ -830,7 +776,7 @@ export default function WikiClient() {
         autosaveTimeoutRef.current = null;
       }
     };
-  }, [activePage?._id, draftTitle, draftMarkdown, isDirty, deleting]);
+  }, [activePage?._id, draftTitle, draftMarkdown, isDirty]);
 
   useEffect(() => {
     return () => {
@@ -880,21 +826,15 @@ export default function WikiClient() {
       <section className="flex min-h-full flex-col bg-surface">
         <div className="border-b border-border-subtle px-4 py-4 sm:px-5 lg:px-6">
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+            <div className="flex flex-col gap-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
               <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-subtle">
-                  <span>Wiki Workspace</span>
-                  {selectedProject ? <span>{selectedProject.name}</span> : null}
-                  {activePage?.versionCount ? <span>{activePage.versionCount} revisions</span> : null}
-                </div>
-
                 <input
                   type="text"
                   value={draftTitle}
                   onChange={(event) => setDraftTitle(event.target.value)}
                   disabled={!activePage}
                   placeholder={activePage ? "Page title" : "Select or create a page"}
-                  className="mt-3 h-12 w-full bg-transparent text-3xl font-semibold tracking-tight text-text-base outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:text-[2.2rem]"
+                  className="h-12 w-full bg-transparent text-3xl font-semibold tracking-tight text-text-base outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:text-[2.2rem]"
                 />
 
                 <p className="mt-2 text-sm text-muted">
@@ -908,7 +848,7 @@ export default function WikiClient() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 self-start xl:justify-end">
+              <div className="flex flex-wrap items-center gap-2 self-start 2xl:justify-end">
                 <div className="inline-flex flex-wrap items-center gap-1 rounded-2xl border border-border-subtle bg-base/60 p-1">
                   {([
                     { key: "edit", label: "Edit", icon: Pencil },
@@ -928,36 +868,6 @@ export default function WikiClient() {
                     </button>
                   ))}
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => openComposer(null)}
-                  disabled={!requestedProjectId}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-border-subtle bg-base/70 px-4 text-sm font-medium text-text-base transition hover:bg-base disabled:opacity-50"
-                >
-                  <FilePlus2 size={16} />
-                  New page
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => openComposer(activePage?._id || null)}
-                  disabled={!activePage}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-border-subtle bg-base/70 px-4 text-sm font-medium text-text-base transition hover:bg-base disabled:opacity-50"
-                >
-                  <Plus size={16} />
-                  Subpage
-                </button>
-
-                <button
-                  type="button"
-                  onClick={deletePage}
-                  disabled={!activePage || deleting}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-border-subtle bg-base/70 px-4 text-sm font-medium text-text-base transition hover:bg-base disabled:opacity-50"
-                >
-                  {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                  Delete
-                </button>
 
                 <button
                   type="button"

@@ -54,6 +54,7 @@ const navItems = [
 export default function Sidebar({ user }: { user: any }) {
   const pathname = usePathname() ?? "";
   const router = useRouter();
+  const isWikiRoute = pathname.startsWith("/wiki");
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -100,6 +101,7 @@ export default function Sidebar({ user }: { user: any }) {
   const userName = user?.name || "Sprinto User";
   const userEmail = user?.email || "Admin Account";
   const userInitial = (userName.trim() || userEmail.trim() || "U").charAt(0).toUpperCase();
+  const isSidebarExpanded = !isWikiRoute && isExpanded;
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
@@ -110,24 +112,26 @@ export default function Sidebar({ user }: { user: any }) {
   return (
     <aside
       className={`hidden shrink-0 border-r border-border-subtle bg-surface p-3 transition-[width] duration-300 lg:flex lg:flex-col ${
-        isExpanded ? "w-72 xl:w-[18.5rem]" : "w-[72px] xl:w-[76px]"
+        isSidebarExpanded ? "w-72 xl:w-[18.5rem]" : "w-[72px] xl:w-[76px]"
       }`}
     >
       <div className="flex h-[calc(100svh-1.5rem)] flex-col overflow-hidden bg-surface">
-        <div className={`flex h-16 items-center px-4 ${isExpanded ? "justify-between" : "justify-center"}`}>
-          {isExpanded ? <Logo href="/dashboard" showText iconSize={28} /> : null}
-          <button
-            type="button"
-            onClick={toggleExpanded}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-transparent text-muted transition hover:border-border-subtle hover:bg-base hover:text-primary"
-            title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
-            aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
-          >
-            {isExpanded ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
-          </button>
+        <div className={`flex h-16 items-center px-4 ${isSidebarExpanded ? "justify-between" : "justify-center"}`}>
+          {isSidebarExpanded ? <Logo href="/dashboard" showText iconSize={28} /> : null}
+          {!isWikiRoute ? (
+            <button
+              type="button"
+              onClick={toggleExpanded}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-transparent text-muted transition hover:border-border-subtle hover:bg-base hover:text-primary"
+              title={isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
+              aria-label={isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
+            >
+              {isSidebarExpanded ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+            </button>
+          ) : null}
         </div>
 
-        <div className={`flex flex-1 flex-col px-3 ${isExpanded ? "py-6" : "pt-3 pb-6"}`}>
+        <div className={`flex flex-1 flex-col px-3 ${isSidebarExpanded ? "py-6" : "pt-3 pb-6"}`}>
           <nav className="space-y-2">
             {navItems.map(({ label, href, icon: Icon }) => {
               const isActive =
@@ -142,7 +146,7 @@ export default function Sidebar({ user }: { user: any }) {
                   prefetch
                   onMouseEnter={() => router.prefetch(href)}
                   className={`group relative flex items-center rounded-[22px] border px-3 py-2 text-sm font-medium transition-all duration-200 ${
-                    isExpanded ? "justify-start gap-3" : "justify-center"
+                    isSidebarExpanded ? "justify-start gap-3" : "justify-center"
                   } ${isActive ? "border-transparent text-[#D97757]" : "sidebar-hover-surface border-transparent text-muted hover:border-border-subtle hover:text-text-base"}`}
                   title={label}
                   aria-label={label}
@@ -152,7 +156,7 @@ export default function Sidebar({ user }: { user: any }) {
                   }`}>
                     <Icon size={16} />
                   </span>
-                  {isExpanded ? <span className={`truncate ${isActive ? "font-semibold text-[#D97757]" : ""}`}>{label}</span> : null}
+                  {isSidebarExpanded ? <span className={`truncate ${isActive ? "font-semibold text-[#D97757]" : ""}`}>{label}</span> : null}
                 </Link>
               );
             })}
@@ -160,8 +164,8 @@ export default function Sidebar({ user }: { user: any }) {
         </div>
 
         <div className="p-3">
-          <div className={isExpanded ? "rounded-[24px] border border-border-subtle bg-base/60 p-3" : "space-y-2"}>
-            {isExpanded ? (
+          <div className={isSidebarExpanded ? "rounded-[24px] border border-border-subtle bg-base/60 p-3" : "space-y-2"}>
+            {isSidebarExpanded ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D97757] text-sm font-semibold text-white">
