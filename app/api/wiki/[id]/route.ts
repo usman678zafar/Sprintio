@@ -4,6 +4,11 @@ import mongoose from "mongoose";
 
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
+import {
+  buildWikiExcerpt,
+  normalizeWikiTitle,
+  slugifyWikiTitle,
+} from "@/lib/wiki/shared";
 import ProjectMember from "@/models/ProjectMember";
 import WikiPage from "@/models/WikiPage";
 
@@ -16,23 +21,6 @@ function toObjectIdIfPossible(value: string) {
     : value;
 }
 
-function normalizeTitle(value: unknown) {
-  return String(value || "")
-    .trim()
-    .replace(/\s+/g, " ")
-    .slice(0, 140);
-}
-
-function slugify(value: string) {
-  const slug = value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 160);
-
-  return slug || "untitled-page";
-}
-
 function serializePage(page: any) {
   return {
     _id: String(page._id),
@@ -41,9 +29,12 @@ function serializePage(page: any) {
     title: page.title,
     slug: page.slug,
     content: page.content || "",
+    document: page.document || null,
+    excerpt: page.excerpt || "",
     order: page.order || 0,
     createdAt: page.createdAt,
     updatedAt: page.updatedAt,
+    versionCount: Array.isArray(page.versions) ? page.versions.length : 0,
   };
 }
 
@@ -74,16 +65,43 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    const { title, content } = await req.json();
-    const normalizedTitle = normalizeTitle(title);
+    const { title, content, document } = await req.json();
+    const normalizedTitle = normalizeWikiTitle(title);
+    const nextContent = String(content || "");
+    const nextDocument =
+      document && typeof document === "object" && !Array.isArray(document)
+        ? document
+        : null;
 
     if (!normalizedTitle) {
       return NextResponse.json({ message: "Page title is required" }, { status: 400 });
     }
 
+    const documentChanged =
+      JSON.stringify(page.document || null) !== JSON.stringify(nextDocument || null);
+    const hasMeaningfulChange =
+      page.title !== normalizedTitle || page.content !== nextContent || documentChanged;
+
+    if (hasMeaningfulChange && (page.title || page.content || page.document)) {
+      const nextVersions = [
+        ...(page.versions || []),
+        {
+          title: page.title,
+          content: page.content || "",
+          document: page.document || null,
+          savedAt: page.updatedAt || new Date(),
+          updatedBy: page.updatedBy,
+        },
+      ].slice(-20);
+
+      page.versions = nextVersions;
+    }
+
     page.title = normalizedTitle;
-    page.slug = slugify(normalizedTitle);
-    page.content = String(content || "");
+    page.slug = slugifyWikiTitle(normalizedTitle);
+    page.content = nextContent;
+    page.document = nextDocument;
+    page.excerpt = buildWikiExcerpt(nextContent, nextDocument);
     page.updatedBy = toObjectIdIfPossible(currentUserId) as mongoose.Types.ObjectId;
 
     await page.save();

@@ -4,6 +4,12 @@ import mongoose from "mongoose";
 
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
+import {
+  buildWikiExcerpt,
+  createStarterWikiDocument,
+  normalizeWikiTitle,
+  slugifyWikiTitle,
+} from "@/lib/wiki/shared";
 import Project from "@/models/Project";
 import ProjectMember from "@/models/ProjectMember";
 import WikiPage from "@/models/WikiPage";
@@ -23,23 +29,6 @@ function toObjectIdIfPossible(value: string) {
     : value;
 }
 
-function normalizeTitle(value: unknown) {
-  return String(value || "")
-    .trim()
-    .replace(/\s+/g, " ")
-    .slice(0, 140);
-}
-
-function slugify(value: string) {
-  const slug = value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 160);
-
-  return slug || "untitled-page";
-}
-
 function serializePage(page: any) {
   return {
     _id: String(page._id),
@@ -48,9 +37,12 @@ function serializePage(page: any) {
     title: page.title,
     slug: page.slug,
     content: page.content || "",
+    document: page.document || null,
+    excerpt: page.excerpt || "",
     order: page.order || 0,
     createdAt: page.createdAt,
     updatedAt: page.updatedAt,
+    versionCount: Array.isArray(page.versions) ? page.versions.length : 0,
   };
 }
 
@@ -133,7 +125,7 @@ export async function POST(req: Request) {
     }
 
     const { projectId, parentId = null, title } = await req.json();
-    const normalizedTitle = normalizeTitle(title);
+    const normalizedTitle = normalizeWikiTitle(title);
 
     if (!projectId) {
       return NextResponse.json({ message: "Project is required" }, { status: 400 });
@@ -168,12 +160,17 @@ export async function POST(req: Request) {
       parentId: parentId || null,
     });
 
+    const starterDocument = createStarterWikiDocument();
+    const starterContent = "Start writing here.";
+
     const page = await WikiPage.create({
       projectId,
       parentId: parentId || null,
       title: normalizedTitle,
-      slug: slugify(normalizedTitle),
-      content: `# ${normalizedTitle}\n\nStart writing here.`,
+      slug: slugifyWikiTitle(normalizedTitle),
+      content: starterContent,
+      document: starterDocument,
+      excerpt: buildWikiExcerpt(starterContent, starterDocument),
       order: siblingCount,
       createdBy: normalizedUserId,
       updatedBy: normalizedUserId,
