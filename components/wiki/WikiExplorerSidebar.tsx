@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, Ellipsis, FilePlus2, FolderKanban, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { BookOpen, Ellipsis, FilePlus2, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type ProjectOption = { _id: string; name: string; role: "MASTER" | "MEMBER" };
@@ -400,14 +400,13 @@ export default function WikiExplorerSidebar() {
   };
 
   return (
-    <aside className="hidden w-[236px] shrink-0 border-r border-border-subtle bg-surface lg:flex lg:flex-col">
+    <aside className="hidden w-[240px] shrink-0 border-r border-border-subtle bg-surface lg:flex lg:flex-col">
       <div className="space-y-2.5 border-b border-border-subtle px-3 py-2.5">
         <div className="relative">
-          <FolderKanban size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
           <select
             value={requestedProjectId}
             onChange={(event) => syncUrl(event.target.value, null)}
-            className="field-surface h-10 pl-10"
+            className="field-surface h-9 py-0 pl-3 pr-9 text-[13px] font-medium leading-none"
           >
             {projects.map((project) => (
               <option key={project._id} value={project._id}>
@@ -418,18 +417,18 @@ export default function WikiExplorerSidebar() {
         </div>
 
         <div className="relative">
-          <Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+          <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input
             type="search"
             value={treeQuery}
             onChange={(event) => setTreeQuery(event.target.value)}
             placeholder="Search wiki pages"
-            className="field-surface h-10 pl-10 pr-3"
+            className="field-surface h-9 py-0 pl-8 pr-3 text-[13px]"
           />
         </div>
 
-        <button type="button" onClick={() => openComposer(null)} className="btn-primary h-10 w-full">
-          <FilePlus2 size={16} />
+        <button type="button" onClick={() => openComposer(null)} className="btn-primary h-9 w-full text-[13px]">
+          <FilePlus2 size={14} />
           New Page
         </button>
 
