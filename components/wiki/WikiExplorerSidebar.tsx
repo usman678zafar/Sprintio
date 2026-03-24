@@ -297,7 +297,7 @@ export default function WikiExplorerSidebar() {
                   </button>
 
                   {openMenuPageId === page._id ? (
-                    <div className="absolute right-0 top-11 z-20 min-w-[180px] rounded-2xl border border-border-subtle bg-surface p-2 shadow-[0_18px_40px_rgba(25,20,16,0.12)]">
+                    <div className="absolute right-0 top-11 z-20 min-w-[180px] rounded-2xl border border-[#d9c9b7] bg-[#fffdfa] p-2 shadow-[0_20px_48px_rgba(25,20,16,0.18)]">
                       <button
                         type="button"
                         onClick={() => openComposer(null)}
