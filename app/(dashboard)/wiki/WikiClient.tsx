@@ -982,7 +982,7 @@ export default function WikiClient() {
                 {projects.length === 0 ? <option value="">No projects</option> : null}
                 {projects.map((project) => (
                   <option key={project._id} value={project._id}>
-                    {project.name} ({project.role})
+                    {project.name}
                   </option>
                 ))}
               </select>

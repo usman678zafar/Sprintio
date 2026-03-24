@@ -264,7 +264,7 @@ export default function WikiExplorerSidebar() {
           >
             {projects.map((project) => (
               <option key={project._id} value={project._id}>
-                {project.name} ({project.role})
+                {project.name}
               </option>
             ))}
           </select>
