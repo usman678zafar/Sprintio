@@ -478,8 +478,11 @@ export default function WikiExplorerSidebar() {
 
       <div className="flex-1 overflow-y-auto px-2.5 py-2.5">
         {loading ? (
-          <div className="rounded-[24px] border border-border-subtle bg-base/70 px-5 py-10 text-center text-sm text-muted">
-            Loading wiki pages...
+          <div className="space-y-2.5 rounded-[24px] border border-border-subtle bg-base/60 p-4">
+            <div className="skeleton h-9 rounded-2xl" />
+            <div className="skeleton h-9 rounded-2xl" />
+            <div className="skeleton h-9 rounded-2xl" />
+            <div className="skeleton h-9 rounded-2xl" />
           </div>
         ) : pages.length === 0 ? (
           <div className="rounded-[24px] border border-dashed border-border-subtle bg-base/70 px-5 py-10 text-center">

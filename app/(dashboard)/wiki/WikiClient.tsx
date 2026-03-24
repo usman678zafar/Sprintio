@@ -139,7 +139,7 @@ export default function WikiClient() {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftMarkdown, setDraftMarkdown] = useState("");
   const [previewDocument, setPreviewDocument] = useState<WikiDocument>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingCount, setUploadingCount] = useState(0);
@@ -846,71 +846,84 @@ export default function WikiClient() {
 
       <section className="flex min-h-full flex-col bg-surface">
         <div className="border-b border-border-subtle px-4 py-4 sm:px-5 lg:px-6">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-            <div className="min-w-0 flex-1">
-              <input
-                type="text"
-                value={draftTitle}
-                onChange={(event) => setDraftTitle(event.target.value)}
-                disabled={!activePage}
-                placeholder={activePage ? "Page title" : "Select or create a page"}
-                className="h-12 w-full bg-transparent text-3xl font-semibold tracking-tight text-text-base outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:text-[2.2rem]"
-              />
-
-              {activePage ? (
-                <div className="mt-2 flex items-center gap-3 text-sm text-muted">
-                  {activePage.createdBy?.image ? (
-                    <img
-                      src={activePage.createdBy.image}
-                      alt={creatorName}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#D97757] text-xs font-semibold text-white">
-                      {creatorInitial}
-                    </div>
-                  )}
-                  <span className="font-medium text-text-base">{creatorName}</span>
-                </div>
-              ) : null}
-
+          {loading ? (
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0 flex-1">
+                <div className="skeleton h-12 max-w-[320px] rounded-2xl" />
+                <div className="skeleton mt-3 h-8 w-[170px] rounded-full" />
+              </div>
+              <div className="flex flex-wrap items-center gap-2 self-start">
+                <div className="skeleton h-11 w-[248px] rounded-2xl" />
+                <div className="skeleton h-11 w-[92px] rounded-2xl" />
+              </div>
             </div>
+          ) : (
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0 flex-1">
+                <input
+                  type="text"
+                  value={draftTitle}
+                  onChange={(event) => setDraftTitle(event.target.value)}
+                  disabled={!activePage}
+                  placeholder={activePage ? "Page title" : "Select or create a page"}
+                  className="h-12 w-full bg-transparent text-3xl font-semibold tracking-tight text-text-base outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:text-[2.2rem]"
+                />
 
-            <div className="flex flex-wrap items-center gap-2 self-start lg:justify-end">
-                <div className="inline-flex flex-wrap items-center gap-1 rounded-2xl border border-border-subtle bg-base/60 p-1">
-                  {([
-                    { key: "edit", label: "Edit", icon: Pencil },
-                    { key: "split", label: "Split", icon: Columns2 },
-                    { key: "preview", label: "Preview", icon: Eye },
-                  ] as const).map(({ key, label, icon: Icon }) => (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => setViewMode(key)}
-                      className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
-                        viewMode === key ? "bg-[#D97757] text-white" : "text-text-base hover:bg-base"
-                      }`}
-                    >
-                      <Icon size={15} />
-                      {label}
-                    </button>
-                  ))}
-                </div>
+                {activePage ? (
+                  <div className="mt-2 flex items-center gap-3 text-sm text-muted">
+                    {activePage.createdBy?.image ? (
+                      <img
+                        src={activePage.createdBy.image}
+                        alt={creatorName}
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#D97757] text-xs font-semibold text-white">
+                        {creatorInitial}
+                      </div>
+                    )}
+                    <span className="font-medium text-text-base">{creatorName}</span>
+                  </div>
+                ) : null}
+              </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    void savePage();
-                  }}
-                  disabled={!activePage || !isDirty || saving}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#D97757] px-5 text-sm font-medium text-white transition hover:bg-[#c96b49] disabled:opacity-50"
-                >
-                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                  Save
-                </button>
+              <div className="flex flex-wrap items-center gap-2 self-start lg:justify-end">
+                  <div className="inline-flex flex-wrap items-center gap-1 rounded-2xl border border-border-subtle bg-base/60 p-1">
+                    {([
+                      { key: "edit", label: "Edit", icon: Pencil },
+                      { key: "split", label: "Split", icon: Columns2 },
+                      { key: "preview", label: "Preview", icon: Eye },
+                    ] as const).map(({ key, label, icon: Icon }) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setViewMode(key)}
+                        className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
+                          viewMode === key ? "bg-[#D97757] text-white" : "text-text-base hover:bg-base"
+                        }`}
+                      >
+                        <Icon size={15} />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void savePage();
+                    }}
+                    disabled={!activePage || !isDirty || saving}
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#D97757] px-5 text-sm font-medium text-white transition hover:bg-[#c96b49] disabled:opacity-50"
+                  >
+                    {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                    Save
+                  </button>
+              </div>
             </div>
+          )}
 
-            <div className="grid gap-3 lg:hidden">
+          <div className="grid gap-3 lg:hidden">
               <select
                 value={requestedProjectId}
                 onChange={(event) => syncUrl(event.target.value || null, null)}
@@ -936,121 +949,125 @@ export default function WikiClient() {
                   </option>
                 ))}
               </select>
-            </div>
-
-            {notice ? (
-              <div className="rounded-2xl border border-primary/15 bg-primary/8 px-4 py-3 text-sm font-medium text-primary">
-                {notice}
-              </div>
-            ) : null}
           </div>
+
+          {notice ? (
+            <div className="mt-3 rounded-2xl border border-primary/15 bg-primary/8 px-4 py-3 text-sm font-medium text-primary">
+              {notice}
+            </div>
+          ) : null}
         </div>
 
         {!activePage ? (
           <div className="grid min-h-[calc(100svh-13rem)] place-items-center px-6 py-12 text-center">
-            <div className="max-w-xl rounded-[28px] border border-dashed border-border-subtle bg-base/60 px-8 py-12">
-              <p className="text-2xl font-semibold tracking-tight text-text-base">
-                {loading ? "Loading wiki..." : "Select a wiki page"}
-              </p>
-              <p className="mt-3 text-sm leading-7 text-muted">
-                {loading
-                  ? "Fetching pages and projects for your workspace."
-                  : "Pick a page from the sidebar or create a new one to start documenting with live preview."}
-              </p>
-            </div>
+            {loading ? (
+              <div className="w-full max-w-xl rounded-[28px] border border-border-subtle bg-base/60 px-8 py-12">
+                <div className="skeleton mx-auto h-8 w-[180px] rounded-2xl" />
+                <div className="skeleton mx-auto mt-4 h-4 w-[260px] rounded-full" />
+              </div>
+            ) : (
+              <div className="max-w-xl rounded-[28px] border border-dashed border-border-subtle bg-base/60 px-8 py-12">
+                <p className="text-2xl font-semibold tracking-tight text-text-base">Select a wiki page</p>
+                <p className="mt-3 text-sm leading-7 text-muted">
+                  Pick a page from the sidebar or create a new one to start documenting with live preview.
+                </p>
+              </div>
+            )}
           </div>
         ) : (
           <>
-            <div className="border-b border-border-subtle bg-base/60 px-4 py-3 sm:px-5 lg:px-6">
-              <div className="flex flex-wrap items-center gap-2">
-                {[
-                  {
-                    label: "H1",
-                    icon: Heading1,
-                    active: editor?.isActive("heading", { level: 1 }),
-                    action: () => editor?.chain().focus().toggleHeading({ level: 1 }).run(),
-                  },
-                  {
-                    label: "H2",
-                    icon: Heading2,
-                    active: editor?.isActive("heading", { level: 2 }),
-                    action: () => editor?.chain().focus().toggleHeading({ level: 2 }).run(),
-                  },
-                  {
-                    label: "H3",
-                    icon: Heading3,
-                    active: editor?.isActive("heading", { level: 3 }),
-                    action: () => editor?.chain().focus().toggleHeading({ level: 3 }).run(),
-                  },
-                  {
-                    label: "Bold",
-                    icon: Bold,
-                    active: editor?.isActive("bold"),
-                    action: () => editor?.chain().focus().toggleBold().run(),
-                  },
-                  {
-                    label: "Italic",
-                    icon: Italic,
-                    active: editor?.isActive("italic"),
-                    action: () => editor?.chain().focus().toggleItalic().run(),
-                  },
-                  {
-                    label: "Bullets",
-                    icon: List,
-                    active: editor?.isActive("bulletList"),
-                    action: () => editor?.chain().focus().toggleBulletList().run(),
-                  },
-                  {
-                    label: "Numbers",
-                    icon: ListOrdered,
-                    active: editor?.isActive("orderedList"),
-                    action: () => editor?.chain().focus().toggleOrderedList().run(),
-                  },
-                  {
-                    label: "Quote",
-                    icon: Quote,
-                    active: editor?.isActive("blockquote"),
-                    action: () => editor?.chain().focus().toggleBlockquote().run(),
-                  },
-                  {
-                    label: "Code",
-                    icon: Code2,
-                    active: editor?.isActive("codeBlock"),
-                    action: () => editor?.chain().focus().toggleCodeBlock().run(),
-                  },
-                  {
-                    label: "Link",
-                    icon: Link2,
-                    active: editor?.isActive("link"),
-                    action: openLinkDialog,
-                  },
-                ].map(({ label, icon: Icon, action, active }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={action}
-                    disabled={!editor}
-                    className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition ${
-                      active
-                        ? "border-[#D97757]/30 bg-[#D97757]/12 text-[#D97757]"
-                        : "border-border-subtle bg-surface text-muted hover:bg-base hover:text-primary"
-                    } disabled:opacity-50`}
-                  >
-                    <Icon size={15} />
-                    {label}
-                  </button>
-                ))}
+            {viewMode !== "preview" ? (
+              <div className="border-b border-border-subtle bg-base/60 px-4 py-3 sm:px-5 lg:px-6">
+                <div className="flex flex-wrap items-center gap-2">
+                  {[
+                    {
+                      label: "H1",
+                      icon: Heading1,
+                      active: editor?.isActive("heading", { level: 1 }),
+                      action: () => editor?.chain().focus().toggleHeading({ level: 1 }).run(),
+                    },
+                    {
+                      label: "H2",
+                      icon: Heading2,
+                      active: editor?.isActive("heading", { level: 2 }),
+                      action: () => editor?.chain().focus().toggleHeading({ level: 2 }).run(),
+                    },
+                    {
+                      label: "H3",
+                      icon: Heading3,
+                      active: editor?.isActive("heading", { level: 3 }),
+                      action: () => editor?.chain().focus().toggleHeading({ level: 3 }).run(),
+                    },
+                    {
+                      label: "Bold",
+                      icon: Bold,
+                      active: editor?.isActive("bold"),
+                      action: () => editor?.chain().focus().toggleBold().run(),
+                    },
+                    {
+                      label: "Italic",
+                      icon: Italic,
+                      active: editor?.isActive("italic"),
+                      action: () => editor?.chain().focus().toggleItalic().run(),
+                    },
+                    {
+                      label: "Bullets",
+                      icon: List,
+                      active: editor?.isActive("bulletList"),
+                      action: () => editor?.chain().focus().toggleBulletList().run(),
+                    },
+                    {
+                      label: "Numbers",
+                      icon: ListOrdered,
+                      active: editor?.isActive("orderedList"),
+                      action: () => editor?.chain().focus().toggleOrderedList().run(),
+                    },
+                    {
+                      label: "Quote",
+                      icon: Quote,
+                      active: editor?.isActive("blockquote"),
+                      action: () => editor?.chain().focus().toggleBlockquote().run(),
+                    },
+                    {
+                      label: "Code",
+                      icon: Code2,
+                      active: editor?.isActive("codeBlock"),
+                      action: () => editor?.chain().focus().toggleCodeBlock().run(),
+                    },
+                    {
+                      label: "Link",
+                      icon: Link2,
+                      active: editor?.isActive("link"),
+                      action: openLinkDialog,
+                    },
+                  ].map(({ label, icon: Icon, action, active }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={action}
+                      disabled={!editor}
+                      className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition ${
+                        active
+                          ? "border-[#D97757]/30 bg-[#D97757]/12 text-[#D97757]"
+                          : "border-border-subtle bg-surface text-muted hover:bg-base hover:text-primary"
+                      } disabled:opacity-50`}
+                    >
+                      <Icon size={15} />
+                      {label}
+                    </button>
+                  ))}
 
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border-subtle bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:bg-base hover:text-primary"
-                >
-                  {uploadingCount > 0 ? <Loader2 size={15} className="animate-spin" /> : <ImagePlus size={15} />}
-                  Image
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="inline-flex items-center gap-2 rounded-xl border border-border-subtle bg-surface px-3 py-2 text-sm font-medium text-muted transition hover:bg-base hover:text-primary"
+                  >
+                    {uploadingCount > 0 ? <Loader2 size={15} className="animate-spin" /> : <ImagePlus size={15} />}
+                    Image
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : null}
 
             <div
               className={`grid min-h-[calc(100svh-17rem)] ${

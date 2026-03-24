@@ -24,6 +24,16 @@
   }
 }
 
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -308,6 +318,19 @@
 
   .sidebar-hover-surface:hover {
     background: rgb(var(--sidebar-hover-rgb));
+  }
+
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+      90deg,
+      rgb(var(--bg-muted-rgb)) 0%,
+      rgb(var(--bg-elevated-rgb)) 50%,
+      rgb(var(--bg-muted-rgb)) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
   }
 
   .field-surface:focus {
